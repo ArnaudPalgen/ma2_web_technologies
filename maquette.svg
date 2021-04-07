@@ -95,9 +95,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.23206857"
-     inkscape:cx="4176.6889"
-     inkscape:cy="2658.9194"
+     inkscape:zoom="0.16227396"
+     inkscape:cx="3575.0216"
+     inkscape:cy="1463.8887"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -1482,5 +1482,22 @@
        height="16.978996"
        x="650.4502"
        y="875.88727" />
+    <circle
+       style="fill:#916f6f;stroke-width:1.03188;stroke-linecap:square;stroke-linejoin:round"
+       id="path241"
+       cx="470.59482"
+       cy="365.42862"
+       r="15.910088" />
+    <text
+       xml:space="preserve"
+       style="font-size:57.4978px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:sans-serif;stroke-width:1.43745"
+       x="528.42511"
+       y="906.82703"
+       id="text245"><tspan
+         sodipodi:role="line"
+         id="tspan243"
+         x="528.42511"
+         y="906.82703"
+         style="stroke-width:1.43745">OU</tspan></text>
   </g>
 </svg>
