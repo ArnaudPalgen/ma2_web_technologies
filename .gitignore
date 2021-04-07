@@ -1,0 +1,16 @@
+
+###> symfony/framework-bundle ###
+umons-lims/.env.local
+umons-lims/.env.local.php
+umons-lims/.env.*.local
+umons-lims/config/secrets/prod/prod.decrypt.private.php
+umons-lims/public/bundles/
+umons-lims/var/
+umons-lims/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/phpunit-bridge ###
+umons-lims/.phpunit
+umons-lims/.phpunit.result.cache
+umons-lims/phpunit.xml
+###< symfony/phpunit-bridge ###
