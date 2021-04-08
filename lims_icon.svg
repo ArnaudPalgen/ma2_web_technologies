@@ -14,7 +14,7 @@
    id="svg8"
    inkscape:version="1.0.2 (394de47547, 2021-03-26)"
    sodipodi:docname="lims_icon.svg"
-   inkscape:export-filename="/home/arnaud/cours/web/projet/ma2_web_technologies/lims_icon.png"
+   inkscape:export-filename="/home/arnaud/cours/web/projet/ma2_web_technologies/umons-lims2/public/lims_icon.png"
    inkscape:export-xdpi="69"
    inkscape:export-ydpi="69">
   <defs
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.60276925"
-     inkscape:cx="514.45623"
-     inkscape:cy="178.0351"
+     inkscape:zoom="1.229079"
+     inkscape:cx="67.942839"
+     inkscape:cy="175.96593"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      inkscape:document-rotation="0"
@@ -40,11 +40,11 @@
      inkscape:snap-bbox="true"
      inkscape:snap-bbox-edge-midpoints="false"
      inkscape:snap-bbox-midpoints="false"
-     inkscape:window-width="960"
-     inkscape:window-height="1016"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="0" />
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -68,7 +68,7 @@
        id="rect858"
        width="102.65833"
        height="102.65833"
-       x="58.398392"
+       x="58.55061"
        y="67.45871"
        ry="18.708866" />
     <path
@@ -78,17 +78,17 @@
        transform="scale(0.26458333)" />
     <path
        id="path895"
-       style="fill:#d1002e;fill-opacity:1;stroke:none;stroke-width:0.999999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#00abd0;fill-opacity:0.84739721;stroke:none;stroke-width:0.999999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 351.27344,491.43945 c -22.31754,50.69566 -26.53743,60.02403 -18.22461,73.23633 9.57751,15.22231 24.09124,11.61719 81.66992,11.61719 57.57872,0 72.09241,3.60512 81.66992,-11.61719 8.31281,-13.2123 4.09296,-22.54069 -18.22461,-73.23633 z"
        transform="scale(0.26458333)" />
     <circle
-       style="fill:#d1002e;fill-opacity:1;stroke:none;stroke-width:4.7625;stroke-opacity:1"
+       style="fill:#00abd0;fill-opacity:0.85000002;stroke:none;stroke-width:4.7625;stroke-opacity:1"
        id="path911"
        cx="113.67931"
        cy="116.16974"
        r="2.4054255" />
     <circle
-       style="fill:#d1002e;fill-opacity:1;stroke:none;stroke-width:10.4409;stroke-opacity:1"
+       style="fill:#00abd0;fill-opacity:0.85000002;stroke:none;stroke-width:10.4409;stroke-opacity:1"
        id="path913"
        cx="106.12359"
        cy="124.28172"

@@ -24,7 +24,8 @@ class MainController extends AbstractController{
      */
     public function login(): Response
     {
-        return $this ->render('login.html.twig');
+        $users=array("Jean", "Jeanne", "Marc", "Jerome", "Paul", "Thomas", "Jaqueline", "Jilbert", "Jean-Jacques");
+        return $this ->render('login.html.twig', ['users' => $users]);
     }
     
 }
