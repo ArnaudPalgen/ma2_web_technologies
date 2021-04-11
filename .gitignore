@@ -1,4 +1,7 @@
 
+.idea
+
+
 ###> symfony/framework-bundle ###
 umons-lims/.env.local
 umons-lims/.env.local.php
