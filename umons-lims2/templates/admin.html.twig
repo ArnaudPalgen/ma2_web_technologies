@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{%block body %}
+	<div class="row">
+
+		<div class="col-lg-9 col-md-9 col-sd-9 col-xs-9"> <input class="form-control" id="inputFT" type="text" placeholder="Search.."> </div>
+	</div>
+		<div class="row">
+		<table class="table table-hover">
+		<thead>
+			<tr>
+
+				<th scope="col" class="text-center">Nom</th>
+				<th scope="col" class="text-center">Prénom</th>
+
+				<th scope="col" class="text-center">Action</th>
+			</tr>
+		</thead>
+			<tbody id = "productTB">
+				{% for user in users %}
+					<tr>
+						<td>{{ user.first_name }}</td>
+						<td>{{ user.last_name }}</td>
+						<td>
+							<button type="button" class="btn btn-success">Supprimer</button>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<script>
+	$(document).ready(function(){
+	  $("#inputFT").on("keyup", function() {
+		var value = $(this).val().toLowerCase();
+		$("#productTB tr").filter(function() {
+		  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+		});
+	  });
+	});
+	</script>
+{% endblock %}

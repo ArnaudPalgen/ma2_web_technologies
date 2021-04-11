@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{%block body %}
+
+
+    <div class="lims-form-container">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+
+        <div class="row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-success">Valider</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -45,3 +45,9 @@ td{
 	text-align: center;
 	padding: 5px;
 }
+
+.lims-form-container {
+    padding: 40px 40px 20px 40px;
+    color: white;
+    background: #BF4C4C;
+}
