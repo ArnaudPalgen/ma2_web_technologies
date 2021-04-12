@@ -26,9 +26,11 @@
                 </li>
             </ul>
         </nav>
-        <!--<div class="input-group" style="margin-top:1%; width:40%;">
-            <input type="search" id="searchbar" placeholder="Rechercher..." class="form-control" action="#"/>
-        </div>-->
+        {% block searchbar %}
+            <div class="input-group" style="margin-top:1%; width:40%;">
+                <input type="text" placeholder="Rechercher..." class="form-control"/>
+            </div>
+        {% endblock %}
         </center>
         <div class="container" style="margin-top:1%;">
             {% block body %}{% endblock %}
