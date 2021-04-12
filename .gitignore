@@ -25,3 +25,4 @@ umons-lims2/composer.json
 umons-lims2/composer.lock
 umons-lims2/config/bundles.php
 umons-lims2/symfony.lock
+umons-lims2/config/bundles.php

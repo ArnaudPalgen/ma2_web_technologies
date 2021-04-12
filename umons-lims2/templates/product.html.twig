@@ -1,68 +1,93 @@
 {% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+{% endblock %}
 {%block body %}
-	<div class="row">
-		<div class="col-lg-3 col-md-3 col-sd-3 col-xs-3"> 
-			<div class="btn-group" role="group" aria-label="Basic example">
-				<button type="button" class="btn btn-secondary mr-5">Supprimer</button> 
-				<button type="button" class="btn btn-secondary">Déplacer</button>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-8 col-md-8 col-sd-8 col-xs-8"> 
+				<input class="form-control" id="inputFT" type="text" placeholder="Search..">
+			</div>
+			<div class="col-lg-4 col-md-4 col-sd-4 col-xs-4"> 
+				<div class="btn-group" role="group" aria-label="Basic example">
+					<button type="button" class="btn btn-secondary mr-5">Filtre&nbsp;<i class="bi bi-caret-down"></i></button>
+					<button type="button" class="btn btn-secondary mr-5">Supprimer</button> 
+					<button type="button" class="btn btn-secondary">Déplacer</button>
+				</div>
 			</div>
 		</div>
-
-		<input class="form-control" id="inputFT" type="text" placeholder="Search..">
-
-	</div>
+		
 		<div class="row">
-		<table class="table table-hover">
-		<thead>
-			<tr>
-				<th scope="col"> </th>
-				<th scope="col"> </th>
-				<th scope="col" class="text-center">N°CAS</th>
-				<th scope="col" class="text-center">Nom du Produit</th>
-				<th scope="col" class="text-center">Localisation</th>
-				<th scope="col" class="text-center">Concentration</th>
-				<th scope="col" class="text-center">Ouvert/Fermé</th>
-				<th scope="col" class="text-center"> </th>
-			</tr>
-		</thead>
-			<tbody id = "productTB">
-				{% set id = 0 %}
-				{% for elem in product %}
-					{% set id = id + 1 %}
+			<div class="table-responsive">
+				<table class="table table-hover">
+				<thead>
 					<tr>
-						<th scope="row">
-							<div class="custom-control custom-checkbox">
-								<label class="container">
-									<input type="checkbox" />
-									<span class="checkmark"></span>
-								</label>
-							</div>
-						</th>
-						<td>
-							{% if elem.used%}
-								<button type="button" class="btn btn-light">Ranger</button>
-							{% else %}
-								<button type="button" class="btn btn-success">Prendre</button>
-							{% endif %}
-						</td>
-						<td>{{ elem.cas }}</td>
-						<td>{{ elem.name }}</td>
-						<td>{{ elem.location }}</td>
-						<td>{{ elem.concentration }}</td>
-						<td>
-							{% if elem.open%}
-								<p>Ouvert</p>
-							{% else %}
-								<p>Fermé</p>
-							{% endif %}
-						</td>
-						<td>
-							
-						</td>
+						<th scope="col" class="text-center"> </th>
+						<th scope="col" class="text-center"> </th>
+						<th scope="col" class="text-center">N°CAS</th>
+						<th scope="col" class="text-center">Nom du Produit</th>
+						<th scope="col" class="text-center">Localisation</th>
+						<th scope="col" class="text-center">Concentration</th>
+						<th scope="col" class="text-center">Utilisé par:</th>
+						<th scope="col" class="text-center">Ouvert/Fermé</th>
+						<th scope="col" class="text-center"> </th>
 					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+				</thead>
+					<tbody id = "productTB">
+						{% set id = 0 %}
+						{% for elem in product %}
+							{% set id = id + 1 %}
+							<tr class="table-light">
+								<td class="align-middle">
+										<label>
+										  <input type="checkbox">
+										  <span></span>
+										</label>
+								</td>
+								<td class="align-middle">
+									{% if elem.used%}
+										<button  type="button" class="btn btn-primary put-btn">Ranger</button>
+									{% else %}
+										<button type="button" class="btn btn-primary take-btn">Prendre</button>
+									{% endif %}
+								</td>
+								<td class="align-middle"><p>{{ elem.cas }}</p></td>
+								<td class="align-middle"><p>{{ elem.name }}</p></td>
+								<td class="align-middle"><p>{{ elem.location }}</p></td>
+								<td class="align-middle"><p>{{ elem.concentration }}</p></td>
+								<td class="align-middle">
+									{% if elem.used is not null %}
+										<p>{{elem.used}}</p>
+									{% else %}
+										<p></p>
+									{% endif %}
+								</td>
+								<td class="align-middle">
+									{% if elem.open%}
+										<p>Ouvert</p>
+									{% else %}
+										<p>Fermé</p>
+									{% endif %}
+								</td>
+								<td class="align-middle">
+									<button type="button" class="btn btn-light info-btn">Informations <i class="bi bi-caret-down"></i></button>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<nav aria-label="Page navigation example">
+				<ul class="pagination">
+					<li class="page-item"><a class="page-link" href="#">Previous</a></li>
+					<li class="page-item"><a class="page-link" href="#">1</a></li>
+					<li class="page-item"><a class="page-link" href="#">2</a></li>
+					<li class="page-item"><a class="page-link" href="#">3</a></li>
+					<li class="page-item"><a class="page-link" href="#">Next</a></li>
+				</ul>
+			</nav>
+		</div>
 	</div>
 	
 	<script>
