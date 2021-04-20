@@ -1,32 +1,34 @@
 {% extends 'base.html.twig' %}
 {%block body %}
-	<div class="row">
-
-		<!--<div class="col-lg-9 col-md-9 col-sd-9 col-xs-9"> <input class="form-control" id="inputFT" type="text" placeholder="Search.."> </div>-->
-	</div>
+	<div class="container-fluid" style="width: 80%; margin-top:1%;">
 		<div class="row">
-		<table class="table table-hover">
-		<thead>
-			<tr>
 
-				<th scope="col" class="text-center">Nom</th>
-				<th scope="col" class="text-center">Prénom</th>
+			<!--<div class="col-lg-9 col-md-9 col-sd-9 col-xs-9"> <input class="form-control" id="inputFT" type="text" placeholder="Search.."> </div>-->
+		</div>
+			<div class="row">
+			<table class="table table-hover">
+			<thead>
+				<tr>
 
-				<th scope="col" class="text-center">Action</th>
-			</tr>
-		</thead>
-			<tbody id = "productTB">
-				{% for user in users %}
-					<tr>
-						<td>{{ user.first_name }}</td>
-						<td>{{ user.last_name }}</td>
-						<td>
-							<button type="button" class="btn btn-success">Supprimer</button>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+					<th scope="col" class="text-center">Nom</th>
+					<th scope="col" class="text-center">Prénom</th>
+
+					<th scope="col" class="text-center">Action</th>
+				</tr>
+			</thead>
+				<tbody id = "productTB">
+					{% for user in users %}
+						<tr>
+							<td>{{ user.first_name }}</td>
+							<td>{{ user.last_name }}</td>
+							<td>
+								<button type="button" class="btn btn-success">Supprimer</button>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
 	</div>
 	
 	<script>

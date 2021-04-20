@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 {% block searchbar %}{% endblock %}
 {%block body %}
+	<div class="container-fluid" style="width: 80%; margin-top:1%;">
+		<div class="lims-form-container">
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
 
-
-    <div class="lims-form-container">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-success">Valider</button>
-            </div>
-        </div>
-        {{ form_end(form) }}
-    </div>
+			<div class="row">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" class="btn btn-success">Valider</button>
+				</div>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
 {% endblock %}

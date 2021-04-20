@@ -1,13 +1,15 @@
 {% extends 'base.html.twig' %}
 {%block body %}
-    <div class="card-columns">
-        {% for item in users %}
-            <div class="card">
-                <div class="card-body">
-                    <center>{{item}}</center>
-                    <a href="#" class="stretched-link"></a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+	<div class="container-fluid" style="width: 80%; margin-top:1%;">
+		<div class="card-columns">
+			{% for item in users %}
+				<div class="card">
+					<div class="card-body">
+						<center>{{item}}</center>
+						<a href="#" class="stretched-link"></a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endblock %}
