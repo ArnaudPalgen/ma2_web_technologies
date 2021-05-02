@@ -40,7 +40,7 @@
 				</thead>
 					<tbody>
 						{% set id = 0 %}
-						{% for elem in product %}
+						{% for product in products %}
 							{% set id = id + 1 %}
 							<tr class="table-light">
 								<td class="align-middle">
@@ -50,26 +50,27 @@
 										</label>
 								</td>
 								<td class="align-middle">
-									{% if elem.used%}
-										<button  type="button" class="btn btn-primary put-btn">Ranger</button>
+									{% if true%}
+{#										<button  type="button" class="btn btn-primary put-btn">Ranger</button>#}
+										<button type="button" class="btn btn-primary take-btn">#TODO</button>
 									{% else %}
 										<button type="button" class="btn btn-primary take-btn">Prendre</button>
 									{% endif %}
 								</td>
-								<td class="align-middle"><p>{{ elem.cas }}</p></td>
-								<td class="align-middle"><p>{{ elem.name }}</p></td>
-								<td class="align-middle"><p>{{ elem.location }}</p></td>
-								<td class="align-middle"><p>{{ elem.concentration }}</p></td>
+								<td class="align-middle"><p>{{ product.getNcas }}</p></td>
+								<td class="align-middle"><p>{{ product.getName }}</p></td>
+								<td class="align-middle"><p>{{ product.getLocation.getString }}</p></td>
+								<td class="align-middle"><p>{{ product.getConcentration }}</p></td>
 								<td class="align-middle">
-									{% if elem.used is not null %}
-										<p>{{elem.used}}</p>
+									{% if true%}
+										<p>#TODO</p>
 									{% else %}
 										<p></p>
 									{% endif %}
 								</td>
 								<td class="align-middle">
-									{% if elem.open%}
-										<p>Ouvert</p>
+									{% if true%}
+										<p>#TODO</p>
 									{% else %}
 										<p>Fermé</p>
 									{% endif %}

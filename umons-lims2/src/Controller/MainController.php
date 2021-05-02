@@ -2,6 +2,11 @@
 // src/Controller/MainController.php
 namespace App\Controller;
 
+use App\Entity\Product;
+use App\Entity\Usage;
+use App\Entity\User;
+use App\Repository\ProductRepository;
+use http\Env\Request;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -81,7 +86,8 @@ class MainController extends AbstractController{
     */
     public function login(): Response
     {
-        $users=array("Jean", "Jeanne", "Marc", "Jerome", "Paul", "Thomas", "Jaqueline", "Jilbert", "Jean-Jacques", "Fe", "Rochell", "Angelique", "Tawanna", "Alyce", "Delmy", "Merna", "Abbey", "Kaitlin", "America", "Aundrea", "Theresia", "Luana", "Annie", "Arleen", "Karoline", "Gus", "Edris", "Elenora", "Lurlene", "Kelsie", "Jospeh", "Ed", "Nadine", "Irina", "Samara", "Mamie", "Shaniqua", "Glayds", "Jerric");
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $users = $repository->findAll();
         return $this ->render('login.html.twig', ['users' => $users]);
     }
 	
@@ -90,16 +96,13 @@ class MainController extends AbstractController{
     */
     public function product(): Response
     {
-        $product=array(
-			array("used" => True, "cas" => "331-39-5", "name" => "Caffeic acid", "location" => "A 3", "concentration" => "80%", "used"=>"Pierre Zielinski", "open" => True),
-			array("used" => True, "cas" => "50-78-2", "name" => "Aspirin", "location" => "B 6", "concentration" => "80%", "used"=>"Serge NSHIMIYIMANA","open" => True),
-			array("used" => False, "cas" => "331-39-5", "name" => "Caffeic acid", "location" => "A 3", "concentration" => "60%", "used"=>Null,"open" => True),
-			array("used" => False, "cas" => "57-27-2", "name" => "Morphine", "location" => "D 5", "concentration" => "90%", "used"=>Null,"open" => False),
-			array("used" => False, "cas" => "100-52-7", "name" => "Benzaldehyde", "location" => "A 3", "concentration" => "80%", "used"=>Null,"open" => True)
-			);
+        $pr = $this->getDoctrine()->getRepository(Product::class);
+        $products = $pr->findAll();
 
 
-        return $this ->render('product.html.twig', ['product' => $product]);
+        return $this ->render('product.html.twig', [
+            'products' => $products,
+        ]);
     }
     
 }
