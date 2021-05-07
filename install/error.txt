@@ -1,0 +1,1 @@
+error on webpage: Fatal error: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 7.4.0". You are running 7.0.33. in /var/www/symfony/vendor/composer/platform_check.php on line 24

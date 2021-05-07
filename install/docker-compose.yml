@@ -1,0 +1,33 @@
+#https://hub.docker.com/_/mysql/
+version: '2'
+services:
+    db:
+        image: mysql:8.0.24 #version used during the implementation of the project 
+        ports:
+          - 3306:3306
+        environment:
+          - MYSQL_ROOT_PASSWORD=f5d_7a8_jkgù0d_d
+          - MYSQL_USER=umons_lims
+          - MYSQL_PASSWORD=u_litpas21
+          - MYSQL_DATABASE=umons_lims
+
+    php:
+        build: php7-fpm
+        ports:
+            - 9000:9000
+        links:
+            - db:mysqldb
+        volumes:
+            - ../umons-lims2:/var/www/symfony
+            - ./logs/symfony:/var/www/symfony/app/logs
+
+    nginx:
+        build: nginx
+        ports:
+          - 80:80
+        links:
+          - php
+        volumes_from:
+          - php
+        volumes:
+          - ./logs/nginx/:/var/log/nginx
