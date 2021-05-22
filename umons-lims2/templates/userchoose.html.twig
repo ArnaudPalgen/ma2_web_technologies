@@ -1,0 +1,49 @@
+
+{% extends 'base.html.twig' %}
+{%block body %}
+	<div class="container-fluid" style="width: 80%; margin-top:1%;">
+
+{#		{% if error %}#}
+{#			<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
+{#		{% endif %}#}
+
+		{% if app.user %}
+			<div class="mb-3">
+				You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+			</div>
+		{% endif %}
+
+		<div class="card-columns">
+			<form method="post">
+
+				<input type="hidden"
+					   name="_csrf_token"
+					   value="{{ csrf_token('simple-auth') }}">
+
+				{% for user in users %}
+
+					<label class="d-block">
+						<input
+								type="radio"
+								name="registration_number"
+								class="d-none"
+								onchange="this.form.submit();"
+								value="{{ user.getRegistrationNumber }}">
+
+						<span class="card cursor-pointer">
+							<span class="card-body">
+								<center>{{user.getFullName}} /  {{ user.getRegistrationNumber }}</center>
+							</span>
+						</span>
+					</label>
+
+
+				{% endfor %}
+			</form>
+		</div>
+	</div>
+
+
+
+{% endblock %}
+

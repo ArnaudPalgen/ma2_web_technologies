@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+{% endblock %}
+{%block body %}
+    {% block searchbar %}
+    {% endblock %}
+    <div class="container-fluid">
+        <div class="row">
+            <!--
+            <div class="col-lg-8 col-md-8 col-sd-8 col-xs-8">
+                <input class="form-control" id="inputFT" type="text" placeholder="Search..">
+            </div>
+            -->
+            <div class="col-lg-4 col-md-4 col-sd-4 col-xs-4">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-secondary mr-5">Filtre&nbsp;<i class="bi bi-caret-down"></i></button>
+                    <button type="button" class="btn btn-secondary mr-5">Supprimer</button>
+                    <button type="button" class="btn btn-secondary">Déplacer</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="table-responsive">
+                <table id = "productTable" class="table table-striped table-bordered table-sm" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="text-center"> </th>
+                        <th scope="col" class="text-center"> </th>
+                        <th scope="col" class="text-center">N°CAS</th>
+                        <th scope="col" class="text-center">Nom du Produit</th>
+                        <th scope="col" class="text-center">Localisation</th>
+                        <th scope="col" class="text-center">Concentration</th>
+                        <th scope="col" class="text-center">Utilisé par:</th>
+                        <th scope="col" class="text-center">Ouvert/Fermé</th>
+                        <th scope="col" class="text-center"> </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set id = 0 %}
+                    {% for product in products %}
+                        {% set id = id + 1 %}
+                        <tr class="table-light">
+                            <td class="align-middle">
+                                <label>
+                                    <input type="checkbox">
+                                    <span></span>
+                                </label>
+                            </td>
+                            <td class="align-middle">
+                                {% if true%}
+                                    {#										<button  type="button" class="btn btn-primary put-btn">Ranger</button>#}
+                                    <button type="button" class="btn btn-primary take-btn">#TODO</button>
+                                {% else %}
+                                    <button type="button" class="btn btn-primary take-btn">Prendre</button>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle"><p>{{ product.getNcas }}</p></td>
+                            <td class="align-middle"><p>{{ product.getName }}</p></td>
+                            <td class="align-middle"><p>{{ product.getLocation.getDisplayName }}</p></td>
+                            <td class="align-middle"><p>{{ product.getConcentration }}</p></td>
+                            <td class="align-middle">
+                                {% if true%}
+                                    <p>#TODO</p>
+                                {% else %}
+                                    <p></p>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                {% if true%}
+                                    <p>#TODO</p>
+                                {% else %}
+                                    <p>Fermé</p>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <button type="button" class="btn btn-light info-btn">Informations <i class="bi bi-caret-down"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th scope="col" class="text-center"> </th>
+                        <th scope="col" class="text-center"> </th>
+                        <th scope="col" class="text-center">N°CAS</th>
+                        <th scope="col" class="text-center">Nom du Produit</th>
+                        <th scope="col" class="text-center">Localisation</th>
+                        <th scope="col" class="text-center">Concentration</th>
+                        <th scope="col" class="text-center">Utilisé par:</th>
+                        <th scope="col" class="text-center">Ouvert/Fermé</th>
+                        <th scope="col" class="text-center"> </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#productTable').DataTable(
+                {"order": [[ 2, 'desc' ]],
+                    "columnDefs": [
+                        { "targets": [0,1,8], "orderable": false }
+                    ]}
+            );
+        });
+    </script>
+{% endblock %}
