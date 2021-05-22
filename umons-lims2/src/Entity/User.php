@@ -6,11 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"registration_number"}, message="There is already an account with this registration_number")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -49,6 +52,10 @@ class User
      * @ORM\Column(type="string", length=255)
      */
     private $registration_number;
+
+
+    private $is_admin_allowed = false;
+
 
     public function __construct()
     {
@@ -152,6 +159,60 @@ class User
         $this->registration_number = $registration_number;
 
         return $this;
+    }
+
+
+
+
+    /**
+     * @param bool $is_admin_allowed
+     */
+    public function setIsAdminAllowed(bool $is_admin_allowed): void
+    {
+        $this->is_admin_allowed = $is_admin_allowed;
+    }
+
+
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        if($this->is_admin_allowed) {
+            return ['ROLE_USER'];
+        }
+
+        return match ($this->getRole()->getName()) {
+            'admin' => ['ROLE_ADMIN'],
+            'sudo' => ['ROLE_SUPER_ADMIN'],
+            default => ['ROLE_USER'],
+        };
+
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return $this->getRegistrationNumber();
+    }
+
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
     }
 
 

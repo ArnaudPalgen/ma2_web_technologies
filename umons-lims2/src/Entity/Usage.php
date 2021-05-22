@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Usage
 {
 
-    public const  ACTION_USE = 1;
+    public const  ACTION_TAKE = 1;
     public const  ACTION_RETURN = 2;
     public const  ACTION_CREATE = 3;
     public const  ACTION_DELETE = 4;

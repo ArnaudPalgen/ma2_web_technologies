@@ -98,7 +98,7 @@ class Location
         return $this;
     }
 
-    public function  getString(): string {
+    public function  getDisplayName(): string {
         return $this->getShelf() . ' ' . $this->getLevel();
     }
 }

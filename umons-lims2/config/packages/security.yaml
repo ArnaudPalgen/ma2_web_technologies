@@ -1,24 +1,60 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    access_denied_url: /login
+
+    enable_authenticator_manager: true
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    encoders:
+        App\Entity\User:
+            algorithm: auto
+
     providers:
-        users_in_memory: { memory: null }
+        user_provider:
+            entity:
+                class: App\Entity\User
+                property: registration_number
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        admin:
+            pattern: ^/admin/|^/login$
+            context: my_context
+            provider: user_provider
+            guard:
+                authenticators:
+                    - App\Security\AppAdminAuthenticator
+            logout:
+                path: app_logout
+
         main:
-            anonymous: true
-            lazy: true
-            provider: users_in_memory
+            context: my_context
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
+            provider: user_provider
+            #            remember_me:
+            #                secret: '%kernel.secret%'
+            #                lifetime: 604800 # 1 week in seconds
+            #                path: /
+            guard:
+                authenticators:
+                    - App\Security\AppCustomAuthenticator
+            logout:
+                path: app_logout
+                    # where to redirect after logout
+                    # target: products.index
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
+        - { path: ^/login$, roles: ROLE_USER }
+
+
+
+
+
+
