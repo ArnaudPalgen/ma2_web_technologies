@@ -21,4 +21,12 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 RUN echo 'alias sf="php app/console"' >> ~/.bashrc
 
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+
+COPY myentrypoint.sh /usr/local/bin/myentrypoint.sh
+RUN chmod +x /usr/local/bin/myentrypoint.sh
+
+CMD /wait && myentrypoint.sh ;  php-fpm
+
 WORKDIR /var/www/symfony
