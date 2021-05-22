@@ -6,11 +6,8 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -18,13 +15,10 @@ class SecurityController extends AbstractController
 {
     /**
      * @Route("/login", name="login")
-     * @param Request $request
-     * @param CsrfTokenManagerInterface $csrfTokenManager
-     * @param UserPasswordEncoderInterface $passwordEncoder
      * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function adminLogin(Request $request, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder,  AuthenticationUtils $authenticationUtils): Response
+    public function adminLogin(AuthenticationUtils $authenticationUtils): Response
     {
 
 
@@ -64,7 +58,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/userselect", name="userselect")
      */
-    public function userSelect(Request $request, CsrfTokenManagerInterface $csrfTokenManager, UserRepository $userRepository): Response
+    public function userSelect(Request $request, UserRepository $userRepository): Response
     {
 
         if ($request->query->get("type")== 'full' && $this->getUser()) {
