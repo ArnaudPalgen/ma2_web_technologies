@@ -179,7 +179,7 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        if($this->is_admin_allowed) {
+        if(!$this->is_admin_allowed) {
             return ['ROLE_USER'];
         }
 
