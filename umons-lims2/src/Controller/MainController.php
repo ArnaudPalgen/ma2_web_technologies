@@ -59,7 +59,19 @@ class MainController extends AbstractController{
         return $this ->render('login.html.twig', ['users' => $users]);
     }
 
+    /**
+     * @Route("/logs")
+     */
+    public function logs(): Response
+    {
+        $pr = $this->getDoctrine()->getRepository(Product::class);
+        $products = $pr->findAll();
 
+
+        return $this->render('logs.html.twig', [
+            'products' => $products,
+        ]);
+    } 
 
     /**
      * @Route("/product", name="product")
