@@ -2,114 +2,247 @@
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
-  
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="tableStyle.css"/>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.1/css/searchPanes.dataTables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css"/>
+
+
 {% endblock %}
 {%block body %}
 	{% block searchbar %}
-    {% endblock %}
-	<div class="container-fluid">
+	{% endblock %}
+	<div class="container-fluid" style="margin-top: 2em;width: 99%">
+		<!--
 		<div class="row">
-			<!--
 			<div class="col-lg-8 col-md-8 col-sd-8 col-xs-8"> 
 				<input class="form-control" id="inputFT" type="text" placeholder="Search..">
 			</div>
-			-->
-			<div class="col-lg-4 col-md-4 col-sd-4 col-xs-4"> 
+
+			<div class="col-lg-4 col-md-4 col-sd-4 col-xs-4">
 				<div class="btn-group" role="group" aria-label="Basic example">
 					<button type="button" class="btn btn-secondary mr-5">Filtre<i class="bi bi-caret-down"></i></button>
-					<button type="button" class="btn btn-secondary mr-5">Supprimer</button> 
+					<button type="button" class="btn btn-secondary mr-5">Supprimer</button>
 					<button type="button" class="btn btn-secondary">Déplacer</button>
 				</div>
 			</div>
 		</div>
+		-->
 		<div class="row">
 			<div class="table-responsive">
-				<table id = "productTable" class="table table-striped table-bordered table-sm" style="width:100%">
-				<thead>
+				<table id = "productTable" class="hover" >
+					<thead>
 					<tr>
-						<th scope="col" class="text-center"> </th>
-						<th scope="col" class="text-center"> </th>
-						<th scope="col" class="text-center">N°CAS</th>
-						<th scope="col" class="text-center">Nom du Produit</th>
-						<th scope="col" class="text-center">Localisation</th>
-						<th scope="col" class="text-center">Concentration</th>
-						<th scope="col" class="text-center">Utilisé par:</th>
-						<th scope="col" class="text-center">Ouvert/Fermé</th>
-						<th scope="col" class="text-center"> </th>
+						<th> </th>
+						<th> </th>
+						<th class="text-center">N°CAS</th>
+						<th class="text-center">Nom du Produit</th>
+						<th class="text-center">Localisation</th>
+						<th class="text-center">Concentration</th>
+						<th class="text-center">Masse</th>
+						<th class="text-center">Volume</th>
+						<th class="text-center">Utilisé par:</th>
+						<th class="text-center">Ouvert/Fermé</th>
+						<th> </th>
 					</tr>
-				</thead>
+					</thead>
 					<tbody>
-						{% for product in products %}
-							<tr class="table-light">
-								<td class="align-middle">
-										<label>
-										  <input type="checkbox">
-										  <span></span>
-										</label>
-								</td>
-								<td class="align-middle">
-									{% if product.action == 1%}
-										<p>
-											<a href="{{path('changeProduct',{action: '2',product : product.id})}}" class="btn btn-primary put-btn">Ranger</a>
-										</p>
-									{% else %}
-										<p>
-											<a href="{{path('changeProduct',{action: '1',product : product.id})}}" class="btn btn-primary take-btn">Prendre</a>
-										</p>
-									{% endif %}
-								</td>
-								<td class="align-middle"><p>{{ product.ncas }}</p></td>
-								<td class="align-middle"><p>{{ product.name }}</p></td>
-								<td class="align-middle"><p>{{ product.location }}</p></td>
-								<td class="align-middle"><p>{{ product.concentration }}</p></td>
-								<td class="align-middle">
-									{% if product.action == 1%}
-										<p>{{product.user}}</p>
-									{% else %}
-										<p></p>
-									{% endif %}
-								</td>
-								<td class="align-middle">
-									{% if product.action != 3 %}
-										<p>Ouvert</p>
-									{% else %}
-										<p>Fermé</p>
-									{% endif %}
-								</td>
-								<td class="align-middle">
-									<button type="button" class="btn btn-light info-btn">Informations <i class="bi bi-caret-down"></i></button>
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-					 <tfoot>
-						<tr>
-							<th scope="col" class="text-center"> </th>
-							<th scope="col" class="text-center"> </th>
-							<th scope="col" class="text-center">N°CAS</th>
-							<th scope="col" class="text-center">Nom du Produit</th>
-							<th scope="col" class="text-center">Localisation</th>
-							<th scope="col" class="text-center">Concentration</th>
-							<th scope="col" class="text-center">Utilisé par:</th>
-							<th scope="col" class="text-center">Ouvert/Fermé</th>
-							<th scope="col" class="text-center"> </th>
+					{% for product in products %}
+						<tr  id = 'product-{{product.id}}'>
+							<td>
+								<label>
+									<input type="checkbox" value='{{product.id}}'>
+									<span></span>
+								</label>
+							</td>
+							<td>
+								{% if product.action == 1%}
+
+										<a onclick="ranger('product-{{product.id}}')" class="btn btn-primary put-btn">Ranger</a>
+
+								{% else %}
+
+										<a onclick="prendre('product-{{product.id}}')" class="btn btn-primary take-btn">Prendre</a>
+
+								{% endif %}
+							</td>
+							<td>{{ product.ncas }}</td>
+							<td>{{ product.name }}</td>
+							<td>{{ product.location }}</td>
+							<td>{{ product.concentration }}</td>
+							<td>{{ product.mass }}</td>
+							<td>{{ product.volume }}</td>
+							<td>
+								{% if product.action == 1%}
+									{{product.user}}
+								{% else %}
+
+								{% endif %}
+							</td>
+							<td>
+								{% if product.action != 3 %}
+									Ouvert
+								{% else %}
+									Fermé
+								{% endif %}
+							</td>
+							<td>
+								<button type="button" class="btn btn-light info-btn">Informations <i class="bi bi-caret-down"></i></button>
+							</td>
 						</tr>
+					{% endfor %}
+					</tbody>
+					<tfoot>
+					<tr>
+						<th> </th>
+						<th> </th>
+						<th>N°CAS</th>
+						<th>Nom du Produit</th>
+						<th>Localisation</th>
+						<th>Concentration</th>
+						<th>Masse</th>
+						<th>Volume</th>
+						<th>Utilisé par:</th>
+						<th>Ouvert/Fermé</th>
+						<th> </th>
+					</tr>
 					</tfoot>
 				</table>
 			</div>
 		</div>
 	</div>
-	
-	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-	<script>
-	$(document).ready(function () {
-		$('#productTable').DataTable(
-			{"order": [[ 2, 'desc' ]],
-			"columnDefs": [
-			{ "targets": [0,1,8], "orderable": false }
-			]}
+
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+
+	<script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.1/js/dataTables.searchPanes.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$('#productTable').DataTable({
+				"dom": '<"top"Blf>rt<"bottom"ip><"clear">',
+				searchPanes: {
+					columns: [2,3,4,5,6,7,8,9]
+				},
+				buttons: {
+					buttons: [
+						{
+							text: 'Déplacer',
+							action: function (e, dt, node, config) {
+								moveRow();
+							}
+						},
+						{
+							text: 'Supprimer',
+							action: function (e, dt, node, config) {
+								deleteRow();
+							}
+						},
+						'searchPanes'
+					]/*,
+					dom: {
+						button: {
+							tag: "button",
+							className: "btn btn-secondary table-btn",
+						}
+					}*/
+				},
+						"order": [[ 2, 'desc' ]],
+						"columnDefs": [
+							{ "targets": [0,1,10], "orderable": false },
+							{"className": "dt-center", "targets": "_all"}
+						],
+						stateSave: true,
+						"lengthMenu": [[10, 25, 50], [10, 25, 50]],
+						language: {
+							"decimal": ",",
+							"thousands": ".",
+							url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+						}}
 			);
-	});
+		});
+
+
+
+		// Traitements sur des cases à chocher
+		$("input[type=checkbox]").change(function() {
+			$("#product-"+this.value).toggleClass('selected');
+		});
+
+		function moveRow(){
+			console.log();
+		}
+
+		function deleteRow(){
+			let table = $('#productTable').DataTable();
+			let rows = table.rows('.selected');
+			let data = rows.data();
+
+			for(let i= 0; i < data.length; i++)
+			{
+				let product = data[i]["DT_RowId"].split('-')[1];
+				let action = {{constant('App\\Entity\\Usage::ACTION_DELETE')}};
+
+				let route = '{{path('changeProduct',{'action': 'action','product' : 'product'})}}';
+				route = route.replace("action",action);
+				route = route.replace("product", product);
+
+				$.get( route, function( res ) {
+					$(".result").html(res);
+				});
+
+			}
+			rows.remove().draw( false );
+		}
+
+		function ranger(id){
+			let product = id.split('-')[1];
+			let action = {{constant('App\\Entity\\Usage::ACTION_RETURN')}};
+			let route = '{{path('changeProduct',{'action': 'action','product' : 'product'})}}';
+
+			route = route.replace("action",action);
+			route = route.replace("product", product);
+
+			$.get( route, function( res ) {
+				$( ".result" ).html( res );
+
+				let table = $('#productTable').DataTable();
+				let row = table.row("#"+id);
+				let data = row.data();
+
+				data[1] = '<a onclick="prendre('+"'"+id+"'"+')" class="btn btn-primary take-btn">Prendre</a>';
+				data[8] = ""
+
+				row.data(data).draw(false);
+			});
+		}
+
+		function prendre(id){
+			let product = id.split('-')[1];
+			let action = {{constant('App\\Entity\\Usage::ACTION_USE')}};
+			let route = '{{path('changeProduct',{'action': 'action','product' : 'product'})}}';
+
+			route = route.replace("action",action);
+			route = route.replace("product", product);
+
+			$.get( route, function( res ) {
+				$( ".result" ).html( res );
+
+				let table = $('#productTable').DataTable();
+				let row = table.row("#"+id);
+				let data = row.data();
+
+				data[1] = '<a onclick="ranger('+"'"+id+"'"+')" class="btn btn-primary put-btn">Ranger</a>';
+				data[8] = $.parseJSON(res);
+				data[9] = 'Ouvert';
+
+				row.data(data).draw(false);
+			});
+
+
+		}
 	</script>
 {% endblock %}

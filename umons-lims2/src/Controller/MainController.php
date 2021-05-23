@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MainController extends AbstractController{
-	
+
 
     /**
      * @Route("/lucky/number")
@@ -84,24 +84,26 @@ class MainController extends AbstractController{
     }
 
     /**
-    * @Route("/login")
-    */
+     * @Route("/login")
+     */
     public function login(): Response
     {
         $repository = $this->getDoctrine()->getRepository(User::class);
         $users = $repository->findAll();
         return $this ->render('login.html.twig', ['users' => $users]);
     }
-	
-	/**
-    * @Route("/product", name="product")
-    */
+
+    /**
+     * @Route("/product", name="product")
+     */
     public function product(): Response
     {
-		
-		
+
+
         $pr = $this->getDoctrine()->getRepository(Product::class);
-		$products = $pr->getProductList();
+        $products = $pr->getProductList();
+
+
 
         //$date = new \DateTime();
         //$date->setTimezone(new \DateTimeZone('Europe/Paris'));
@@ -124,6 +126,7 @@ class MainController extends AbstractController{
 
         $repository = $this->getDoctrine()->getRepository(User::class);
         $user = $repository->find(1);
+        $nameUser = $user -> getFullName();
 
         $usage = new Usage();
         $usage->setAction($action);
@@ -136,7 +139,7 @@ class MainController extends AbstractController{
 
         $en->flush();
 
-        return $this->redirectToRoute("product");
+        return $this->json(json_encode($nameUser));
     }
-    
+
 }

@@ -25,28 +25,6 @@
 
 
 
-.row{
-	margin-bottom: 30px;
-}
-.table{
-	border-collapse: separate;
-	border-spacing: 0 15px;
-	width: 100%;
-}
-thead{
-	background-color: #CD5C5C;	
-}
-tbody{
-	background-color:#FFFFFF;	
-}
-th{
-	color: white;
-}
-td{
-	text-align: center;
-}
-
-
 .btn-light.info-btn {
 	border: 1px solid;
 }
