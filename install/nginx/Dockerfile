@@ -13,7 +13,10 @@ RUN echo "upstream php-upstream { server php:9000; }" > /etc/nginx/conf.d/upstre
 
 RUN usermod -u 1000 www-data
 
-CMD ["nginx"]
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+
+CMD /wait && nginx
 
 EXPOSE 80
 EXPOSE 443
