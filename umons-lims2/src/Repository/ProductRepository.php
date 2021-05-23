@@ -5,9 +5,8 @@ namespace App\Repository;
 use App\Entity\Product;
 use App\Entity\Usage;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,6 +20,18 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    public function findByNCAS($ncas)
+    {
+
+        return $this->createQueryBuilder('p')
+            ->select(['p.ncas','p.name'])
+            ->where('p.ncas LIKE :ncas')
+            ->setParameter('ncas', '%' . $ncas . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
 
 	public function  getProductList() {
         $rsm = new ResultSetMapping();
@@ -50,7 +61,7 @@ class ProductRepository extends ServiceEntityRepository
         ";
         $query = $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)
-            ->setParameter('action', Usage::ACTION_USE);
+            ->setParameter('action', Usage::ACTION_TAKE);
 
 
         return $query->getResult();

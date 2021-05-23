@@ -3,6 +3,7 @@ version: '2'
 services:
     db:
         image: mysql:8.0.24 #version used during the implementation of the project 
+        container_name: mysql 
         ports:
           - 3306:3306
         environment:
@@ -15,11 +16,20 @@ services:
         build: php7-fpm
         ports:
             - 9000:9000
+        #command: bash -c "myentrypoint.sh"
         links:
             - db
         volumes:
             - ../umons-lims2:/var/www/symfony
             - ./logs/symfony:/var/www/symfony/app/logs
+        depends_on:
+          - db
+        environment:
+          - WAIT_HOSTS=mysql:3306
+          - WAIT_SLEEP_INTERVAL=15
+          - MYSQL_DATABASE=umons_lims
+          - MYSQL_USER=uumons_lims
+          - MYSQL_PASSWORD=u_litpas21
 
     nginx:
         build: nginx
@@ -31,3 +41,10 @@ services:
           - php
         volumes:
           - ./logs/nginx/:/var/log/nginx
+        depends_on:
+          - php
+          - db
+        environment:
+          - WAIT_HOSTS=mysql:3306, php:9000
+          - WAIT_SLEEP_INTERVAL=20
+          - WAIT_TIMEOUT=60

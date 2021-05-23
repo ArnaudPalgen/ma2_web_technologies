@@ -150,7 +150,7 @@ class AppFixtures extends Fixture
                 $usage = new Usage();
                 $d = $this->faker->dateTimeThisYear();
                 $usage
-                    ->setAction(Usage::ACTION_USE)
+                    ->setAction(Usage::ACTION_TAKE)
                     ->setProduct($product)
                     ->setUser($this->faker->randomElement($this->users))
                     ->setDate($d);
@@ -168,7 +168,7 @@ class AppFixtures extends Fixture
                 $usage = new Usage();
                 $d = $this->faker->dateTimeThisYear($d);
                 $usage
-                    ->setAction(Usage::ACTION_USE)
+                    ->setAction(Usage::ACTION_TAKE)
                     ->setProduct($product)
                     ->setUser($this->faker->randomElement($this->users))
                     ->setDate($this->faker->dateTimeThisYear());

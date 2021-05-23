@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Role
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
