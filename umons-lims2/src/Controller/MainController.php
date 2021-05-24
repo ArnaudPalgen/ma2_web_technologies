@@ -80,31 +80,5 @@ class MainController extends AbstractController{
         ]);
     }
 
-    /**
-     * @Route("/changeProduct/{action}/{product}", name="changeProduct")
-     */
-    public function changeProduct(int $action, int $product): Response
-    {
-        $en = $this->getDoctrine()->getManager();
 
-        $pr = $this->getDoctrine()->getRepository(Product::class);
-        $prod = $pr->find($product);
-
-        $repository = $this->getDoctrine()->getRepository(User::class);
-        $user = $repository->find(1);
-        $nameUser = $user -> getFullName();
-
-        $usage = new Usage();
-        $usage->setAction($action);
-        $usage->setDate(new \DateTime());
-        $usage->setProduct($prod);
-        $usage->setUser($user);
-        $this->generateUrl('product');
-
-        $en->persist($usage);
-
-        $en->flush();
-
-        return $this->json(json_encode($nameUser));
-    }
 }

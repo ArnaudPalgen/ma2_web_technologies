@@ -46,18 +46,18 @@ class ProductRepository extends ServiceEntityRepository
         ->addScalarResult('user', 'user')
         ->addScalarResult('action', 'action');
         $sql = "
-                SELECT p.id, NAME name, ncas, volume, mass, concentration,concat(location.shelf, ' ', location.level) location, concat( user.first_name, ' ', user.last_name) user, `action`
-                FROM `product` p
-                INNER JOIN (SELECT u1.product_id, u1.action, u2.date , u1.user_id
-                from `usage` u1
-							 join (
-						SELECT product_id, max(date) date
-						FROM `usage`
-						GROUP BY product_id
-					 ) u2 on u1.date = u2.date and u1.product_id = u2.product_id
-                GROUP BY product_id) u ON p.id = u.product_id AND `action` != 4
-                left join user  on user.id = u.user_id
-                left join location  on location.id = p.location_id;
+                SELECT p.id, name, ncas, volume, mass, concentration,concat(location.shelf, ' ', location.level) location, concat( user.first_name, ' ', user.last_name) user, action
+                FROM product p
+                         INNER JOIN (SELECT u1.product_id, u1.action, u2.date , u1.user_id
+                                     from `usage` u1
+                                            join (
+                                         SELECT product_id, max(date) date
+                                         FROM `usage`
+                                         GROUP BY product_id
+                                     ) u2 on u1.date = u2.date and u1.product_id = u2.product_id
+                                     /* GROUP BY product_id*/) u ON p.id = u.product_id AND action != 4
+                         left join user  on user.id = u.user_id
+                         left join location  on location.id = p.location_id;
         ";
         $query = $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)

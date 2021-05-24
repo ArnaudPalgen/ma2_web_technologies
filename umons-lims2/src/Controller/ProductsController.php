@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\Usage;
+use App\Entity\User;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,12 +22,38 @@ class ProductsController extends AbstractController
     {
 
         $pr = $this->getDoctrine()->getRepository(Product::class);
-        $products = $pr->findAll();
+        $products = $pr->getProductList();
 
 
         return $this->render('products/index.html.twig', [
             'products' => $products,
         ]);
+    }
+
+    #[Route('/changeProduct/{action}/{product}', name: 'products.change')]
+    public function changeProduct(int $action, int $product): Response
+    {
+        $en = $this->getDoctrine()->getManager();
+
+        $pr = $this->getDoctrine()->getRepository(Product::class);
+        $prod = $pr->find($product);
+
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $user = $this -> getUser();
+        $nameUser = $this -> getUser() -> getFullName();
+
+        $usage = new Usage();
+        $usage->setAction($action);
+        $usage->setDate(new \DateTime());
+        $usage->setProduct($prod);
+        $usage->setUser($user);
+        $this->generateUrl('product');
+
+        $en->persist($usage);
+
+        $en->flush();
+
+        return $this->json(json_encode($nameUser));
     }
 
     #[Route(path :"new_product", name: 'products.create')]
