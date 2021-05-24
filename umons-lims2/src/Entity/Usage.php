@@ -17,6 +17,7 @@ class Usage
     public const  ACTION_CREATE = 3;
     public const  ACTION_DELETE = 4;
     public const  ACTION_MOVE = 5;
+    public const  ACTIONS = array("Prendre", "Ranger", "Créer", "Supprimer", "Bouger");
 
     /**
      * @ORM\Id
