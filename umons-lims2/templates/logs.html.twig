@@ -44,11 +44,23 @@
 
     <script>
         $(document).ready( function () {
-      var table = $('#example').DataTable({
+          var table = $('#example').DataTable({
             //Classic DataTables parameters
+            bFilter: false,
+            processing: true,
             responsive: true,
-            ordering: false,
-            searching: false,
+            paging: true,
+            columnDefs: [ { type: 'date', 'targets': [3] } ],
+            "order": [[ 3, "desc" ]],
+            language: {
+              "decimal": ",",
+              "thousands": ".",
+              url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+			      }
+      });
+
+      $("#search").on('input', function() {
+        table.column(1).search($(this).val()).draw();
       });
     } );
     </script>
