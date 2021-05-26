@@ -206,6 +206,14 @@ table.dataTable.no-footer {
 .dataTables_wrapper .dataTables_paginate {
     color: #ffffff;
 }
+div.dt-buttons {
+    clear: both;
+}
+
+#top {
+    position: absolute;
+    right: 10px;
+}
 
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
