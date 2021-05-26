@@ -122,12 +122,10 @@
     <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
 
-            $('#productTable').DataTable({
-                "dom": '<"top"Blf>rt<"bottom"ip><"clear">',
-                buttons: {
-                    buttons: [
+            var table = $('#productTable').DataTable({
+                dom : '<Bl<"#filter">f<t>ip>',
+                buttons: [
                         {
                             tag: "button",
                             className: "btn btn-secondary",
@@ -151,30 +149,133 @@
                             action: function (e, dt, node, config) {
                                 deleteRow();
                             }
-                        },
-                        {
-                            extend: 'searchPanes',
-                            text: 'filtre',
-                            tag: "button",
-                            className: "btn btn-secondary"
                         }
 
-                    ]
-                },
+                ],
                 "order": [[ 2, 'desc' ]],
                 "columnDefs": [
+                    { "searchable": false, "targets": 0 },
+                    { "searchable": false, "targets": 10 },
+                    {
+                        searchPanes: {
+                            show: false
+                        },
+                        targets: [0]
+                    },
+                    {
+                        searchPanes: {
+                            show: false
+                        },
+                        targets: [1]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [2]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [3]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [4]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [5]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [6]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [7]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [8]
+                    },
+                    {
+                        searchPanes: {
+                            show: true
+                        },
+                        targets: [9]
+                    },
+                    {
+                        searchPanes: {
+                            show: false
+                        },
+                        targets: [10]
+                    },
                     { "targets": [0,1,10], "orderable": false },
                     {"className": "dt-center", "targets": "_all"}
                 ],
                 stateSave: true,
                 "lengthMenu": [[10, 25, 50], [10, 25, 50]],
                 language: {
+                    searchPanes: {
+                        clearMessage: 'réinitialiser la recherche',
+                        collapse: {0: 'Recherche avancée', _: 'Recherche avancée(%d)'},
+                        emptyPanes: "Aucune recherche n'est possible :("
+                    },
                     "decimal": ",",
                     "thousands": ".",
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-                }}
-            );
-        });
+                },"initComplete": function( settings, json ) {
+                    new $.fn.dataTable.Buttons( table, {
+                        buttons: [
+                            {
+                                extend: 'searchPanes',
+                                tag: "button",
+                                className: "btn btn-secondary",
+                                config: {
+                                    cascadePanes: true,
+                                    panes: [
+                                        {
+                                            header: 'Produits utilisés/libres',
+                                            options: [
+                                                {
+                                                    label: 'libres',
+                                                    value: function (rowData, rowIdx) {
+                                                        return rowData[8] === '';
+                                                    }
+                                                },
+                                                {
+                                                    label: 'utilisés',
+                                                    value: function (rowData, rowIdx) {
+                                                        return rowData[8] !== '';
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    } );
+
+                    table.buttons( 1, null ).container().appendTo(
+                        $("#filter")
+                    );
+                }
+            });
+
+
 
 
 
@@ -184,8 +285,7 @@
         });
 
         function addElement(){
-            let route = '{{path('products.create')|escape('js')}}';
-            window.location.href = route;
+            window.location.href = '{{path('products.create')|escape('js')}}';
         }
 
         function moveRow(){
@@ -193,7 +293,6 @@
         }
 
         function deleteRow(){
-            let table = $('#productTable').DataTable();
             let rows = table.rows('.selected');
             let data = rows.data();
 
@@ -212,6 +311,7 @@
 
             }
             rows.remove().draw( false );
+            table.searchPanes.rebuildPane();
         }
 
         function ranger(id){
@@ -225,7 +325,6 @@
             $.get( route, function( res ) {
                 $( ".result" ).html( res );
 
-                let table = $('#productTable').DataTable();
                 let row = table.row("#"+id);
                 let data = row.data();
 
@@ -233,6 +332,7 @@
                 data[8] = ""
 
                 row.data(data).draw(false);
+                table.searchPanes.rebuildPane();
             });
         }
 
@@ -247,7 +347,6 @@
             $.get( route, function( res ) {
                 $( ".result" ).html( res );
 
-                let table = $('#productTable').DataTable();
                 let row = table.row("#"+id);
                 let data = row.data();
 
@@ -256,6 +355,7 @@
                 data[9] = 'Ouvert';
 
                 row.data(data).draw(false);
+                table.searchPanes.rebuildPane();
             });
 
 

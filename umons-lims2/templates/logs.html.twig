@@ -63,7 +63,7 @@
         <tbody>
         {% for log in logs%}
         <tr>
-          <th>{{constant('ACTIONS', log)[log.action]}}</th>
+          <th>{{constant('ACTIONS', log)[log.action-1]}}</th>
           <th>{{log.product.getName()}}</th>
           <th>{{log.user.getFirstName()}} {{log.user.getLastName()}}</th>
           <th>{{log.date|date("d/m/Y")}}</th>
