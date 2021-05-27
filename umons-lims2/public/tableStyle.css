@@ -210,10 +210,6 @@ div.dt-buttons {
     clear: both;
 }
 
-#top {
-    position: absolute;
-    right: 10px;
-}
 
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
