@@ -31,12 +31,7 @@
 					<tbody>
 					{% for user in users %}
 						<tr  id = 'user-{{user.getId}}'>
-							<td>
-								<label>
-									<input type="checkbox" value='{{user.getId}}' autocomplete="off">
-									<span></span>
-								</label>
-							</td>
+							<td><label><input type="checkbox" value='{{user.getId}}' autocomplete="off"><span></span></label></td>
 							<td>{{user.getRegistrationNumber}}</td>
 							<td>{{user.getFirstName}}</td>
 							<td>{{user.getLastName}}</td>
@@ -122,10 +117,11 @@
 			let row = table.row("#"+id);
 			let data = row.data();
 
-			data[1] = '<input type="text" value="'+data[1]+'">';
-			data[2] = '<input type="text" value="'+data[2]+'">';
-			data[3] = '<input type="text" value="'+data[3]+'">';
-			data[4] = '<input type="text" value="'+data[4]+'">';
+
+			data[1] = '<input type="text" id ="#'+id+'-1" value="'+data[1]+'">';
+			data[2] = '<input type="text" id ="#'+id+'-2" value="'+data[2]+'">';
+			data[3] = '<input type="text" id ="#'+id+'-3" value="'+data[3]+'">';
+			data[4] = '<input type="text" id ="#'+id+'-4" value="'+data[4]+'">';
 			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="updateRow(\''+id+'\')" >Valider <i class="bi bi-check2"></i></button>'
 
 			row.data(data).draw(false);
@@ -136,20 +132,15 @@
 			let data = row.data();
 
 
-			data[1] = getValue(data[1]);
-			data[2] = getValue(data[2]);
-			data[3] = getValue(data[3]);
-			data[4] = getValue(data[4]);
-			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="changeRow(\''+id+'\')" >Valider <i class="bi bi-pencil"></i></button>'
+			data[1] = document.getElementById("#"+id+"-1").value;
+			data[2] = document.getElementById("#"+id+"-2").value;
+			data[3] = document.getElementById("#"+id+"-3").value;
+			data[4] = document.getElementById("#"+id+"-4").value;
+			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="changeRow(\''+id+'\')" >Modifier <i class="bi bi-pencil"></i></button>'
 
 			row.data(data).draw(false);
 
 		}
 
-		function getValue(html){
-			let temp = document.createElement('div');
-			temp.innerHTML = html;
-			return temp.firstChild.value;
-		}
 	</script>
 {% endblock %}

@@ -36,12 +36,7 @@
                     <tbody>
                     {% for product in products %}
                         <tr  id = 'product-{{product.id}}'>
-                            <td>
-                                <label>
-                                    <input type="checkbox" value='{{product.id}}' autocomplete="off">
-                                    <span></span>
-                                </label>
-                            </td>
+                            <td><label><input type="checkbox" value='{{product.id}}' autocomplete="off"><span></span></label></td>
                             <td>
                                 {% if product.action == 1%}
 

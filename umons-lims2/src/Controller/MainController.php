@@ -24,6 +24,26 @@ class MainController extends AbstractController{
         );
     }
 
+    /**
+     * @Route("/product", name="product")
+     */
+    public function product(): Response
+    {
+
+
+        $pr = $this->getDoctrine()->getRepository(Product::class);
+        $products = $pr->getProductList();
+
+
+
+        //$date = new \DateTime();
+        //$date->setTimezone(new \DateTimeZone('Europe/Paris'));
+        //$date = date_format($date, 'Y-m-d H:i:s');
+
+        return $this ->render('product.html.twig', [
+            'products' => $products,
+        ]);
+    }
 
     /**
      * @Route("/adminTest")
