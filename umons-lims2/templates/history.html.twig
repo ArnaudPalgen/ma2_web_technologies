@@ -2,11 +2,12 @@
 
 {% block stylesheets %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css"/>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/datatables.min.css"/>
 	<link rel="stylesheet" type="text/css" href="tableStyle.css"/>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.1/css/searchPanes.dataTables.min.css"/>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css"/>
+{% endblock %}
+
+{% block title %}
+    Historique - {{ parent() }}
 {% endblock %}
 
 {% block searchbar %}
@@ -29,23 +30,7 @@
       </div>
     </div>
     </div>
-    <!--
-    <div class="input-group" style="margin-top:1%; width:40%; margin-bottom:1%;">
-      <div class="input-group-prepend">
-    <span class="input-group-text" id="basic-addon1">@</span>
-  </div>
-        <input type="text" id="search" placeholder="Rechercher..." class="form-control"/>
-        <div class="form-floating">
-        <select class="form-select" aria-label="Floating label select example">
-            <option selected>Tous les champs</option>
-            <option value="1">Action</option>
-            <option value="2">Produit</option>
-            <option value="3">Utilisateur</option>
-            <option value="3">Date</option>
-        </select>
-         <label for="floatingSelect">Works with selects</label>
-         </div>
-    </div>-->
+
 {% endblock %}
 
 {% block body %}
@@ -55,8 +40,8 @@
         <thead>
           <tr>
             <th>Action</th>
-            <th>Product</th>
-            <th>User</th>
+            <th>Produit</th>
+            <th>Utilisateur</th>
             <th>Date</th>
           </tr>
         </thead>
@@ -66,7 +51,7 @@
           <th>{{constant('ACTIONS', log)[log.action-1]}}</th>
           <th>{{log.product.getName()}}</th>
           <th>{{log.user.getFirstName()}} {{log.user.getLastName()}}</th>
-          <th>{{log.date|date("d/m/Y H:i:s")}}</th>
+          <th class ="date">{{log.date|date("d/m/Y H:i:s", "Europe/Paris")}}</th>
         </tr>
         {% endfor %}
         </tbody>
@@ -75,25 +60,21 @@
 {% endblock %}
 
 {% block javascripts %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.1/js/dataTables.searchPanes.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
-<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.24/sorting/datetime-moment.js"></script>
 
     <script>
         $(document).ready( function () {
+          $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
           var table = $('#example').DataTable({
             dom:'ltip',
             processing: true,
             responsive: true,
             paging: true,
-            columnDefs: [ { type: 'date-eu', 'targets': [3] } ],
             "order": [[ 3, "desc" ]],
             language: {
-              "decimal": ",",
-              "thousands": ".",
               url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
 			      }
       });

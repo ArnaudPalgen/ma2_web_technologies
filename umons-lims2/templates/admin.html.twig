@@ -1,44 +1,146 @@
 {% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.1/sl-1.3.3/datatables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="tableStyle.css"/>
+
+
+{% endblock %}
+{% block title %}
+	Administrateur - {{ parent() }}
+{% endblock %}
+{% block searchbar %}
+{% endblock %}
 {%block body %}
-	<div class="container-fluid" style="width: 80%; margin-top:1%;">
+
+	<div class="container-fluid" style="margin-top: 2em;">
 		<div class="row">
-
-			<!--<div class="col-lg-9 col-md-9 col-sd-9 col-xs-9"> <input class="form-control" id="inputFT" type="text" placeholder="Search.."> </div>-->
-		</div>
-			<div class="row">
-			<table class="table table-hover">
-			<thead>
-				<tr>
-
-					<th scope="col" class="text-center">Nom</th>
-					<th scope="col" class="text-center">Prénom</th>
-
-					<th scope="col" class="text-center">Action</th>
-				</tr>
-			</thead>
-				<tbody id = "productTB">
+			<div class="table-responsive">
+				<table id = "productTable" class="hover" >
+					<thead>
+					<tr>
+						<th> </th>
+						<th class="text-center">Matricule</th>
+						<th class="text-center">Nom</th>
+						<th class="text-center">Prénom</th>
+						<th class="text-center">Rôle</th>
+						<th class="text-center">Outils</th>
+					</tr>
+					</thead>
+					<tbody>
 					{% for user in users %}
-						<tr>
-							<td>{{ user.first_name }}</td>
-							<td>{{ user.last_name }}</td>
+						<tr  id = 'user-{{user.getId}}'>
+							<td><label><input type="checkbox" value='{{user.getId}}' autocomplete="off"><span></span></label></td>
+							<td>{{user.getRegistrationNumber}}</td>
+							<td>{{user.getFirstName}}</td>
+							<td>{{user.getLastName}}</td>
+							<td>{{user.getRole.getName}}</td>
 							<td>
-								<button type="button" class="btn btn-success">Supprimer</button>
+								<button type="button" class="btn btn-light info-btn" onclick="changeRow('user-{{user.getId}}')" >Modifier <i class="bi bi-pencil"></i></button>
 							</td>
 						</tr>
 					{% endfor %}
-				</tbody>
-			</table>
+					</tbody>
+					<tfoot>
+					<tr>
+						<th> </th>
+						<th class="text-center">Matricule</th>
+						<th class="text-center">Nom</th>
+						<th class="text-center">Prénom</th>
+						<th class="text-center">Rôle</th>
+						<th class="text-center">Outils</th>
+					</tr>
+					</tfoot>
+				</table>
+			</div>
 		</div>
 	</div>
-	
-	<script>
-	$(document).ready(function(){
-	  $("#inputFT").on("keyup", function() {
-		var value = $(this).val().toLowerCase();
-		$("#productTB tr").filter(function() {
-		  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+{% endblock %}
+{% block javascripts %}
+	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+
+	<script type="text/javascript">
+
+		var table = $('#productTable').DataTable({
+			dom : '<Bl<t>ip>',
+			buttons: [
+				{
+					tag: "button",
+					className: "btn btn-secondary",
+					text: 'Ajouter',
+					action: function (e, dt, node, config) {
+						addElement();
+					}
+				},
+				{
+					tag: "button",
+					className: "btn btn-secondary",
+					text: 'Supprimer',
+					action: function (e, dt, node, config) {
+						deleteRow();
+					}
+				}
+
+			],
+			"order": [[ 1, 'desc' ]],
+			"columnDefs": [
+				{ "targets": [0,5], "orderable": false },
+				{"className": "dt-center", "targets": "_all"}
+			],
+			stateSave: true,
+			"lengthMenu": [[10, 25, 50], [10, 25, 50]],
+			language: {
+				url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+			}
 		});
-	  });
-	});
+
+
+
+
+
+		// Traitements sur des cases à chocher
+		$("input[type=checkbox]").change(function() {
+			$("#user-"+this.value).toggleClass('selected');
+		});
+
+		function addElement(){
+			console.log();
+		}
+
+
+		function deleteRow(){
+			console.log();
+		}
+
+		function changeRow(id){
+			let row = table.row("#"+id);
+			let data = row.data();
+
+
+			data[1] = '<input type="text" id ="#'+id+'-1" value="'+data[1]+'">';
+			data[2] = '<input type="text" id ="#'+id+'-2" value="'+data[2]+'">';
+			data[3] = '<input type="text" id ="#'+id+'-3" value="'+data[3]+'">';
+			data[4] = '<input type="text" id ="#'+id+'-4" value="'+data[4]+'">';
+			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="updateRow(\''+id+'\')" >Valider <i class="bi bi-check2"></i></button>'
+
+			row.data(data).draw(false);
+		}
+
+		function updateRow(id){
+			let row = table.row("#"+id);
+			let data = row.data();
+
+
+			data[1] = document.getElementById("#"+id+"-1").value;
+			data[2] = document.getElementById("#"+id+"-2").value;
+			data[3] = document.getElementById("#"+id+"-3").value;
+			data[4] = document.getElementById("#"+id+"-4").value;
+			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="changeRow(\''+id+'\')" >Modifier <i class="bi bi-pencil"></i></button>'
+
+			row.data(data).draw(false);
+
+		}
+
 	</script>
 {% endblock %}
