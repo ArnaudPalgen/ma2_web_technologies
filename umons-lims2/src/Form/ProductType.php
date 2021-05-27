@@ -27,8 +27,7 @@ class ProductType extends AbstractType
                     'id'=>'field_product_name'
                 ]
             ])
-            ->add('volume', TextType::class, ['label' => 'Volume'])
-            ->add('mass', TextType::class, ['label' => 'Masse'])
+            ->add('size', TextType::class, ['label' => 'Taille'])
             ->add('concentration', TextType::class, ['label' => 'Concentration'])
             ->add('location', EntityType::class, [
                 'label' => 'Position',

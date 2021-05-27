@@ -15,8 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductsController extends AbstractController
 {
 
-
-
     #[Route('/', name: 'products.index')]
     public function index(): Response
     {
@@ -33,6 +31,8 @@ class ProductsController extends AbstractController
     #[Route('/changeProduct/{action}/{product}', name: 'products.change')]
     public function changeProduct(int $action, int $product): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $en = $this->getDoctrine()->getManager();
 
         $pr = $this->getDoctrine()->getRepository(Product::class);
@@ -47,7 +47,7 @@ class ProductsController extends AbstractController
         $usage->setDate(new \DateTime());
         $usage->setProduct($prod);
         $usage->setUser($user);
-        $this->generateUrl('product');
+
 
         $en->persist($usage);
 
@@ -58,6 +58,9 @@ class ProductsController extends AbstractController
 
     #[Route(path :"new_product", name: 'products.create')]
     public function new(Request $request): Response {
+
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
 
         $product = new Product();
 

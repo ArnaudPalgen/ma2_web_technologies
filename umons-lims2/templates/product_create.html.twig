@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	S'enregistrer - {{ parent() }}
+	Enregistrer un produit - {{ parent() }}
 {% endblock %}
 
 {% block searchbar %}{% endblock %}
@@ -25,10 +25,65 @@
 {% endblock %}
 
 
+{% block stylesheets %}
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+{% endblock %}
+
 
 
 {% block javascripts %}
 	{% include 'pubchemapi.html.twig' %}
+
+
+
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script>
+		$(() => {
+			const pubchem = new PubChem();
+
+			const ncas_field = $( "#product_ncas" );
+
+			const ncas_field_group = ncas_field.parent()
+
+			const error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>")
+			error_feedback.hide()
+			ncas_field_group.append(error_feedback)
+
+			ncas_field.focusout(() => {
+				const class_invalid = "is-invalid";
+				const class_has_validation = "has-validation"
+
+				if(pubchem.isCasValid(ncas_field.val())){
+					ncas_field_group.removeClass(class_has_validation)
+					ncas_field.removeClass(class_invalid)
+					error_feedback.hide()
+				} else {
+					ncas_field_group.addClass(class_has_validation)
+					ncas_field.addClass(class_invalid)
+					error_feedback.show()
+				}
+
+
+			})
+
+			ncas_field.autocomplete({
+				source: function( qry, callback ) {
+					pubchem.autocompleteCAS(qry.term).then(callback)
+				},
+				minLength: 3,
+				// select: function( event, ui ) {
+				// 	console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+				// }
+			} );
+
+		});
+
+
+	</script>
+
+
 
 {% endblock %}
 

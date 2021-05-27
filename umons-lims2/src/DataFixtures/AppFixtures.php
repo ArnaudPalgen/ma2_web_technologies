@@ -137,8 +137,7 @@ class AppFixtures extends Fixture
                 ->setNcas($this->faker->randomNumber(7))
                 ->setConcentration(rand(10,1000))
                 ->setLocation($this->faker->randomElement($this->locations))
-                ->setVolume('1 L')
-                ->setMass('15 kg');
+                ->setSize($this->faker->randomElement(['1 kg','12 L']));
 
             $cs = $this->faker->randomElements($this->chemical_safeties, rand(0, count($this->chemical_safeties)));
             foreach ($cs as $safety) {
