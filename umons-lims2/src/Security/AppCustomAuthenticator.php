@@ -26,7 +26,6 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator
     public const LOGIN_ROUTE = 'userselect';
 
 
-
     private EntityManagerInterface $entityManager;
     private UrlGeneratorInterface $urlGenerator;
     private CsrfTokenManagerInterface $csrfTokenManager;

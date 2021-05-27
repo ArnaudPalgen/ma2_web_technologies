@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Product;
-use App\Entity\Usage;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MainController extends AbstractController{
+class MainController extends AbstractController
+{
 
 
     /**
@@ -20,7 +20,7 @@ class MainController extends AbstractController{
         $number = random_int(0, 100);
 
         return new Response(
-            '<html><body>Lucky number: '.$number.'</body></html>'
+            '<html><body>Lucky number: ' . $number . '</body></html>'
         );
     }
 
@@ -35,12 +35,11 @@ class MainController extends AbstractController{
         $products = $pr->getProductList();
 
 
-
         //$date = new \DateTime();
         //$date->setTimezone(new \DateTimeZone('Europe/Paris'));
         //$date = date_format($date, 'Y-m-d H:i:s');
 
-        return $this ->render('product.html.twig', [
+        return $this->render('product.html.twig', [
             'products' => $products,
         ]);
     }
@@ -55,7 +54,7 @@ class MainController extends AbstractController{
         $users = $repository->findAll();
 
 
-        return $this ->render('admin.html.twig', ['users' => $users]);
+        return $this->render('admin.html.twig', ['users' => $users]);
     }
 
 
@@ -66,10 +65,8 @@ class MainController extends AbstractController{
     {
         $repository = $this->getDoctrine()->getRepository(User::class);
         $users = $repository->findAll();
-        return $this ->render('login.html.twig', ['users' => $users]);
+        return $this->render('login.html.twig', ['users' => $users]);
     }
-
-
 
 
 }

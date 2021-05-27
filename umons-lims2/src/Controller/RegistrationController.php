@@ -24,7 +24,7 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if(!$form->get('plainPassword')->isEmpty()) {
+            if (!$form->get('plainPassword')->isEmpty()) {
                 $user->setPassword(
                     $passwordEncoder->encodePassword(
                         $user,
@@ -33,7 +33,7 @@ class RegistrationController extends AbstractController
                 );
             }
 
-            $user->setRole($roleRepository->findOneBy(['name'=>'user']));
+            $user->setRole($roleRepository->findOneBy(['name' => 'user']));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);

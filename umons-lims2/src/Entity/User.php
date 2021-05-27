@@ -67,6 +67,23 @@ class User implements UserInterface
         return $this->id;
     }
 
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getFullName()
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
     public function getFirstName(): ?string
     {
         return $this->first_name;
@@ -89,34 +106,6 @@ class User implements UserInterface
         $this->last_name = $last_name;
 
         return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function getRole(): ?Role
-    {
-        return $this->role;
-    }
-
-    public function setRole(?Role $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    public function getFullName(){
-        return $this->getFirstName() . ' '. $this->getLastName();
     }
 
     /**
@@ -149,21 +138,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRegistrationNumber(): ?string
-    {
-        return $this->registration_number;
-    }
-
-    public function setRegistrationNumber(string $registration_number): self
-    {
-        $this->registration_number = $registration_number;
-
-        return $this;
-    }
-
-
-
-
     /**
      * @param bool $is_admin_allowed
      */
@@ -172,14 +146,12 @@ class User implements UserInterface
         $this->is_admin_allowed = $is_admin_allowed;
     }
 
-
-
     /**
      * @see UserInterface
      */
     public function getRoles(): array
     {
-        if(!$this->is_admin_allowed) {
+        if (!$this->is_admin_allowed) {
             return ['ROLE_USER'];
         }
 
@@ -189,6 +161,18 @@ class User implements UserInterface
             default => ['ROLE_USER'],
         };
 
+    }
+
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): self
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
     /**
@@ -207,6 +191,17 @@ class User implements UserInterface
         return $this->getRegistrationNumber();
     }
 
+    public function getRegistrationNumber(): ?string
+    {
+        return $this->registration_number;
+    }
+
+    public function setRegistrationNumber(string $registration_number): self
+    {
+        $this->registration_number = $registration_number;
+
+        return $this;
+    }
 
     /**
      * @see UserInterface

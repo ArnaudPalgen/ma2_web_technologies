@@ -30,7 +30,6 @@ class Product
     private $ncas;
 
 
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -181,9 +180,6 @@ class Product
 
         return $this;
     }
-
-
-
 
 
 }

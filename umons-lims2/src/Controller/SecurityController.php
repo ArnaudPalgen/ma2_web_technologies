@@ -3,12 +3,11 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -20,7 +19,6 @@ class SecurityController extends AbstractController
      */
     public function adminLogin(AuthenticationUtils $authenticationUtils): Response
     {
-
 
 
         if ($this->getUser() && $this->isGranted('ROLE_ADMIN')) {
@@ -49,7 +47,7 @@ class SecurityController extends AbstractController
 
         $error = $authenticationUtils->getLastAuthenticationError();
         return $this->render('admin_login.html.twig', [
-            'error'=>$error
+            'error' => $error
         ]);
 
 
@@ -61,12 +59,12 @@ class SecurityController extends AbstractController
     public function userSelect(Request $request, UserRepository $userRepository): Response
     {
 
-        if ($request->query->get("type")== 'full' && $this->getUser()) {
-            if($this->isGranted('ROLE_ADMIN')) {
+        if ($request->query->get("type") == 'full' && $this->getUser()) {
+            if ($this->isGranted('ROLE_ADMIN')) {
                 return $this->redirectToRoute('admin.index');
             }
 
-            if($this->isGranted('ROLE_USER')) {
+            if ($this->isGranted('ROLE_USER')) {
                 return $this->redirectToRoute('login');
             }
 
@@ -74,7 +72,7 @@ class SecurityController extends AbstractController
 
 
         $users = $userRepository->findAll();
-        return $this ->render('userchoose.html.twig', ['users' => $users]);
+        return $this->render('userchoose.html.twig', ['users' => $users]);
     }
 
 
@@ -83,6 +81,6 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }

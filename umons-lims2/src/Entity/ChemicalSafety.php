@@ -98,22 +98,6 @@ class ChemicalSafety
         return $this->icompatibilities;
     }
 
-    public function addIcompatibility(self $icompatibility): self
-    {
-        if (!$this->icompatibilities->contains($icompatibility)) {
-            $this->icompatibilities[] = $icompatibility;
-        }
-
-        return $this;
-    }
-
-    public function removeIcompatibility(self $icompatibility): self
-    {
-        $this->icompatibilities->removeElement($icompatibility);
-
-        return $this;
-    }
-
     /**
      * @return Collection|self[]
      */
@@ -132,11 +116,27 @@ class ChemicalSafety
         return $this;
     }
 
+    public function addIcompatibility(self $icompatibility): self
+    {
+        if (!$this->icompatibilities->contains($icompatibility)) {
+            $this->icompatibilities[] = $icompatibility;
+        }
+
+        return $this;
+    }
+
     public function removeIncompatibility(self $incompatibility): self
     {
         if ($this->incompatibilities->removeElement($incompatibility)) {
             $incompatibility->removeIcompatibility($this);
         }
+
+        return $this;
+    }
+
+    public function removeIcompatibility(self $icompatibility): self
+    {
+        $this->icompatibilities->removeElement($icompatibility);
 
         return $this;
     }

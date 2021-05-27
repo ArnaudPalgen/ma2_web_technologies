@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
  * @method Product|null findOneBy(array $criteria, array $orderBy = null)
-// * @method Product[]    findAll()
+ * // * @method Product[]    findAll()
  * @method Product[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ProductRepository extends ServiceEntityRepository
@@ -25,7 +25,7 @@ class ProductRepository extends ServiceEntityRepository
     {
 
         return $this->createQueryBuilder('p')
-            ->select(['p.ncas','p.name'])
+            ->select(['p.ncas', 'p.name'])
             ->where('p.ncas LIKE :ncas')
             ->setParameter('ncas', '%' . $ncas . '%')
             ->getQuery()
@@ -33,17 +33,18 @@ class ProductRepository extends ServiceEntityRepository
     }
 
 
-	public function  getProductList() {
+    public function getProductList()
+    {
         $rsm = new ResultSetMapping();
         $rsm
-        ->addScalarResult('id', 'id')
-        ->addScalarResult('name', 'name')
-        ->addScalarResult('ncas', 'ncas')
-        ->addScalarResult('size', 'size')
-        ->addScalarResult('concentration', 'concentration')
-        ->addScalarResult('location', 'location')
-        ->addScalarResult('user', 'user')
-        ->addScalarResult('action', 'action');
+            ->addScalarResult('id', 'id')
+            ->addScalarResult('name', 'name')
+            ->addScalarResult('ncas', 'ncas')
+            ->addScalarResult('size', 'size')
+            ->addScalarResult('concentration', 'concentration')
+            ->addScalarResult('location', 'location')
+            ->addScalarResult('user', 'user')
+            ->addScalarResult('action', 'action');
         $sql = "
                 SELECT p.id, name, ncas, size, concentration,concat(location.shelf, ' ', location.level) location, concat( user.first_name, ' ', user.last_name) user, action
                 FROM product p

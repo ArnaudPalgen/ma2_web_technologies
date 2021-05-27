@@ -44,30 +44,6 @@ class Location
         return $this->id;
     }
 
-    public function getShelf(): ?string
-    {
-        return $this->shelf;
-    }
-
-    public function setShelf(string $shelf): self
-    {
-        $this->shelf = $shelf;
-
-        return $this;
-    }
-
-    public function getLevel(): ?int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Product[]
      */
@@ -98,7 +74,32 @@ class Location
         return $this;
     }
 
-    public function  getDisplayName(): string {
+    public function getDisplayName(): string
+    {
         return $this->getShelf() . ' ' . $this->getLevel();
+    }
+
+    public function getShelf(): ?string
+    {
+        return $this->shelf;
+    }
+
+    public function setShelf(string $shelf): self
+    {
+        $this->shelf = $shelf;
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+
+        return $this;
     }
 }
