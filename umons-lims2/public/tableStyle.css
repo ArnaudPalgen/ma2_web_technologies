@@ -210,6 +210,10 @@ div.dt-buttons {
     clear: both;
 }
 
+div.dtsp-panesContainer {
+    color: #000000 !important;
+}
+
 
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
