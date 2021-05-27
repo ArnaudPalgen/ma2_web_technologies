@@ -38,7 +38,7 @@
                         <tr  id = 'product-{{product.id}}'>
                             <td>
                                 <label>
-                                    <input type="checkbox" value='{{product.id}}'>
+                                    <input type="checkbox" value='{{product.id}}' autocomplete="off">
                                     <span></span>
                                 </label>
                             </td>
@@ -258,9 +258,7 @@
 
 
 
-
-
-        // Traitements sur des cases à chocher
+            // Traitements sur des cases à chocher
         $("input[type=checkbox]").change(function() {
             $("#product-"+this.value).toggleClass('selected');
         });

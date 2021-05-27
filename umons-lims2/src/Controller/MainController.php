@@ -26,23 +26,13 @@ class MainController extends AbstractController{
 
 
     /**
-     * @Route("/admin")
+     * @Route("/adminTest")
      */
     public function admin(): Response
     {
 
-        $users=[
-            [ "first_name" => "Kirk", "last_name" => "Christensen"],
-            [ "first_name" => "Olivia", "last_name" => "Adam"],
-            [ "first_name" => "Fraya", "last_name" => "Mohammed"],
-            [ "first_name" => "Parker", "last_name" => "Cleveland"],
-            [ "first_name" => "Cinar", "last_name" => "Warren"],
-            [ "first_name" => "Martine", "last_name" => "Harrington"],
-            [ "first_name" => "Felix", "last_name" => "Campos"],
-            [ "first_name" => "Eliana", "last_name" => "Cameron"],
-            [ "first_name" => "Brooke", "last_name" => "Coates"],
-            [ "first_name" => "Saniya", "last_name" => "Hernandez"],
-        ];
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $users = $repository->findAll();
 
 
         return $this ->render('admin.html.twig', ['users' => $users]);
@@ -59,26 +49,7 @@ class MainController extends AbstractController{
         return $this ->render('login.html.twig', ['users' => $users]);
     }
 
-    /**
-     * @Route("/product", name="product")
-     */
-    public function product(): Response
-    {
 
-
-        $pr = $this->getDoctrine()->getRepository(Product::class);
-        $products = $pr->getProductList();
-
-
-
-        //$date = new \DateTime();
-        //$date->setTimezone(new \DateTimeZone('Europe/Paris'));
-        //$date = date_format($date, 'Y-m-d H:i:s');
-
-        return $this ->render('product.html.twig', [
-            'products' => $products,
-        ]);
-    }
 
 
 }
