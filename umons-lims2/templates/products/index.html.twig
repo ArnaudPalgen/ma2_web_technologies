@@ -124,7 +124,7 @@
     <script type="text/javascript">
 
             var table = $('#productTable').DataTable({
-                dom : '<Bl<"#filter">f<t>ip>',
+                dom : '<Blf<t>ip>',
                 buttons: [
                         {
                             tag: "button",
@@ -270,7 +270,7 @@
                     } );
 
                     table.buttons( 1, null ).container().appendTo(
-                        $("#filter")
+                        $("#productTable_filter")
                     );
                 }
             });
