@@ -96,5 +96,15 @@ class ProductsController extends AbstractController
         return $this->json(null, 204);
     }
 
+    /**
+     * @Route("/history")
+     */
+    public function history(): Response
+    {
+        $repository = $this->getDoctrine()->getRepository(Usage::class);
+        $history = $repository->findAll();
+        return $this->render('history.html.twig', ['history' => $history, ]);
+    }
+
 
 }
