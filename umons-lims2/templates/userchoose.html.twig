@@ -1,5 +1,10 @@
 
 {% extends 'base.html.twig' %}
+{% block searchbar %}
+    <div class="input-group" style="margin-top:1%; width:40%; margin-bottom:1%;">
+        <input type="text" id="search" placeholder="Rechercher un nom" class="form-control"/>
+    </div>
+{% endblock %}
 {%block body %}
 	<div class="container-fluid" style="width: 80%; margin-top:1%;">
 
@@ -29,10 +34,13 @@
 								class="d-none"
 								onchange="this.form.submit();"
 								value="{{ user.getRegistrationNumber }}">
-
 						<span class="card cursor-pointer">
 							<span class="card-body">
-								<center>{{user.getFullName}} /  {{ user.getRegistrationNumber }}</center>
+								<center>
+								<img src="user.svg" alt="Card image cap" style="background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
+								<h5 class="card-title">{{user.getFullName}}</h5>
+								<p class="card-text">{{ user.getRegistrationNumber }}</p>
+								</center>
 							</span>
 						</span>
 					</label>
@@ -44,6 +52,15 @@
 	</div>
 
 
+{% endblock %}
 
+{% block javascripts %}
+	<script>
+		$('#search').on('input', function (){
+    	$('.card').removeClass('d-none');
+    	var filter = $(this).val();
+    	$('.card-columns').find('.card .card-body .card-title:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
+})
+	</script>
 {% endblock %}
 

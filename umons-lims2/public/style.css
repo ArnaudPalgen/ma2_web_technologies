@@ -1,3 +1,7 @@
+:root{
+  --red: #d60044;
+} 
+
 #particles-js {
     position: fixed;
     top: 0;
@@ -15,15 +19,17 @@
 
 .navbar{
     position: fixed;
-    background-color: #BF4C4C;
+    background-color: white;
     box-shadow: 0px 8px 8px -6px rgba(0,0,0,.5);
     width:80%;
+}
+.navbar-nav{
+  display:flex;
+  align-items:center;
 }
 .title{
     color: white;
 }
-
-
 
 .btn-light.info-btn {
 	border: 1px solid;

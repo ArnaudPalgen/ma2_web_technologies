@@ -10,8 +10,7 @@
 
     </head>
     
-    <body>
-
+    <body class="d-flex flex-column min-vh-100">
 
         {% if app.session.has('current_registration_number') %}
             <strong>
@@ -20,16 +19,26 @@
 
         {% endif %}
 
-
         <center>
-        <nav class="navbar">
-            <img src="lims_icon.png" alt="icon" width="100" height="100">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <h1 class="title">UMons LIMS</h1>
-                </li>
-            </ul>
+
+        <nav class="navbar navbar-expand-md navbar-light bg-faded">
+            <a class="navbar-brand d-md-none" href="/"><img src="lims_icon2.svg" alt="site-logo"></a>
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-md-flex d-block w-100">
+                <div class="collapse navbar-collapse mx-auto w-auto justify-content-center" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link" href="/">Produits <span class="sr-only">(current)</span></a>
+                        <a class="nav-item nav-link" href="/history">Historique</a>
+                        <a class="navbar-brand mx-2 d-none d-md-inline" href="/"><img src="lims_icon2.svg" alt="site-logo"></a>
+                        <a class="nav-item nav-link" href="#">Administration</a>
+                        <a class="nav-item nav-link" href="{{ path('app_logout') }}">Déconnexion</a><!-- active/disabled-->
+                    </div>
+                </div>
+            </div>
         </nav>
+
         {% block searchbar %}
             <div class="input-group" style="margin-top:1%; width:40%; margin-bottom:1%;">
                 <input type="text" id="search" placeholder="Rechercher..." class="form-control"/>
@@ -63,13 +72,30 @@
         </center>
         {% block body %}{% endblock %}
         <div id="particles-js" ></div>
-
+        
+    <footer class="footer mt-auto" style="background:white;">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm">
+                {% if app.user %}
+		            <span>You are logged in as {{ app.user.username }}</span>
+	            {% endif %}
+            </div>
+            <div class="col-sm">
+                <center>
+                    <span>Created by --.S, Palgen.A, Zielinski.P 2021</span>
+                </center>
+            </div>
+            <div class="col-sm">
+            </div>
+        </div>
+      </div>
+    </footer>
 
 
         <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
         <script>
             particlesJS.load('particles-js', 'particles.json', function() {console.log('callback - particles.js config loaded');});
         </script>
