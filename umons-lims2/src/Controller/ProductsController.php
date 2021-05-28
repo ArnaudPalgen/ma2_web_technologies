@@ -7,6 +7,7 @@ use App\Entity\Usage;
 use App\Entity\User;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductsController extends AbstractController
 {
-
-
 
     #[Route('/', name: 'products.index')]
     public function index(): Response
@@ -33,21 +32,23 @@ class ProductsController extends AbstractController
     #[Route('/changeProduct/{action}/{product}', name: 'products.change')]
     public function changeProduct(int $action, int $product): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $en = $this->getDoctrine()->getManager();
 
         $pr = $this->getDoctrine()->getRepository(Product::class);
         $prod = $pr->find($product);
 
         $repository = $this->getDoctrine()->getRepository(User::class);
-        $user = $this -> getUser();
-        $nameUser = $this -> getUser() -> getFullName();
+        $user = $this->getUser();
+        $nameUser = $this->getUser()->getFullName();
 
         $usage = new Usage();
         $usage->setAction($action);
-        $usage->setDate(new \DateTime());
+        $usage->setDate(new DateTime());
         $usage->setProduct($prod);
         $usage->setUser($user);
-        $this->generateUrl('product');
+
 
         $en->persist($usage);
 
@@ -56,8 +57,12 @@ class ProductsController extends AbstractController
         return $this->json(json_encode($nameUser));
     }
 
-    #[Route(path :"new_product", name: 'products.create')]
-    public function new(Request $request): Response {
+    #[Route(path: "new_product", name: 'products.create')]
+    public function new(Request $request): Response
+    {
+
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
 
         $product = new Product();
 
@@ -82,15 +87,13 @@ class ProductsController extends AbstractController
     }
 
 
-
-
-
     #[Route('/products/json/search', name: 'products.search.json')]
-    public function jsonSearch(Request $request, ProductRepository $productRepository): Response {
+    public function jsonSearch(Request $request, ProductRepository $productRepository): Response
+    {
 
         $query = $request->query->get('q');
-        if($query) {
-            $res =  $productRepository->findByNCAS($query);
+        if ($query) {
+            $res = $productRepository->findByNCAS($query);
             return $this->json($res);
         }
         return $this->json(null, 204);
@@ -103,7 +106,7 @@ class ProductsController extends AbstractController
     {
         $repository = $this->getDoctrine()->getRepository(Usage::class);
         $history = $repository->findAll();
-        return $this->render('history.html.twig', ['history' => $history, ]);
+        return $this->render('history.html.twig', ['history' => $history,]);
     }
 
 

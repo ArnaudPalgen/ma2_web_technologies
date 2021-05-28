@@ -18,12 +18,11 @@ class AppFixtures extends Fixture
     /**
      * @var Generator
      */
-    private  $faker;
+    private $faker;
 
     private $locations;
 
     private $chemical_safeties;
-
 
 
     private $users;
@@ -40,7 +39,6 @@ class AppFixtures extends Fixture
 
         $this->addUsers($manager);
         $this->addProducts($manager);
-
 
 
         $manager->flush();
@@ -121,9 +119,7 @@ class AppFixtures extends Fixture
         }
 
 
-
     }
-
 
 
     private function addProducts(ObjectManager $manager)
@@ -135,10 +131,9 @@ class AppFixtures extends Fixture
             $product
                 ->setName($this->faker->word())
                 ->setNcas($this->faker->randomNumber(7))
-                ->setConcentration(rand(10,1000))
+                ->setConcentration(rand(10, 1000))
                 ->setLocation($this->faker->randomElement($this->locations))
-                ->setVolume('1 L')
-                ->setMass('15 kg');
+                ->setSize($this->faker->randomElement(['1 kg', '12 L']));
 
             $cs = $this->faker->randomElements($this->chemical_safeties, rand(0, count($this->chemical_safeties)));
             foreach ($cs as $safety) {
@@ -146,7 +141,7 @@ class AppFixtures extends Fixture
             }
             $manager->persist($product);
 
-            if($this->faker->boolean()) {
+            if ($this->faker->boolean()) {
                 $usage = new Usage();
                 $d = $this->faker->dateTimeThisYear();
                 $usage
@@ -177,7 +172,6 @@ class AppFixtures extends Fixture
         }
 
     }
-
 
 
 }

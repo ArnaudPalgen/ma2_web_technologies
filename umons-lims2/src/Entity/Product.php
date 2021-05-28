@@ -29,15 +29,11 @@ class Product
      */
     private $ncas;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $volume;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $mass;
+    private $size;
 
     /**
      * @ORM\Column(type="integer")
@@ -70,6 +66,7 @@ class Product
         return $this->id;
     }
 
+
     public function getName(): ?string
     {
         return $this->name;
@@ -94,26 +91,14 @@ class Product
         return $this;
     }
 
-    public function getVolume(): ?string
+    public function getSize(): ?string
     {
-        return $this->volume;
+        return $this->size;
     }
 
-    public function setVolume(?string $volume): self
+    public function setSize(?string $size): self
     {
-        $this->volume = $volume;
-
-        return $this;
-    }
-
-    public function getMass(): ?string
-    {
-        return $this->mass;
-    }
-
-    public function setMass(?string $mass): self
-    {
-        $this->mass = $mass;
+        $this->size = $size;
 
         return $this;
     }
@@ -195,9 +180,6 @@ class Product
 
         return $this;
     }
-
-
-
 
 
 }

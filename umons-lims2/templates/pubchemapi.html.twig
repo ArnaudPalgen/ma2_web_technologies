@@ -1,49 +1,5 @@
 
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-
-        class PubChem {
-            constructor() {
-                this.api = axios.create({
-                    baseURL: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound'
-                });
-            }
-
-            async findProductCids (ncas) {
-                return this.api.get(`/name/${ncas}/cids/JSON`);
-            };
-
-            async findProductName(cids) {
-                return this.api.get(`/cid/${cids}/synonyms/JSON`);
-            }
-
-             async findProductInfoByCids (cids) {
-                return this.api.get(`/cid/${cids.join()}/property/MolecularFormula,MolecularWeight/json`);
-            }
-
-             async findProductInfo(ncas) {
-                try {
-                    const cidsResp = await this.findProductCids(ncas);
-                    const prodsResp = await this.findProductInfoByCids(cidsResp.data.IdentifierList.CID);
-
-
-
-                } catch (e) {
-                    console.error('PubChem call failed !')
-                    console.log(e);
-                }
-            }
-        }
-
-        const api = new PubChem();
-
-
-
-        // `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/synonyms/json`
-
-
-
-
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="js/pubchem.js"></script>
 

@@ -2,34 +2,19 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.1/sl-1.3.3/datatables.min.css"/>
     <link rel="stylesheet" type="text/css" href="tableStyle.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.1/css/searchPanes.dataTables.min.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css"/>
 
 
+{% endblock %}
+{% block title %}
+    Produits - {{ parent() }}
 {% endblock %}
 {% block searchbar %}
 {% endblock %}
 {%block body %}
 
     <div class="container-fluid" style="margin-top: 2em;">
-        <!--
-        <div class="row">
-            <div class="col-lg-8 col-md-8 col-sd-8 col-xs-8">
-                <input class="form-control" id="inputFT" type="text" placeholder="Search..">
-            </div>
-
-            <div class="col-lg-4 col-md-4 col-sd-4 col-xs-4">
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-secondary mr-5">Filtre<i class="bi bi-caret-down"></i></button>
-                    <button type="button" class="btn btn-secondary mr-5">Supprimer</button>
-                    <button type="button" class="btn btn-secondary">Déplacer</button>
-                </div>
-            </div>
-        </div>
-        -->
         <div class="row">
             <div class="table-responsive">
                 <table id = "productTable" class="hover" >
@@ -41,8 +26,7 @@
                         <th class="text-center">Nom du Produit</th>
                         <th class="text-center">Localisation</th>
                         <th class="text-center">Concentration</th>
-                        <th class="text-center">Masse</th>
-                        <th class="text-center">Volume</th>
+                        <th class="text-center">Taille</th>
                         <th class="text-center">Utilisé par:</th>
                         <th class="text-center">Ouvert/Fermé</th>
                         <th> </th>
@@ -51,29 +35,26 @@
                     <tbody>
                     {% for product in products %}
                         <tr  id = 'product-{{product.id}}'>
+                            <td><label><input type="checkbox" value='{{product.id}}' autocomplete="off"><span></span></label></td>
                             <td>
-                                <label>
-                                    <input type="checkbox" value='{{product.id}}'>
-                                    <span></span>
-                                </label>
-                            </td>
-                            <td>
-                                {% if product.action == 1%}
-
-                                    <a onclick="ranger('product-{{product.id}}')" class="btn btn-primary put-btn">Ranger</a>
-
+                                {% if app.user %}
+                                    {% if product.action == 1%}
+                                        <a onclick="ranger('product-{{product.id}}')" class="btn btn-primary put-btn">Ranger</a>
+                                    {% else %}
+                                        <a onclick="prendre('product-{{product.id}}')" class="btn btn-primary take-btn">Prendre</a>
+                                    {% endif %}
                                 {% else %}
-
-                                    <a onclick="prendre('product-{{product.id}}')" class="btn btn-primary take-btn">Prendre</a>
-
+                                    <a href="{{ path('userselect') }}" class="btn btn-primary {{ product.action == 1 ? 'put-btn': ' take-btn' }} ">
+                                        {{ product.action == 1 ? 'Ranger': 'Prendre' }}
+                                    </a>
                                 {% endif %}
+
                             </td>
                             <td>{{product.ncas}}</td>
                             <td>{{product.name}}</td>
                             <td>{{product.location}}</td>
                             <td>{{product.concentration}}</td>
-                            <td>{{product.mass}}</td>
-                            <td>{{product.volume}}</td>
+                            <td>{{product.size}}</td>
                             <td>
                                 {% if product.action == 1%}
                                     {{product.user}}
@@ -102,8 +83,7 @@
                         <th>Nom du Produit</th>
                         <th>Localisation</th>
                         <th>Concentration</th>
-                        <th>Masse</th>
-                        <th>Volume</th>
+                        <th>Taille</th>
                         <th>Utilisé par:</th>
                         <th>Ouvert/Fermé</th>
                         <th> </th>
@@ -115,11 +95,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-
-    <script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.1/js/dataTables.searchPanes.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
 
     <script type="text/javascript">
 
@@ -277,9 +253,7 @@
 
 
 
-
-
-        // Traitements sur des cases à chocher
+            // Traitements sur des cases à chocher
         $("input[type=checkbox]").change(function() {
             $("#product-"+this.value).toggleClass('selected');
         });

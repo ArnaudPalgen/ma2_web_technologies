@@ -18,17 +18,16 @@ class ProductType extends AbstractType
             ->add('ncas', TextType::class, [
                 'label' => 'Numéro CAS',
                 'attr' => [
-                    'id'=>'field_product_ncas'
+                    'id' => 'field_product_ncas'
                 ]
             ])
             ->add('name', TextType::class, [
                 'label' => 'Nom du produit',
                 'attr' => [
-                    'id'=>'field_product_name'
+                    'id' => 'field_product_name'
                 ]
             ])
-            ->add('volume', TextType::class, ['label' => 'Volume'])
-            ->add('mass', TextType::class, ['label' => 'Masse'])
+            ->add('size', TextType::class, ['label' => 'Taille'])
             ->add('concentration', TextType::class, ['label' => 'Concentration'])
             ->add('location', EntityType::class, [
                 'label' => 'Position',
@@ -36,8 +35,7 @@ class ProductType extends AbstractType
                 'choice_label' => function ($category) {
                     return $category->getDisplayName();
                 }
-            ])
-//            ->add('chemical_safeties', EntityType::class) # TODO add type
+            ])//            ->add('chemical_safeties', EntityType::class) # TODO add type
         ;
     }
 
