@@ -131,7 +131,7 @@
                 "order": [[ 2, 'desc' ]],
                 "columnDefs": [
                     { "searchable": false, "targets": 0 },
-                    { "searchable": false, "targets": 10 },
+                    { "searchable": false, "targets": 9 },
                     {
                         searchPanes: {
                             show: false
@@ -188,17 +188,11 @@
                     },
                     {
                         searchPanes: {
-                            show: true
+                            show: false
                         },
                         targets: [9]
                     },
-                    {
-                        searchPanes: {
-                            show: false
-                        },
-                        targets: [10]
-                    },
-                    { "targets": [0,1,10], "orderable": false },
+                    { "targets": [0,1,9], "orderable": false },
                     {"className": "dt-center", "targets": "_all"}
                 ],
                 stateSave: true,
@@ -228,13 +222,13 @@
                                                 {
                                                     label: 'libres',
                                                     value: function (rowData, rowIdx) {
-                                                        return rowData[8] === '';
+                                                        return rowData[7] === '';
                                                     }
                                                 },
                                                 {
                                                     label: 'utilisés',
                                                     value: function (rowData, rowIdx) {
-                                                        return rowData[8] !== '';
+                                                        return rowData[7] !== '';
                                                     }
                                                 }
                                             ]
@@ -303,7 +297,7 @@
                 let data = row.data();
 
                 data[1] = '<a onclick="prendre('+"'"+id+"'"+')" class="btn btn-primary take-btn">Prendre</a>';
-                data[8] = ""
+                data[7] = ""
 
                 row.data(data).draw(false);
                 table.searchPanes.rebuildPane();
@@ -325,8 +319,8 @@
                 let data = row.data();
 
                 data[1] = '<a onclick="ranger('+"'"+id+"'"+')" class="btn btn-primary put-btn">Ranger</a>';
-                data[8] = $.parseJSON(res);
-                data[9] = 'Ouvert';
+                data[7] = $.parseJSON(res);
+                data[8] = 'Ouvert';
 
                 row.data(data).draw(false);
                 table.searchPanes.rebuildPane();
