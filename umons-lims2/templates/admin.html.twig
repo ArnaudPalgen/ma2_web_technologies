@@ -37,7 +37,7 @@
 							<td>{{user.getLastName}}</td>
 							<td>{{user.getRole.getName}}</td>
 							<td>
-								<button type="button" class="btn btn-light info-btn" onclick="changeRow('user-{{user.getId}}')" >Modifier <i class="bi bi-pencil"></i></button>
+								<button type="button" class="btn btn-light info-btn" data-toggle="modal" data-target="#myModal" data-whatever="user-{{user.getId}}">Modifier <i class="bi bi-pencil"></i></button>
 							</td>
 						</tr>
 					{% endfor %}
@@ -56,6 +56,39 @@
 			</div>
 		</div>
 	</div>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un utilisateur</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+			<input type="text" class="form-control d-none" id="edit_id">
+			<label for="edit_id">Matricule</label>
+			<input type="text" class="form-control" id="edit_matricule" placeholder="...">
+			<label for="edit_name">Nom</label>
+			<input type="text" class="form-control" id="edit_name" placeholder="...">
+			<label for="edit_firstname">Prénom</label>
+			<input type="text" class="form-control" id="edit_firstname" placeholder="...">
+			<label for="edit_role">Rôle</label>
+			<select class="form-control" id="edit_role">
+			</select>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" id="savebutton">Valider</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 {% block javascripts %}
 	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
@@ -96,9 +129,6 @@
 		});
 
 
-
-
-
 		// Traitements sur des cases à chocher
 		$("input[type=checkbox]").change(function() {
 			$("#user-"+this.value).toggleClass('selected');
@@ -113,34 +143,67 @@
 			console.log();
 		}
 
-		function changeRow(id){
+		//when user save modification on the modal
+		$('#savebutton').on("click",function(){
+			//get new data
+			var new_matricule = $('#edit_matricule').val();
+			var new_name = $('#edit_name').val();
+			var new_firstname = $('#edit_firstname').val();
+			var new_role_name = $('#edit_role option:selected').text();;
+			var id = $('#edit_id').val();
+
+			//get data from concerned row
 			let row = table.row("#"+id);
 			let data = row.data();
 
+			//update data in datatable
+			data[1] = new_matricule;
+			data[2] = new_name;
+			data[3] = new_firstname;
+			data[4] = new_role_name;
 
-			data[1] = '<input type="text" id ="#'+id+'-1" value="'+data[1]+'">';
-			data[2] = '<input type="text" id ="#'+id+'-2" value="'+data[2]+'">';
-			data[3] = '<input type="text" id ="#'+id+'-3" value="'+data[3]+'">';
-			data[4] = '<input type="text" id ="#'+id+'-4" value="'+data[4]+'">';
-			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="updateRow(\''+id+'\')" >Valider <i class="bi bi-check2"></i></button>'
+			row.data(data).draw(false);//redraw datatable
+			$('#myModal').modal('hide');//hide modal
+		});
 
-			row.data(data).draw(false);
-		}
-
-		function updateRow(id){
+		//when the modal is shown
+		$('#myModal').on('show.bs.modal', function (event) {
+			
+			var button = $(event.relatedTarget);//find the button that trigger the event
+  			var id = button.data('whatever');//get data
+			
+			//get data from concerned row
 			let row = table.row("#"+id);
 			let data = row.data();
-
-
-			data[1] = document.getElementById("#"+id+"-1").value;
-			data[2] = document.getElementById("#"+id+"-2").value;
-			data[3] = document.getElementById("#"+id+"-3").value;
-			data[4] = document.getElementById("#"+id+"-4").value;
-			data[5] = '<button type="button" class="btn btn-light info-btn" onclick="changeRow(\''+id+'\')" >Modifier <i class="bi bi-pencil"></i></button>'
-
-			row.data(data).draw(false);
-
-		}
+  			
+			var modal = $(this);
+  			
+			//find input elements of the modal
+  			modal.find('#edit_id').val(id);
+			modal.find('#edit_matricule').val(data[1]);
+			modal.find('#edit_name').val(data[2]);
+			modal.find('#edit_firstname').val(data[3]);
+			
+			//re-init the select #edit_role
+			modal.find('#edit_role').replaceWith('<select class="form-control" id="edit_role"></select>');
+			var role_select = modal.find('#edit_role');
+			
+			//append option to edit_tole
+			if (data[4] != "sudo"){
+				{% for role in roles%}
+					{% if role.name != "sudo"%}//can't choose sudo
+						if(data[4] == "{{role.name}}"){
+							role_select.append('<option selected>{{role.name}}</option>');
+						}else{
+							role_select.append('<option value="{{role.id}}">{{role.name}}</option>');
+						}
+					{% endif %}
+				{% endfor %}
+			}else{
+				//sudo can't be chaged -> replace select by a read-only input
+				role_select.replaceWith('<input id="edit_role" class="form-control" type="text" placeholder='+data[4]+' readonly>');
+			}
+		})
 
 	</script>
 {% endblock %}
