@@ -70,7 +70,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <button type="button" class="btn btn-light info-btn">Informations <i class="bi bi-caret-down"></i></button>
+                                <button type="button" class="btn btn-light info-btn" onclick="getInformation('{{product.ncas}}','product-{{product.id}}',this)">Informations <i class="bi bi-caret-down"></i></button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -96,6 +96,8 @@
 {% endblock %}
 {% block javascripts %}
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/pubchem.js"></script>
 
     <script type="text/javascript">
 
@@ -251,6 +253,56 @@
         $("input[type=checkbox]").change(function() {
             $("#product-"+this.value).toggleClass('selected');
         });
+
+        async function getInformation(cas,id,elem) {
+            var tr = elem.closest('tr');
+            var row = table.row('#'+id);
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.classList.remove('shown');
+            }
+            else {
+                let a = new PubChem()
+                let result = await a.findProductInfoByCAS(cas);
+                let info = information(result);
+                row.child(info, 'child' ).show();
+                tr.classList.add('shown');
+            }
+        }
+
+        function information(result){
+            if(result === null){
+                return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left: auto;margin-right: auto;">'+
+                    '<tr>'+
+                    '<td>Aucune information n\'a été trouvée pour ce numéro de CAS :(</td>'+
+                    '</tr>'+
+                    '</table>';
+            }
+            let safeties = '';
+            for(const elem of result["safeties"]){
+                safeties += '<p><img src="'+elem["symbol"]+'">'+elem["text"]+'<\p>';
+            }
+            return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left: auto;margin-right: auto;">'+
+                '<tr>'+
+                '<td>Formule moléculaire:</td>'+
+                '<td>'+result["MolecularFormula"]+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                '<td>Masse moléculaire :</td>'+
+                '<td>'+result["MolecularWeight"]+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                '<td>Lien vers la page PubChem:</td>'+
+                '<td><a href="'+result["link"]+'" target="_blank">'+result["link"]+'</a></td>'+
+                '</tr>'+
+                '<tr>'+
+                '<td>Sécurités:</td>'+
+                '<td>'+safeties+'</td>'+
+                '</tr>'+
+                '</table>';
+        }
 
         function addElement(){
             window.location.href = '{{path('products.create')|escape('js')}}';

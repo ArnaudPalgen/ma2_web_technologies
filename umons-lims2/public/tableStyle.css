@@ -214,7 +214,12 @@ div.dtsp-panesContainer {
     color: #000000 !important;
 }
 
-
+table.dataTable.display tbody tr.child {
+    background: white;
+}
+table.dataTable.display tbody tr table tr:hover {
+    background: none;
+}
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
     border-bottom: 1px solid #000000;
