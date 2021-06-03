@@ -22,7 +22,7 @@ class SecurityController extends AbstractController
 
 
         if ($this->getUser() && $this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('admin.index');
+            return $this->redirectToRoute('admin.user');
         }
 
 //        if ($request->isMethod('POST')) {
@@ -61,7 +61,7 @@ class SecurityController extends AbstractController
 
         if ($request->query->get("type") == 'full' && $this->getUser()) {
             if ($this->isGranted('ROLE_ADMIN')) {
-                return $this->redirectToRoute('admin.index');
+                return $this->redirectToRoute('admin.user');
             }
 
             if ($this->isGranted('ROLE_USER')) {
