@@ -216,6 +216,8 @@
                 "thousands": ".",
                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
             }, "initComplete": function (settings, json) {
+                $.fn.DataTable.ext.pager.numbers_length = 5;
+
                 new $.fn.dataTable.Buttons(table, {
                     buttons: [
                         {
