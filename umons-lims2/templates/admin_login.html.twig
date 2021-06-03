@@ -9,7 +9,7 @@
 
                 <div class="text-center">
                     <h1 class="card-title">{{ app.user.getFullName }}</h1>
-                    <button type="button" class="btn btn-light dropdown-toggle">{{ app.user.username }}</button>
+                    <a href="{{ path('userselect') }}" class="btn btn-light dropdown-toggle">{{ app.user.username }}</a>
                 </div>
 
                 {% if app.user.getRole.name == "user"%}

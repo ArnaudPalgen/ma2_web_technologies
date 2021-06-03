@@ -103,7 +103,6 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
     protected function getLoginUrl(): string
     {
 
-        $this->getUser()
         return $this->urlGenerator->generate("userselect", [
             'type' => 'full'
         ]);
