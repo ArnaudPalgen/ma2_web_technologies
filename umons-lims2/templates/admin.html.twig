@@ -1,209 +1,254 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.1/sl-1.3.3/datatables.min.css"/>
-	<link rel="stylesheet" type="text/css" href="tableStyle.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.1/sl-1.3.3/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('tableStyle.css') }}"/>
 
 
 {% endblock %}
 {% block title %}
-	Administrateur - {{ parent() }}
+    Administrateur - {{ parent() }}
 {% endblock %}
 {% block searchbar %}
 {% endblock %}
-{%block body %}
+{% block body %}
 
-	<div class="container-fluid" style="margin-top: 2em;">
-		<div class="row">
-			<div class="table-responsive">
-				<table id = "productTable" class="hover" >
-					<thead>
-					<tr>
-						<th> </th>
-						<th class="text-center">Matricule</th>
-						<th class="text-center">Nom</th>
-						<th class="text-center">Prénom</th>
-						<th class="text-center">Rôle</th>
-						<th class="text-center">Outils</th>
-					</tr>
-					</thead>
-					<tbody>
-					{% for user in users %}
-						<tr  id = 'user-{{user.getId}}'>
-							<td><label><input type="checkbox" value='{{user.getId}}' autocomplete="off"><span></span></label></td>
-							<td>{{user.getRegistrationNumber}}</td>
-							<td>{{user.getFirstName}}</td>
-							<td>{{user.getLastName}}</td>
-							<td>{{user.getRole.getName}}</td>
-							<td>
-								<button type="button" class="btn btn-light info-btn" data-toggle="modal" data-target="#myModal" data-whatever="user-{{user.getId}}">Modifier <i class="bi bi-pencil"></i></button>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-					<tfoot>
-					<tr>
-						<th> </th>
-						<th class="text-center">Matricule</th>
-						<th class="text-center">Nom</th>
-						<th class="text-center">Prénom</th>
-						<th class="text-center">Rôle</th>
-						<th class="text-center">Outils</th>
-					</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-	</div>
-
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un utilisateur</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-			<input type="text" class="form-control d-none" id="edit_id">
-			<label for="edit_id">Matricule</label>
-			<input type="text" class="form-control" id="edit_matricule" placeholder="...">
-			<label for="edit_name">Nom</label>
-			<input type="text" class="form-control" id="edit_name" placeholder="...">
-			<label for="edit_firstname">Prénom</label>
-			<input type="text" class="form-control" id="edit_firstname" placeholder="...">
-			<label for="edit_role">Rôle</label>
-			<select class="form-control" id="edit_role">
-			</select>
-		</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-        <button type="button" class="btn btn-primary" id="savebutton">Valider</button>
-
-      </div>
+    <div class="container-fluid" style="margin-top: 2em;">
+        <div class="row">
+            <div class="table-responsive">
+                <table id="productTable" class="hover">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Matricule</th>
+                        <th class="text-center">Nom</th>
+                        <th class="text-center">Prénom</th>
+                        <th class="text-center">Rôle</th>
+                        <th class="text-center">Outils</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr id='user-{{ user.getId }}'>
+                            <td><label><input type="checkbox" value='{{ user.getId }}' autocomplete="off"><span></span></label>
+                            </td>
+                            <td>{{ user.getRegistrationNumber }}</td>
+                            <td>{{ user.getFirstName }}</td>
+                            <td>{{ user.getLastName }}</td>
+                            <td>{{ user.getRole.getName }}</td>
+                            <td>
+                                <button type="button" class="btn btn-light info-btn" data-toggle="modal"
+                                        data-target="#myModal" data-whatever="user-{{ user.getId }}">Modifier <i
+                                            class="bi bi-pencil"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Matricule</th>
+                        <th class="text-center">Nom</th>
+                        <th class="text-center">Prénom</th>
+                        <th class="text-center">Rôle</th>
+                        <th class="text-center">Outils</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+
+    <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modifier un utilisateur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="edit_id">
+                        <label for="edit_id">Matricule</label>
+                        <input type="text" class="form-control" id="edit_matricule" placeholder="...">
+                        <label for="edit_name">Nom</label>
+                        <input type="text" class="form-control" id="edit_name" placeholder="...">
+                        <label for="edit_firstname">Prénom</label>
+                        <input type="text" class="form-control" id="edit_firstname" placeholder="...">
+                        <label for="edit_role">Rôle</label>
+                        <select class="form-control" id="edit_role">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="savebutton">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 {% block javascripts %}
-	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		var table = $('#productTable').DataTable({
-			dom : '<Bl<t>ip>',
-			buttons: [
-				{
-					tag: "button",
-					className: "btn btn-secondary",
-					text: 'Ajouter',
-					action: function (e, dt, node, config) {
-						addElement();
-					}
-				},
-				{
-					tag: "button",
-					className: "btn btn-secondary",
-					text: 'Supprimer',
-					action: function (e, dt, node, config) {
-						deleteRow();
-					}
-				}
+        var table = $('#productTable').DataTable({
+            dom: '<Bl<t>ip>',
+            buttons: [
+                {
+                    tag: "button",
+                    className: "btn btn-secondary",
+                    text: 'Ajouter',
+                    action: function (e, dt, node, config) {
+                        addElement();
+                    }
+                },
+                {
+                    tag: "button",
+                    className: "btn btn-secondary",
+                    text: 'Supprimer',
+                    action: function (e, dt, node, config) {
+                        deleteRow();
+                    }
+                }
 
-			],
-			"order": [[ 1, 'desc' ]],
-			"columnDefs": [
-				{ "targets": [0,5], "orderable": false },
-				{"className": "dt-center", "targets": "_all"}
-			],
-			stateSave: true,
-			"lengthMenu": [[10, 25, 50], [10, 25, 50]],
-			language: {
-				url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-			}
-		});
-
-
-		// Traitements sur des cases à chocher
-		$("input[type=checkbox]").change(function() {
-			$("#user-"+this.value).toggleClass('selected');
-		});
-
-		function addElement(){
-			console.log();
-		}
+            ],
+            "order": [[1, 'desc']],
+            "columnDefs": [
+                {"targets": [0, 5], "orderable": false},
+                {"className": "dt-center", "targets": "_all"}
+            ],
+            stateSave: true,
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            }
+        });
 
 
-		function deleteRow(){
-			console.log();
-		}
+        // Traitements sur des cases à chocher
+        $("input[type=checkbox]").change(function () {
+            $("#user-" + this.value).toggleClass('selected');
+        });
 
-		//when user save modification on the modal
-		$('#savebutton').on("click",function(){
-			//get new data
-			var new_matricule = $('#edit_matricule').val();
-			var new_name = $('#edit_name').val();
-			var new_firstname = $('#edit_firstname').val();
-			var new_role_name = $('#edit_role option:selected').text();;
-			var id = $('#edit_id').val();
+        function addElement() {
+            console.log();
+        }
 
-			//get data from concerned row
-			let row = table.row("#"+id);
-			let data = row.data();
 
-			//update data in datatable
-			data[1] = new_matricule;
-			data[2] = new_name;
-			data[3] = new_firstname;
-			data[4] = new_role_name;
+        function deleteRow() {
+            let rows = table.rows('.selected');
+            let data = rows.data();
 
-			row.data(data).draw(false);//redraw datatable
-			$('#myModal').modal('hide');//hide modal
-		});
+            for (let i = 0; i < data.length; i++) {
+                let actualData = data[i];
 
-		//when the modal is shown
-		$('#myModal').on('show.bs.modal', function (event) {
-			
-			var button = $(event.relatedTarget);//find the button that trigger the event
-  			var id = button.data('whatever');//get data
-			
-			//get data from concerned row
-			let row = table.row("#"+id);
-			let data = row.data();
-  			
-			var modal = $(this);
-  			
-			//find input elements of the modal
-  			modal.find('#edit_id').val(id);
-			modal.find('#edit_matricule').val(data[1]);
-			modal.find('#edit_name').val(data[2]);
-			modal.find('#edit_firstname').val(data[3]);
-			
-			//re-init the select #edit_role
-			modal.find('#edit_role').replaceWith('<select class="form-control" id="edit_role"></select>');
-			var role_select = modal.find('#edit_role');
-			
-			//append option to edit_tole
-			if (data[4] != "sudo"){
-				{% for role in roles%}
-					{% if role.name != "sudo"%}//can't choose sudo
-						if(data[4] == "{{role.name}}"){
-							role_select.append('<option selected>{{role.name}}</option>');
-						}else{
-							role_select.append('<option value="{{role.id}}">{{role.name}}</option>');
-						}
-					{% endif %}
-				{% endfor %}
-			}else{
-				//sudo can't be chaged -> replace select by a read-only input
-				role_select.replaceWith('<input id="edit_role" class="form-control" type="text" placeholder='+data[4]+' readonly>');
-			}
-		})
+                let matricule = actualData[1];
+                let name = actualData[2];
+                let firstname = actualData[3];
+                let role_name = actualData[4];
+                let id = actualData["DT_RowId"];
 
-	</script>
+                let route = '{{ path('admin.change.user',{'id': 'id','registration_number' : 'registration_number','last_name' : 'last_name','first_name' : 'first_name','role' : 'role','action' : 'remove'}) }}';
+
+                route = route.replace("id", id.split('-')[1]);
+                route = route.replace("registration_number", matricule);
+                route = route.replace("first_name", firstname);
+                route = route.replace("last_name", name);
+                route = route.replace("role", role_name);
+
+                $.get(route, function (res) {
+                    $(".result").html(res);
+                });
+            }
+            rows.remove().draw(false);
+            table.searchPanes.rebuildPane();
+        }
+
+        //when user save modification on the modal
+        $('#savebutton').on("click", function () {
+            //get new data
+            let new_matricule = $('#edit_matricule').val();
+            let new_name = $('#edit_name').val();
+            let new_firstname = $('#edit_firstname').val();
+            let new_role_name = $('#edit_role option:selected').text();
+            let id = $('#edit_id').val();
+
+            let route = '{{ path('admin.change.user',{'id': 'id','registration_number' : 'registration_number','last_name' : 'last_name','first_name' : 'first_name','role' : 'role','action' : 'update'}) }}';
+
+            route = route.replace("id", id.split('-')[1]);
+            route = route.replace("registration_number", new_matricule);
+            route = route.replace("first_name", new_firstname);
+            route = route.replace("last_name", new_name);
+            route = route.replace("role", new_role_name);
+
+            $.get(route, function (res) {
+                $(".result").html(res);
+                if ($.parseJSON(res)) {
+                    //get data from concerned row
+                    let row = table.row("#" + id);
+                    let data = row.data();
+
+                    //update data in datatable
+                    data[1] = new_matricule;
+                    data[2] = new_name;
+                    data[3] = new_firstname;
+                    data[4] = new_role_name;
+
+
+                    row.data(data).draw(false);//redraw datatable
+                    $('#myModal').modal('hide');//hide modal
+                }
+            });
+
+        });
+
+        //when the modal is shown
+        $('#myModal').on('show.bs.modal', function (event) {
+
+            let button = $(event.relatedTarget);//find the button that trigger the event
+            let id = button.data('whatever');//get data
+
+            //get data from concerned row
+            let row = table.row("#" + id);
+            let data = row.data();
+
+            let modal = $(this);
+
+            //find input elements of the modal
+            modal.find('#edit_id').val(id);
+            modal.find('#edit_matricule').val(data[1]);
+            modal.find('#edit_name').val(data[2]);
+            modal.find('#edit_firstname').val(data[3]);
+
+            //re-init the select #edit_role
+            modal.find('#edit_role').replaceWith('<select class="form-control" id="edit_role"></select>');
+            let role_select = modal.find('#edit_role');
+
+            //append option to edit_tole
+            if (data[4] != "sudo") {
+                {% for role in roles %}
+                {% if role.name != "sudo" %}//can't choose sudo
+                if (data[4] == "{{ role.name }}") {
+                    role_select.append('<option selected>{{ role.name }}</option>');
+                } else {
+                    role_select.append('<option value="{{ role.id }}">{{ role.name }}</option>');
+                }
+                {% endif %}
+                {% endfor %}
+            } else {
+                //sudo can't be chaged -> replace select by a read-only input
+                role_select.replaceWith('<input id="edit_role" class="form-control" type="text" placeholder=' + data[4] + ' readonly>');
+            }
+        })
+
+    </script>
 {% endblock %}

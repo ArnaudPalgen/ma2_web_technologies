@@ -72,6 +72,8 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException('Registration_number could not be found.');
         }
 
+        $user->setIsAdminAllowed(true);
+
         return $user;
     }
 
