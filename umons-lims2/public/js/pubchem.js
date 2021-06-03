@@ -27,44 +27,82 @@ class PubChem {
             const resp = await this.api.get(`/autocomplete/compound/${input}`);
             return resp.data.dictionary_terms.compound;
         } catch (e) {
+            console.error('PubChem call failed !')
+            console.log(e);
             return [];
         }
-
 
     }
 
 
     async findProductsCid (ncas) {
-        if(this.isCasValid(ncas)) {
-            const resp =  await this.api.get(`/pug/compound/name/${ncas}/cids/JSON`);
-            return resp.data.IdentifierList.CID[0];
-        } else {
-            return null;
+
+        try {
+            if(this.isCasValid(ncas)) {
+                const resp =  await this.api.get(`/pug/compound/name/${ncas}/cids/JSON`);
+                return resp.data.IdentifierList.CID[0];
+            } else {
+                return null;
+            }
+
+
+        } catch (e) {
+            console.error('PubChem call failed !')
+            console.log(e);
         }
     };
 
     async findProductName(cid) {
-        const resp = await this.api.get(`/pug/compound/cid/${cid}/synonyms/JSON`);
-        return resp.data.InformationList.Information[0].Synonym[0];
+
+        try {
+
+            const resp = await this.api.get(`/pug/compound/cid/${cid}/synonyms/JSON`);
+            return resp.data.InformationList.Information[0].Synonym[0];
+        } catch (e) {
+            console.error('PubChem call failed !')
+            console.log(e);
+        }
     }
 
     async findProductHazards(cid) {
-        const resp = await this.api.get(`/pug_view/data/compound/${cid}/JSON?heading=Chemical+Safety`);
-        return resp.data.Record.Section[0].Information[0].Value.StringWithMarkup[0].Markup.map(e=>({
-            symbol: e.URL,
-            text: e.Extra
-        }));
+        try {
+            const resp = await this.api.get(`/pug_view/data/compound/${cid}/JSON?heading=Chemical+Safety`);
+            return resp.data.Record.Section[0].Information[0].Value.StringWithMarkup[0].Markup.map(e=>{
+                let s =  "https://pubchem.ncbi.nlm.nih.gov/images/ghs/GHS01.svg".split("/");
+                return {
+                    symbol: e.URL,
+                    code: s[s.length -1].split('.')[0],
+                    text:e.Extra
+                }
+            });
+
+        } catch (e) {
+            if(e.response.status == 404) {
+                return [];
+            } else{
+                console.error('PubChem call failed !')
+                console.log(e);
+            }
+
+        }
     }
 
     async findProductProps (cids) {
-        let values = Array.isArray(cids)? cids.join(): cids;
 
-        const resp = await this.api.get(`/pug/compound/cid/${values}/property/MolecularFormula,MolecularWeight/json`);
+        try {
+            let values = Array.isArray(cids)? cids.join(): cids;
 
-        if(Array.isArray(cids)) {
-            return resp.data.PropertyTable.Properties;
-        } else {
-            return resp.data.PropertyTable.Properties[0];
+            const resp = await this.api.get(`/pug/compound/cid/${values}/property/MolecularFormula,MolecularWeight/json`);
+
+            if(Array.isArray(cids)) {
+                return resp.data.PropertyTable.Properties;
+            } else {
+                return resp.data.PropertyTable.Properties[0];
+            }
+
+        } catch (e) {
+            console.error('PubChem call failed !')
+            console.log(e);
         }
 
     }
@@ -84,15 +122,17 @@ class PubChem {
     }
 
     async findProductInfoByCid(cid) {
+
         try {
             const prodInfo = await this.findProductProps(cid);
             prodInfo.name = await  this.findProductName(cid);
-            prodInfo.safeties = await  this.findProductHazards(cid);
+            prodInfo.hazards = await  this.findProductHazards(cid);
             prodInfo.link = `https://pubchem.ncbi.nlm.nih.gov/compound/${cid}`;
 
             return prodInfo;
 
         } catch (e) {
+
             console.error('PubChem call failed !')
             console.log(e);
         }

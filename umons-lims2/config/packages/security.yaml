@@ -44,8 +44,7 @@ security:
                     - App\Security\AppCustomAuthenticator
             logout:
                 path: app_logout
-                    # where to redirect after logout
-                    # target: products.index
+                target: products.index
 
 
 

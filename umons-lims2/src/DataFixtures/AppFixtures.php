@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ChemicalSafety;
+use App\Entity\Hazard;
 use App\Entity\Location;
 use App\Entity\Product;
 use App\Entity\Role;
@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
 
     private $locations;
 
-    private $chemical_safeties;
+    private $hazards;
 
 
     private $users;
@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
 
         $this->addRoles($manager);
         $this->addLocations($manager);
-        $this->addChemicalSafeties($manager);
+        $this->addHazards($manager);
 
         $this->addUsers($manager);
         $this->addProducts($manager);
@@ -74,7 +74,7 @@ class AppFixtures extends Fixture
 
     }
 
-    private function addChemicalSafeties(ObjectManager $manager)
+    private function addHazards(ObjectManager $manager)
     {
         $list = [
             "Flammable",
@@ -93,11 +93,12 @@ class AppFixtures extends Fixture
             "Hepatotoxins",
             "Nephrotoxins",
         ];
-        foreach ($list as $safety) {
-            $cs = new ChemicalSafety();
-            $cs->setName($safety);
+        foreach ($list as $hazard) {
+            $cs = new Hazard();
+            $cs->setLabel($hazard);
+            $cs->setId("GHS".$this->faker->randomNumber(2));
             $manager->persist($cs);
-            $this->chemical_safeties[] = $cs;
+            $this->hazards[] = $cs;
         }
     }
 
@@ -135,9 +136,9 @@ class AppFixtures extends Fixture
                 ->setLocation($this->faker->randomElement($this->locations))
                 ->setSize($this->faker->randomElement(['1 kg', '12 L']));
 
-            $cs = $this->faker->randomElements($this->chemical_safeties, rand(0, count($this->chemical_safeties)));
-            foreach ($cs as $safety) {
-                $product->addChemicalSafety($safety);
+            $cs = $this->faker->randomElements($this->hazards, rand(0, count($this->hazards)));
+            foreach ($cs as $hazard) {
+                $product->addHazard($hazard);
             }
             $manager->persist($product);
 

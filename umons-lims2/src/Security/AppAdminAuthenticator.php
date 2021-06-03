@@ -23,7 +23,7 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'userselect';
+    public const LOGIN_ROUTE = 'login';
 
 
     private EntityManagerInterface $entityManager;
@@ -49,6 +49,7 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
     public function getCredentials(Request $request): array
     {
 
+
         return [
             'registration_number' => $request->request->get('registration_number'),
             'password' => $request->request->get('_password'),
@@ -72,11 +73,14 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException('Registration_number could not be found.');
         }
 
+        $user->setIsAdminAllowed(true);
+
         return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
+
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
@@ -98,7 +102,9 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 
     protected function getLoginUrl(): string
     {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE, [
+
+        $this->getUser()
+        return $this->urlGenerator->generate("userselect", [
             'type' => 'full'
         ]);
     }

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	Enregistrer un produit - {{ parent() }}
+	Enregistrer un produit
 {% endblock %}
 
 {% block searchbar %}{% endblock %}
@@ -15,8 +15,31 @@
 
 				{{ form_start(form) }}
 					{{ form_widget(form) }}
-					<button type="submit" class="btn btn-primary">Valider</button>
+
+					<div id="hazards"></div>
+					<button type="submit" class="btn btn-primary"  id="productFormButton">Valider</button>
 				{{ form_end(form) }}
+			</div>
+		</div>
+
+
+		<div class="modal fade" id="compatibilityModal" tabindex="-1" aria-labelledby="compatibilityModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="compatibilityModalLabel">Confirmer Emplacement</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						...
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+						<button type="button" class="btn btn-warning" id="compatibilityConfirmButton">Confirmer</button>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -35,50 +58,172 @@
 {% block javascripts %}
 	{% include 'pubchemapi.html.twig' %}
 
-
-
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 	<script>
 		$(() => {
-			const pubchem = new PubChem();
+			const $ncas_field = $( "#product_ncas" );
+			const $ncas_field_group = $ncas_field.parent()
+			const $product_name = $("#product_name");
 
-			const ncas_field = $( "#product_ncas" );
+			const $product_hazards = $("#hazards");
 
-			const ncas_field_group = ncas_field.parent()
+			const $product_form_button = $("#productFormButton");
 
-			const error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>")
-			error_feedback.hide()
-			ncas_field_group.append(error_feedback)
+			const $compatibilityModal = $("#compatibilityModal");
 
-			ncas_field.focusout(() => {
-				const class_invalid = "is-invalid";
-				const class_has_validation = "has-validation"
+			const $compatibilityConfirmButton = $("#compatibilityConfirmButton");
+			const $productForm = $("form[name='product']");
 
-				if(pubchem.isCasValid(ncas_field.val())){
-					ncas_field_group.removeClass(class_has_validation)
-					ncas_field.removeClass(class_invalid)
-					error_feedback.hide()
+			let name_promise;
+			let hazard_promise;
+			let cid_promise;
+
+
+			const pState = {
+				set isNameLoading(val) {
+					$product_name.prop( "disabled", !!val );
+				},
+				get isNameLoading() {
+					return $product_name.prop('disabled');
+				},
+
+				set isNcasValid(val) {
+					const class_invalid = "is-invalid";
+					const class_has_validation = "has-validation"
+					let error_feedback = $ncas_field_group.find('.invalid-feedback')
+					if(!error_feedback.length) {
+						error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>");
+					}
+					error_feedback.hide();
+					$ncas_field_group.append(error_feedback);
+
+					$ncas_field_group.removeClass(class_has_validation)
+					$ncas_field.removeClass(class_invalid)
+
+					if(!val){
+						$ncas_field_group.addClass(class_has_validation)
+						$ncas_field.addClass(class_invalid)
+						error_feedback.show()
+					}
+				},
+
+			}
+
+			async function get_name(pubchem, prodCid) {
+				let p_name = await axios.get("/json/products/name", {
+					params: {
+						ncas: prodCid
+					}
+				});
+				return  p_name.data || await pubchem.findProductName(prodCid);
+			}
+
+			function autofill_name(pubchem, cid) {
+
+				pState.isNameLoading = true;
+
+				name_promise = get_name(pubchem, cid);
+				const localPromise = name_promise;
+				name_promise.then(result => {
+					if(name_promise === localPromise){
+						pState.isNameLoading = false;
+						if(result) {
+							$product_name.val(result);
+						}
+					}
+				});
+			}
+
+			function clear_hazards() {
+				$product_hazards.empty();
+			}
+
+			async  function  get_hazards(pubchem, prodCid) {
+				return await pubchem.findProductHazards(prodCid);
+			}
+
+			function autofill_hazards(pubchem, cid) {
+				hazard_promise = get_hazards(pubchem, cid);
+				const localPromise = hazard_promise;
+				hazard_promise.then(hzds => {
+
+					if(hazard_promise === localPromise){
+						if(hzds) {
+							hzds.forEach(h => {
+								$product_hazards.append(`<input type="hidden" name="hazards[${h.code}]" value="${h.text}" />`)
+							});
+						}
+					}
+				});
+			}
+
+
+			function  update(pubchem, ncas) {
+				clear_hazards();
+
+				if(ncas.length >= 3 && pubchem.isCasValid(ncas)){
+
+					cid_promise = pubchem.findProductsCid(ncas);
+					const localPromise = cid_promise;
+					cid_promise
+							.then(cid => {
+								if(cid_promise === localPromise){
+									if (cid) {
+										pState.isNcasValid = true;
+										autofill_name(pubchem, cid);
+										autofill_hazards(pubchem, cid);
+									} else {
+										pState.isNcasValid = false;
+									}
+								}
+							})
+							.catch((err)=>{
+								pState.isNcasValid = false;
+							})
 				} else {
-					ncas_field_group.addClass(class_has_validation)
-					ncas_field.addClass(class_invalid)
-					error_feedback.show()
+					pState.isNcasValid = false;
+				}
+			}
+
+			$compatibilityConfirmButton.click(function () {
+				$productForm.submit();
+			});
+
+			$productForm.submit(function( event ) {
+				$product_form_button.button('loading');
+				// setTimeout(function() {
+				// 	$product_form_button.button('reset');
+				// }, 4000);
+				if(false){ // TODO
+					$productForm.submit();
+				} else {
+					$compatibilityModal.modal('show');
 				}
 
 
-			})
+				event.preventDefault();
 
-			ncas_field.autocomplete({
+
+			});
+
+			const pubchem = new PubChem();
+
+			$ncas_field.on("input", function() {
+				update(pubchem,  $(this).val())
+			});
+
+			$ncas_field.autocomplete({
 				source: function( qry, callback ) {
 					pubchem.autocompleteCAS(qry.term).then(callback)
 				},
 				minLength: 3,
-				// select: function( event, ui ) {
-				// 	console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-				// }
-			} );
+				select: function( event, ui ) {
+					update(pubchem, ui.item.value)
+				}
+			});
+
 
 		});
+
 
 
 	</script>

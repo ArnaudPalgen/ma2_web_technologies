@@ -20,37 +20,14 @@ class SecurityController extends AbstractController
     public function adminLogin(AuthenticationUtils $authenticationUtils): Response
     {
 
-
         if ($this->getUser() && $this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('admin.index');
         }
-
-//        if ($request->isMethod('POST')) {
-//            $password =  $request->request->get('registration_number');
-//            $csrf_token = $request->request->get('_csrf_token');
-//
-//            $token = new CsrfToken('authenticate-simple', $csrf_token);
-//            if (!$csrfTokenManager->isTokenValid($token)) {
-//                throw new InvalidCsrfTokenException();
-//            }
-//
-//            if($passwordEncoder->isPasswordValid($this->getUser(), $password)) {
-//                $this->getUser()->setIsAdminAllowed(true);
-//                return $this->redirectToRoute('admin.index');
-//            }
-//
-//            $this->addFlash('error', 'Mot de passe incorrect.');
-//
-//        } else {
-//
-//        }
 
         $error = $authenticationUtils->getLastAuthenticationError();
         return $this->render('admin_login.html.twig', [
             'error' => $error
         ]);
-
-
     }
 
     /**
