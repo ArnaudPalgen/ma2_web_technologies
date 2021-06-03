@@ -25,13 +25,11 @@
 
 		<div class="card-columns">
 			<form method="post">
-
 				<input type="hidden"
 					   name="_csrf_token"
 					   value="{{ csrf_token('simple-auth') }}">
 
 				{% for user in users %}
-
 					<label class="d-block">
 						<input
 								type="radio"
@@ -39,17 +37,17 @@
 								class="d-none"
 								onchange="this.form.submit();"
 								value="{{ user.getRegistrationNumber }}">
-						<span class="card cursor-pointer">
-							<span class="card-body">
+						
+						<div class="card text-center cursor-pointer">
+							<div class="card-body">
 								<center>
 								<img src="user.svg" alt="Card image cap" style="background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
 								<h5 class="card-title">{{user.getFullName}}</h5>
 								<p class="card-text">{{ user.getRegistrationNumber }}</p>
 								</center>
-							</span>
-						</span>
+							</div>
+						</div>
 					</label>
-
 
 				{% endfor %}
 			</form>
