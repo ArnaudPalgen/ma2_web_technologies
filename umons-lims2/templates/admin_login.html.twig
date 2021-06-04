@@ -12,47 +12,53 @@
                     <button type="button" class="btn btn-light dropdown-toggle">{{ app.user.username }}</button>
                 </div>
 
-                <form method="post">
-{#                    {% for message in app.flashes('error') %}#}
-{#                        <div class="alert alert-success alert-dismissible fade show">#}
-{#                            <button type="button" class="close" data-dismiss="alert">&times;</button>#}
-{#                            {{ message }}#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-
-                    {% if  error %}
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        </div>
-                    {% endif %}
-
+                {% if app.user.getRole.name == "user"%}
                     <div class="alert alert-danger">
-
+                        Vous ne pouvez pas vous connecter en tant qu'administrateur avec ce compte.
                     </div>
+                {% else %}
+                    <form method="post">
+    {#                    {% for message in app.flashes('error') %}#}
+    {#                        <div class="alert alert-success alert-dismissible fade show">#}
+    {#                            <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+    {#                            {{ message }}#}
+    {#                        </div>#}
+    {#                    {% endfor %}#}
+
+                        {% if  error %}
+                            <div class="alert alert-success alert-dismissible fade show">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        <div class="alert alert-danger">
+
+                        </div>
 
 
-                    <div class="form-group">
-                        <label for="inputPassword">Mot de passe</label>
-                        <input type="password" name="_password" id="inputPassword" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <label for="inputPassword">Mot de passe</label>
+                            <input type="password" name="_password" id="inputPassword" class="form-control" required>
+                        </div>
 
-                    <input type="hidden" name="registration_number"
-                           value="{{ app.user.username }}"
-                    >
+                        <input type="hidden" name="registration_number"
+                               value="{{ app.user.username }}"
+                        >
 
-                            <input type="hidden" name="_csrf_token"
-                                   value="{{ csrf_token('full-auth') }}"
-                            >
+                                <input type="hidden" name="_csrf_token"
+                                       value="{{ csrf_token('full-auth') }}"
+                                >
 
-                    {#        <div class="checkbox mb-3">#}
-                    {#            <label>#}
-                    {#                <input type="checkbox" name="_remember_me"> Remember me#}
-                    {#            </label>#}
-                    {#        </div>#}
+                        {#        <div class="checkbox mb-3">#}
+                        {#            <label>#}
+                        {#                <input type="checkbox" name="_remember_me"> Remember me#}
+                        {#            </label>#}
+                        {#        </div>#}
 
-                    <button class="btn btn-lg btn-primary" type="submit">Se connecter</button>
-                </form>
+                        <button class="btn btn-lg btn-primary" type="submit">Se connecter</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
 

@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block searchbar %}
-    <div class="container" style="margin-top:1%; width:40%; margin-bottom:1%;">
+    <div class="container" style="margin-top:1%; width:60%; margin-bottom:1%;">
     <div class="row">
       <div class="col">
         <input type="text" id="search" placeholder="Rechercher..." class="form-control"/>
@@ -76,7 +76,10 @@
             "order": [[ 3, "desc" ]],
             language: {
               url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-			      }
+			      },
+            "initComplete": function (settings, json) {
+              $.fn.DataTable.ext.pager.numbers_length = 5;
+            }
       });
       $("#search").on('input', function() {
         //alert(parseInt($("#columnselect").val(), 10));

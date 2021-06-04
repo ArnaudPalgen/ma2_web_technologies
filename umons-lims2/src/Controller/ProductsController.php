@@ -39,7 +39,6 @@ class ProductsController extends AbstractController
         $pr = $this->getDoctrine()->getRepository(Product::class);
         $prod = $pr->find($product);
 
-        $repository = $this->getDoctrine()->getRepository(User::class);
         $user = $this->getUser();
         $nameUser = $this->getUser()->getFullName();
 

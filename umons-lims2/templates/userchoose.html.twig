@@ -18,13 +18,14 @@
 			</div>
 		{% endif %}
 
-		<div class="card-columns">
+		<div class="container-fluid">
 			<form method="post">
 				<input type="hidden"
 					   name="_csrf_token"
 					   value="{{ csrf_token('simple-auth') }}">
-
+				<div class="row">
 				{% for user in users %}
+					<div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
 					<label class="d-block">
 						<input
 								type="radio"
@@ -36,15 +37,16 @@
 						<div class="card text-center cursor-pointer">
 							<div class="card-body">
 								<center>
-								<img src="user.svg" alt="Card image cap" style="background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
-								<h5 class="card-title">{{user.getFullName}}</h5>
+								<img src="user.svg" alt="Card image cap" style="width: 80%;background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
+								<h5 class="card-title" >{{user.getFullName}}</h5>
 								<p class="card-text">{{ user.getRegistrationNumber }}</p>
 								</center>
 							</div>
 						</div>
 					</label>
-
+					</div>
 				{% endfor %}
+				</div>
 			</form>
 		</div>
 	</div>
