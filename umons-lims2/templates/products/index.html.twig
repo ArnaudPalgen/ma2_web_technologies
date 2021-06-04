@@ -18,9 +18,10 @@
     <div class="container-fluid" style="margin-top: 2em;">
         <div class="row">
             <div class="table-responsive">
-                <table id="productTable" class="hover">
+                <table id="productTable" class="display">
                     <thead>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th class="text-center">N°CAS</th>
@@ -30,13 +31,17 @@
                         <th class="text-center">Taille</th>
                         <th class="text-center">Utilisé par:</th>
                         <th class="text-center">Ouvert/Fermé</th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for product in products %}
                         <tr id='product-{{ product.id }}'>
                             <td><label><input type="checkbox" value='{{ product.id }}' autocomplete="off"><span></span></label>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-light info-btn"
+                                        onclick="getInformation('{{ product.ncas }}','product-{{ product.id }}',this)">
+                                    <i class="bi bi-info-circle"></i></button>
                             </td>
                             <td>
                                 {% if app.user %}
@@ -73,16 +78,12 @@
                                     Fermé
                                 {% endif %}
                             </td>
-                            <td>
-                                <button type="button" class="btn btn-light info-btn"
-                                        onclick="getInformation('{{ product.ncas }}','product-{{ product.id }}',this)">
-                                    Informations <i class="bi bi-caret-down"></i></button>
-                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                     <tfoot>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th>N°CAS</th>
@@ -92,7 +93,6 @@
                         <th>Taille</th>
                         <th>Utilisé par:</th>
                         <th>Ouvert/Fermé</th>
-                        <th></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -109,11 +109,33 @@
     <script type="text/javascript">
 
         var table = $('#productTable').DataTable({
-            dom: '<Blf<t>ip>',
+            dom: 'P<Blf<t>ip>',
+            searchPanes:{
+                cascadePanes: true,
+                panes: [
+                    {
+                        header: 'Produits utilisés/libres',
+                        options: [
+                            {
+                                label: 'libres',
+                                value: function (rowData, rowIdx) {
+                                    return rowData[8] === '';
+                                }
+                            },
+                            {
+                                label: 'utilisés',
+                                value: function (rowData, rowIdx) {
+                                    return rowData[8] !== '';
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
             buttons: [
                 {
                     tag: "button",
-                    className: "btn btn-secondary",
+                    className: "btn btn-light info-btn",
                     text: 'Déplacer',
                     action: function (e, dt, node, config) {
                         moveRow();
@@ -121,7 +143,7 @@
                 },
                 {
                     tag: "button",
-                    className: "btn btn-secondary",
+                    className: "btn btn-light info-btn",
                     text: 'Ajouter',
                     action: function (e, dt, node, config) {
                         addElement();
@@ -129,7 +151,7 @@
                 },
                 {
                     tag: "button",
-                    className: "btn btn-secondary",
+                    className: "btn btn-light info-btn",
                     text: 'Supprimer',
                     action: function (e, dt, node, config) {
                         deleteRow();
@@ -137,10 +159,10 @@
                 }
 
             ],
-            "order": [[2, 'desc']],
+            "order": [[3, 'desc']],
             "columnDefs": [
                 {"searchable": false, "targets": 0},
-                {"searchable": false, "targets": 9},
+                {"searchable": false, "targets": 1},
                 {
                     searchPanes: {
                         show: false
@@ -155,7 +177,7 @@
                 },
                 {
                     searchPanes: {
-                        show: true
+                        show: false
                     },
                     targets: [2]
                 },
@@ -197,11 +219,11 @@
                 },
                 {
                     searchPanes: {
-                        show: false
+                        show: true
                     },
                     targets: [9]
                 },
-                {"targets": [0, 1, 9], "orderable": false},
+                {"targets": [0, 1, 2], "orderable": false},
                 {"className": "dt-center", "targets": "_all"}
             ],
             stateSave: true,
@@ -216,35 +238,18 @@
                 "thousands": ".",
                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
             }, "initComplete": function (settings, json) {
+                table.searchPanes.container().prependTo(table.table().container());
+                table.searchPanes.container().hide();
                 $.fn.DataTable.ext.pager.numbers_length = 5;
 
                 new $.fn.dataTable.Buttons(table, {
                     buttons: [
                         {
-                            extend: 'searchPanes',
+                            text: 'Recherche avancée',
                             tag: "button",
-                            className: "btn btn-secondary",
-                            config: {
-                                cascadePanes: true,
-                                panes: [
-                                    {
-                                        header: 'Produits utilisés/libres',
-                                        options: [
-                                            {
-                                                label: 'libres',
-                                                value: function (rowData, rowIdx) {
-                                                    return rowData[7] === '';
-                                                }
-                                            },
-                                            {
-                                                label: 'utilisés',
-                                                value: function (rowData, rowIdx) {
-                                                    return rowData[7] !== '';
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
+                            className: "btn btn-light info-btn",
+                            action: function (e, dt, node, config) {
+                                table.searchPanes.container().toggle();
                             }
                         }
                     ]
@@ -379,7 +384,7 @@
                 let data = row.data();
 
                 data[1] = '<a onclick="prendre(' + "'" + id + "'" + ')" class="btn btn-primary take-btn">Prendre</a>';
-                data[7] = ""
+                data[8] = ""
 
                 row.data(data).draw(false);
                 table.searchPanes.rebuildPane();
@@ -401,8 +406,8 @@
                 let data = row.data();
 
                 data[1] = '<a onclick="ranger(' + "'" + id + "'" + ')" class="btn btn-primary put-btn">Ranger</a>';
-                data[7] = $.parseJSON(res);
-                data[8] = 'Ouvert';
+                data[8] = $.parseJSON(res);
+                data[9] = 'Ouvert';
 
                 row.data(data).draw(false);
                 table.searchPanes.rebuildPane();
