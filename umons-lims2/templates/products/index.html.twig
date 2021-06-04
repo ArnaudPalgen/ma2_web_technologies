@@ -15,10 +15,10 @@
 {% endblock %}
 {% block body %}
 
-    <div class="container-fluid" style="margin-top: 2em;">
+    <div class="container-fluid" style="margin-top: 2em;width:98%;">
         <div class="row">
             <div class="table-responsive">
-                <table id="productTable" class="display">
+                <table id="productTable" class="display" style="width:100%">
                     <thead>
                     <tr>
                         <th></th>
@@ -135,7 +135,7 @@
             buttons: [
                 {
                     tag: "button",
-                    className: "btn btn-light info-btn",
+                    className: "btn btn-light action-btn",
                     text: 'Déplacer',
                     action: function (e, dt, node, config) {
                         moveRow();
@@ -143,7 +143,7 @@
                 },
                 {
                     tag: "button",
-                    className: "btn btn-light info-btn",
+                    className: "btn btn-light action-btn",
                     text: 'Ajouter',
                     action: function (e, dt, node, config) {
                         addElement();
@@ -151,7 +151,7 @@
                 },
                 {
                     tag: "button",
-                    className: "btn btn-light info-btn",
+                    className: "btn btn-light action-btn",
                     text: 'Supprimer',
                     action: function (e, dt, node, config) {
                         deleteRow();
@@ -166,19 +166,19 @@
                 {
                     searchPanes: {
                         show: false
-                    },
+                    }, width: '5%',
                     targets: [0]
                 },
                 {
                     searchPanes: {
                         show: false
-                    },
+                    },width: '2%',
                     targets: [1]
                 },
                 {
                     searchPanes: {
                         show: false
-                    },
+                    }, width: '5%',
                     targets: [2]
                 },
                 {
@@ -247,7 +247,7 @@
                         {
                             text: 'Recherche avancée',
                             tag: "button",
-                            className: "btn btn-light info-btn",
+                            className: "btn btn-light action-btn",
                             action: function (e, dt, node, config) {
                                 table.searchPanes.container().toggle();
                             }
