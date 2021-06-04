@@ -12,12 +12,8 @@
 
 {% block searchbar %}
     <div class="container" style="margin-top:1%; width:60%; margin-bottom:1%;">
-    <div class="row">
-      <div class="col">
+      <div class="input-group mb3">
         <input type="text" id="search" placeholder="Rechercher..." class="form-control"/>
-      </div>  
-      <div class="col">  
-        <div class="form-floating">
           <select id="columnselect" class="form-select" aria-label="Floating label select example">
             <option value="-1" selected>Tous les champs</option>
             <option value="0">Action</option>
@@ -25,10 +21,7 @@
             <option value="2">Utilisateur</option>
             <option value="3">Date</option>
           </select>
-          <label for="floatingSelect">Rechercher sur</label>
-        </div>
       </div>
-    </div>
     </div>
 
 {% endblock %}
