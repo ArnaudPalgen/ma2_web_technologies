@@ -26,6 +26,8 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator
     public const LOGIN_ROUTE = 'userselect';
 
 
+    private string|null $redirect_route = null;
+
     private EntityManagerInterface $entityManager;
     private UrlGeneratorInterface $urlGenerator;
     private CsrfTokenManagerInterface $csrfTokenManager;
@@ -42,15 +44,16 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator
 
     public function supports(Request $request): bool
     {
+
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request): array
     {
-
+        $this->redirect_route = $request->request->get('_redirect_route');
         return [
-            'registration_number' => $request->request->get('registration_number'),
+            'registration_number' => $request->request->get('_username'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
     }
@@ -64,7 +67,6 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator
         }
 
         $user = $userProvider->loadUserByUsername($credentials['registration_number']);
-
 
         if (!$user) {
             // fail authentication with a custom error
@@ -90,7 +92,10 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+
+        if($this->redirect_route && $targetPath = $this->urlGenerator->generate($this->redirect_route )) {
+            return new RedirectResponse($targetPath);
+        } elseif ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
         return new RedirectResponse($this->urlGenerator->generate('products.index'));

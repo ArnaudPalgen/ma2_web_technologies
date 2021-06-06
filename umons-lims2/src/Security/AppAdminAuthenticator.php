@@ -16,11 +16,12 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 {
-
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'login';
@@ -42,16 +43,15 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 
     public function supports(Request $request): bool
     {
+
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request): array
     {
-
-
         return [
-            'registration_number' => $request->request->get('registration_number'),
+            'registration_number' => $request->request->get('_username'),
             'password' => $request->request->get('_password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
@@ -59,8 +59,7 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
-
-        $token = new CsrfToken('simple-auth', $credentials['csrf_token']);
+        $token = new CsrfToken('full-auth', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
@@ -73,13 +72,16 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException('Registration_number could not be found.');
         }
 
+//        dd("coucou");
         $user->setIsAdminAllowed(true);
 
+//        dd($user->getRoles());
         return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
+
 
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
@@ -94,17 +96,15 @@ class AppAdminAuthenticator extends AbstractFormLoginAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
+//        dd("cuccess");
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
-        return new RedirectResponse($this->urlGenerator->generate('admin.index'));
+        return new RedirectResponse($this->urlGenerator->generate('admin.user'));
     }
 
     protected function getLoginUrl(): string
     {
-
-        return $this->urlGenerator->generate("userselect", [
-            'type' => 'full'
-        ]);
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE );
     }
 }

@@ -25,7 +25,7 @@ class ProductType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom du produit',
             ])
-            ->add('size', TextType::class, ['label' => 'Taille'])
+            ->add('size', TextType::class, ['label' => 'Masse / Volume'])
             ->add('concentration', TextType::class, ['label' => 'Concentration'])
             ->add('count', IntegerType::class, [
                 'label' => 'Quantité',

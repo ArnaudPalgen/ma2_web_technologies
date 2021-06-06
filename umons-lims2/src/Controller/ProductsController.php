@@ -33,7 +33,7 @@ class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/changeProduct/{action}/{product}', name: 'products.change'),IsGranted("ROLE_ADMIN")]
+    #[Route('/changeProduct/{action}/{product}', name: 'products.change')]
     public function changeProduct(int $action, int $product): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -63,7 +63,6 @@ class ProductsController extends AbstractController
     #[Route(path: "new_product", name: 'products.create')]
     public function new(Request $request, NameRepository $nameRepository): Response
     {
-
         $this->denyAccessUnlessGranted('ROLE_USER');
 
 

@@ -2,38 +2,47 @@
 
 {% block title %}Log in!{% endblock %}
 
+
+{% block searchbar %}{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="card">
             <div class="card-body">
 
+
+
                 <div class="text-center">
-                    <h1 class="card-title">{{ app.user.getFullName }}</h1>
-                    <a href="{{ path('userselect') }}" class="btn btn-light dropdown-toggle">{{ app.user.username }}</a>
+                    <h1 class="card-title">Authentification Administrateur</h1>
+{#                    <a href="{{ path('userselect', {"redirect_route":"login"}) }}" class="btn btn-light dropdown-toggle">{{ app.user.username }}</a>#}
                 </div>
 
-                {% if app.user.getRole.name == "user"%}
-                    <div class="alert alert-danger">
-                        Vous ne pouvez pas vous connecter en tant qu'administrateur avec ce compte.
+
+                {% if  error %}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
                     </div>
-                {% else %}
-                    <form method="post">
-    {#                    {% for message in app.flashes('error') %}#}
-    {#                        <div class="alert alert-success alert-dismissible fade show">#}
-    {#                            <button type="button" class="close" data-dismiss="alert">&times;</button>#}
-    {#                            {{ message }}#}
-    {#                        </div>#}
-    {#                    {% endfor %}#}
+                {% endif %}
 
-                        {% if  error %}
-                            <div class="alert alert-success alert-dismissible fade show">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                {{ error.messageKey|trans(error.messageData, 'security') }}
-                            </div>
-                        {% endif %}
 
-                        <div class="alert alert-danger">
 
+                    <form method="post" action="{{ path('login') }}">
+
+                        <input type="hidden"
+                               name="_csrf_token"
+                               value="{{ csrf_token("full-auth") }}">
+
+                        <div class="form-group">
+                            <label for="inputRegistrationNumber">Matricule</label>
+                            <input type="text"  name="_username"
+                                    {% if  last_username is empty %}
+                                        value="{{ last_username }}"
+                                    {% elseif app.user %}
+                                        value="{{app.user.username}}"
+                                    {% endif %}
+
+                                   id="inputRegistrationNumber" class="form-control" required>
                         </div>
 
 
@@ -42,23 +51,10 @@
                             <input type="password" name="_password" id="inputPassword" class="form-control" required>
                         </div>
 
-                        <input type="hidden" name="registration_number"
-                               value="{{ app.user.username }}"
-                        >
-
-                                <input type="hidden" name="_csrf_token"
-                                       value="{{ csrf_token('full-auth') }}"
-                                >
-
-                        {#        <div class="checkbox mb-3">#}
-                        {#            <label>#}
-                        {#                <input type="checkbox" name="_remember_me"> Remember me#}
-                        {#            </label>#}
-                        {#        </div>#}
 
                         <button class="btn btn-lg btn-primary" type="submit">Se connecter</button>
                     </form>
-                {% endif %}
+
             </div>
         </div>
 

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+    {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
@@ -47,7 +47,7 @@
                                            class="btn btn-primary take-btn">Prendre</a>
                                     {% endif %}
                                 {% else %}
-                                    <a href="{{ path('userselect') }}"
+                                    <a href="{{ path('userselect', {"redirect_route": "products.index"}) }}"
                                        class="btn btn-primary {{ product.action == 1 ? 'put-btn': ' take-btn' }} ">
                                         {{ product.action == 1 ? 'Ranger': 'Prendre' }}
                                     </a>
