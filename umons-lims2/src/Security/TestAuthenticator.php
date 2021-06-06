@@ -71,6 +71,9 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
                 throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
             }
 
+            $user->setIsAdminAllowed(true);
+
+
             return $user;
         }), new PasswordCredentials($credentials['password']), [new RememberMeBadge()]);
 
