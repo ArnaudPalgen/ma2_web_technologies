@@ -39,7 +39,7 @@
 
 				<div class="row">
 				{% for user in users %}
-					<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+					<div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-2">
 					<label class="d-block">
 						<input
 								type="radio"
@@ -51,8 +51,8 @@
 						<div class="card text-center cursor-pointer">
 							<div class="card-body">
 								<center>
-								<img src="user.svg" alt="Card image cap" style="background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
-								<h5 class="card-title">{{user.getFullName}}</h5>
+								<img src="user.svg" alt="Card image cap" style="width: 80%;background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
+								<h5 class="card-title" >{{user.getFullName}}</h5>
 								<p class="card-text">{{ user.getRegistrationNumber }}</p>
 								</center>
 							</div>

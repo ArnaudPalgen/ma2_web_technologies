@@ -5,17 +5,17 @@ services:
         image: mysql:8.0.24 #version used during the implementation of the project 
         container_name: mysql 
         ports:
-          - 3306:3306
+          - 3307:3306
         environment:
-          MYSQL_ROOT_PASSWORD: f5dU7a8UjkgUc0dUd
-          MYSQL_USER: uumons_lims
-          MYSQL_PASSWORD: u_litpas21
-          MYSQL_DATABASE: umons_lims
+          MYSQL_ROOT_PASSWORD: ${DB_ROOT}
+          MYSQL_USER: ${DB_USER}
+          MYSQL_PASSWORD: ${DB_PASSWORD}
+          MYSQL_DATABASE: ${DB_DATABASE}
 
     php:
         build: php7-fpm
         ports:
-            - 9000:9000
+            - 9001:9000
         #command: bash -c "myentrypoint.sh"
         links:
             - db
@@ -25,16 +25,16 @@ services:
         depends_on:
           - db
         environment:
-          - WAIT_HOSTS=mysql:3306
+          - WAIT_HOSTS=db:3306
           - WAIT_SLEEP_INTERVAL=15
-          - MYSQL_DATABASE=umons_lims
-          - MYSQL_USER=uumons_lims
-          - MYSQL_PASSWORD=u_litpas21
+          - MYSQL_DATABASE=${DB_DATABASE}
+          - MYSQL_USER=${DB_USER}
+          - MYSQL_PASSWORD=${DB_PASSWORD}
 
     nginx:
         build: nginx
         ports:
-          - 80:80
+          - 82:80
         links:
           - php
         volumes_from:
@@ -45,6 +45,6 @@ services:
           - php
           - db
         environment:
-          - WAIT_HOSTS=mysql:3306, php:9000
+          - WAIT_HOSTS=db:3306, php:9000
           - WAIT_SLEEP_INTERVAL=20
           - WAIT_TIMEOUT=60

@@ -1,5 +1,6 @@
 # php7-fpm/Dockerfile
-FROM php:7.4-fpm
+#FROM php:7.4-fpm
+FROM php:8-fpm
 
 MAINTAINER Maxence POUTORD <maxence.poutord@gmail.com>
 

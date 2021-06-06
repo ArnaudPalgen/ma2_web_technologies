@@ -46,6 +46,8 @@ class SecurityController extends AbstractController
             'last_username' => $lastUsername,
             'error'         => $error,
         ]);
+
+
     }
 
     /**
@@ -81,6 +83,7 @@ class SecurityController extends AbstractController
 //                    $formAuthenticator,
 //                    $request);
             }
+
         }
         $redirect_route = $request->query->get("redirect_route");
 
