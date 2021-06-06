@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Name;
 use App\Entity\Product;
 use App\Entity\Usage;
 use App\Entity\User;
 use App\Form\ProductType;
+use App\Repository\HazardRepository;
+use App\Repository\NameRepository;
 use App\Repository\ProductRepository;
 use DateTime;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,9 +61,8 @@ class ProductsController extends AbstractController
     }
 
     #[Route(path: "new_product", name: 'products.create')]
-    public function new(Request $request): Response
+    public function new(Request $request, NameRepository $nameRepository): Response
     {
-
         $this->denyAccessUnlessGranted('ROLE_USER');
 
 
@@ -72,7 +75,33 @@ class ProductsController extends AbstractController
             $product = $form->getData();
 
             $entityManager = $this->getDoctrine()->getManager();
+
+            $actionCreate = (new Usage())
+                ->setAction(Usage::ACTION_CREATE)
+                ->setUser($this->getUser())
+                ->setDate(new DateTime());
+
+            $product->addUsage($actionCreate);
+
+            $entityManager->persist($actionCreate);
             $entityManager->persist($product);
+
+
+            $name = $nameRepository->findOneBy([
+                "name" => $product->getName(),
+                "ncas" => $product->getNcas()
+            ]);
+
+            if ($name == null) {
+                $name = new Name();
+                $name->setName($product->getName());
+                $name->setNcas($product->getNcas());
+                $entityManager->persist($name);
+            } else {
+                $name->setName($product->getName());
+            }
+
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Le produit a bien été ajouté.');
@@ -86,27 +115,53 @@ class ProductsController extends AbstractController
     }
 
 
-    #[Route('/products/json/search', name: 'products.search.json')]
-    public function jsonSearch(Request $request, ProductRepository $productRepository): Response
+    #[Route('/json/products/name', name: 'products.search.json')]
+    public function jsonSearch(Request $request, NameRepository $nameRepository): Response
     {
-
-        $query = $request->query->get('q');
-        if ($query) {
-            $res = $productRepository->findByNCAS($query);
-            return $this->json($res);
-        }
-        return $this->json(null, 204);
+        $query = $request->query->get('ncas');
+        $res = $nameRepository->findOneBy(['ncas'=>$query]);
+        return $this->json($res);
     }
 
-    /**
-     * @Route("/history")
-     */
+//    #[Route('/json/products/{product_id}/hazards', name: 'products.hazards.json')]
+//    public function jsonGetHazards(int $product_id, ProductRepository $productRepository): Response
+//    {
+//        $product = $productRepository->findOneBy(["id" => $product_id]);
+//        if($product !=null) {
+//            return $this->json($product->getHazards());
+//        }
+//
+//        return $this->json(null, 404);
+//    }
+
+    #[Route('/json/products/compatibilities/check', name: 'products.compatibility_check.json')]
+    public function jsonCompatibilityCheck(Request $request, ProductRepository $productRepository): Response
+    {
+        $product_id = $request->query->get('product');
+        $location_id = $request->query->get('location');
+        if($product_id != null && $location_id!=null) {
+            $product_id = intval($product_id);
+            $location_id = intval($location_id);
+
+            $productRepository->findIncompatibilities();
+
+        }
+//        $res = $nameRepository->findBy(['ncas'=>$product_id]);
+//        return $this->json($res);
+    }
+
+
+
+
+    #[Route('/history', name: 'history')]
     public function history(): Response
     {
         $repository = $this->getDoctrine()->getRepository(Usage::class);
         $history = $repository->findAll();
         return $this->render('history.html.twig', ['history' => $history,]);
     }
+
+
 
 
 }

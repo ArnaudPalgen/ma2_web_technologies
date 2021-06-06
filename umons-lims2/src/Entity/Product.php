@@ -45,19 +45,20 @@ class Product
      */
     private $location;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=ChemicalSafety::class, inversedBy="products")
-     */
-    private $chemical_safeties;
 
     /**
      * @ORM\OneToMany(targetEntity=Usage::class, mappedBy="product")
      */
     private $usages;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Hazard::class, mappedBy="products")
+     */
+    private $hazards;
+
     public function __construct()
     {
-        $this->chemical_safeties = new ArrayCollection();
+        $this->hazards = new ArrayCollection();
         $this->usages = new ArrayCollection();
     }
 
@@ -128,30 +129,6 @@ class Product
     }
 
     /**
-     * @return Collection|ChemicalSafety[]
-     */
-    public function getChemicalSafeties(): Collection
-    {
-        return $this->chemical_safeties;
-    }
-
-    public function addChemicalSafety(ChemicalSafety $chemicalSafety): self
-    {
-        if (!$this->chemical_safeties->contains($chemicalSafety)) {
-            $this->chemical_safeties[] = $chemicalSafety;
-        }
-
-        return $this;
-    }
-
-    public function removeChemicalSafety(ChemicalSafety $chemicalSafety): self
-    {
-        $this->chemical_safeties->removeElement($chemicalSafety);
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Usage[]
      */
     public function getUsages(): Collection
@@ -176,6 +153,33 @@ class Product
             if ($usage->getProduct() === $this) {
                 $usage->setProduct(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Hazard[]
+     */
+    public function getHazards(): Collection
+    {
+        return $this->hazards;
+    }
+
+    public function addHazard(Hazard $hazard): self
+    {
+        if (!$this->hazards->contains($hazard)) {
+            $this->hazards[] = $hazard;
+            $hazard->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHazard(Hazard $hazard): self
+    {
+        if ($this->hazards->removeElement($hazard)) {
+            $hazard->removeProduct($this);
         }
 
         return $this;

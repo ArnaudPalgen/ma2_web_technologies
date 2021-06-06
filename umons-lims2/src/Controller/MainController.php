@@ -14,7 +14,7 @@ class MainController extends AbstractController
 
 
     /**
-     * @Route("/lucky/number")
+     * @Route("/lucky/number", name="ln")
      */
     public function number(): Response
     {

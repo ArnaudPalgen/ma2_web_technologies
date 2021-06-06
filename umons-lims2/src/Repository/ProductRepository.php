@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Location;
 use App\Entity\Product;
 use App\Entity\Usage;
+use ContainerJZgdR83\getProductRepositoryService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,15 +23,23 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findByNCAS($ncas)
-    {
+    public function findIncompatibilities(int $location,array $hazardCodes) {
 
-        return $this->createQueryBuilder('p')
-            ->select(['p.ncas', 'p.name'])
-            ->where('p.ncas LIKE :ncas')
-            ->setParameter('ncas', '%' . $ncas . '%')
-            ->getQuery()
-            ->getResult();
+        $qb =  $this->createQueryBuilder('p')
+            ->where('p.location = :location')
+            ->join('p.hazards', 'h')
+            ->setParameter('location', $location);
+
+        foreach ($hazardCodes as $k=> $code) {
+            $pname = 'hzrdcode'.$k;
+            $qb->orWhere(':'.$pname.' MEMBER OF h.incompatibilities')
+                ->setParameter($pname, $code);
+        }
+
+
+        return $qb->getQuery()->getResult();
+
+
     }
 
 
