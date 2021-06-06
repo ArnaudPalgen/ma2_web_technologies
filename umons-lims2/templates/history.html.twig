@@ -20,6 +20,7 @@
             <option value="1">Produit</option>
             <option value="2">Utilisateur</option>
             <option value="3">Date</option>
+            <option value="4">Identifiant</option>
           </select>
       </div>
     </div>
@@ -36,6 +37,7 @@
             <th>Produit</th>
             <th>Utilisateur</th>
             <th>Date</th>
+            <th>Identifiant</th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +47,7 @@
           <th>{{log.product.getName()}}</th>
           <th>{{log.user.getFirstName()}} {{log.user.getLastName()}}</th>
           <th class ="date">{{log.date|date("d/m/Y H:i:s", "Europe/Paris")}}</th>
+          <th>{{log.product.getId()}}</th>
         </tr>
         {% endfor %}
         </tbody>

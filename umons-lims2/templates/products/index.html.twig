@@ -31,6 +31,7 @@
                         <th class="text-center">Taille</th>
                         <th class="text-center">Utilisé par:</th>
                         <th class="text-center">Ouvert/Fermé</th>
+                        <th class="text-center">Identifiant</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,6 +79,7 @@
                                     Fermé
                                 {% endif %}
                             </td>
+                            <td>{{ product.id }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -93,6 +95,7 @@
                         <th>Taille</th>
                         <th>Utilisé par:</th>
                         <th>Ouvert/Fermé</th>
+                        <th>Identifiant</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -163,10 +166,11 @@
             "columnDefs": [
                 {"searchable": false, "targets": 0},
                 {"searchable": false, "targets": 1},
+                {"searchable": false, "targets": 2},
                 {
                     searchPanes: {
                         show: false
-                    }, width: '5%',
+                    }, width: '4%',
                     targets: [0]
                 },
                 {
@@ -222,6 +226,12 @@
                         show: true
                     },
                     targets: [9]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },width: '5%',
+                    targets: [10]
                 },
                 {"targets": [0, 1, 2], "orderable": false},
                 {"className": "dt-center", "targets": "_all"}
