@@ -262,9 +262,9 @@
 
             {% if is_granted('ROLE_SUPER_ADMIN')%}
                 //append option to edit_role
-                if (data[4] != "sudo") {
+                if (data[4] != "superuser") {
                     {% for role in roles %}
-                    {% if role.name != "sudo" %}//can't choose sudo
+                    {% if role.name != "superuser" %}//can't choose sudo
                     if (data[4] == "{{ role.name }}") {
                         role_select.append('<option selected>{{ role.name }}</option>');
                     } else {

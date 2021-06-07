@@ -72,7 +72,7 @@ class ProductsController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            dd($form->getData());
+            dd($form["ncas"]);
 
             $product = $form->getData();
 

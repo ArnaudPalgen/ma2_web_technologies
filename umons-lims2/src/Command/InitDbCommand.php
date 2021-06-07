@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Hazard;
+use App\Entity\Location;
 use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class InitDbCommand extends Command
 {
     protected static $defaultName = 'app:init-db';
-    protected static $defaultDescription = 'Initialize database data and create the superuser';
+    protected static string $defaultDescription = 'Initialize database data and create the superuser';
 
     private EntityManagerInterface $em;
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -32,21 +33,20 @@ class InitDbCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-//            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-//            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         $io = new SymfonyStyle($input, $output);
 
         $this->createRolesAndSuperUser($io);
+
         $this->seedHazardsAndIncompatibilities($io);
 
+        $this->seedLocations($io);
 
-        $io->success('Done ');
+        $io->success('Done!');
 
         return Command::SUCCESS;
     }
@@ -176,4 +176,19 @@ class InitDbCommand extends Command
 
 
     }
+
+    private function seedLocations(SymfonyStyle $io)
+    {
+        foreach (range('A', 'Q') as $shelf) {
+            for ($level = 0; $level < 4; $level++) {
+                $location = (new Location())
+                    ->setLevel($level)
+                    ->setShelf($shelf);
+                $this->em->persist($location);
+            }
+        }
+        $this->em->flush();
+    }
+
+
 }

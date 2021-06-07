@@ -150,7 +150,7 @@ class User implements UserInterface
 
         return match ($this->getRole()->getName()) {
             'admin' => ['ROLE_ADMIN'],
-            'sudo' => ['ROLE_SUPER_ADMIN'],
+            'superuser' => ['ROLE_SUPER_ADMIN'],
             default => ['ROLE_USER'],
         };
 

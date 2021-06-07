@@ -8,7 +8,7 @@ L'application web a les fonctionnalité suivantes:
 - Gestion des utilisateurs avec 3 roles:
   1. User: Utilisateurs pouvant consulter toutes les informations sur les produits et l'historique. Peut également agir sur le stock.
   2. Admin: Utilisateur pouvant modifier/ajouter/supprimer des utilisateurs.
-  3. Sudo: Utilisaeur unique ne pouvant pas être modifié. Il peut modifer/ajouter/supprimer des admins.
+  3. Superuser: Utilisaeur unique ne pouvant pas être modifié. Il peut modifer/ajouter/supprimer des admins.
 
 Les rôles héritent des propriétés des rôles précédents. Par exemple Admin hérite des propriétés de User. Un utilisateur non authentifié peut consulter les  informations sur les produits/historique sans les modifier.
 

@@ -77,8 +77,6 @@
 
 			const $product_location = $("#product_location");
 
-			const $product_hazards = $("#hazards");
-
 			const $product_form_button = $("#productFormButton");
 
 			const $compatibilityModal = $("#compatibilityModal");
@@ -91,7 +89,6 @@
 			const $product_isIgnoreConflict = $("#product_isIgnoreConflict");
 
 			let name_promise;
-			let hazard_promise;
 			let cid_promise;
 
 
@@ -165,32 +162,11 @@
 				});
 			}
 
-			function clear_hazards() {
-				$product_hazards.empty();
-			}
 
-			async  function  get_hazards(pubchem, prodCid) {
-				return await pubchem.findProductHazards(prodCid);
-			}
-
-			// function autofill_hazards(pubchem, cid) {
-			// 	hazard_promise = get_hazards(pubchem, cid);
-			// 	const localPromise = hazard_promise;
-			// 	hazard_promise.then(hzds => {
-			//
-			// 		if(hazard_promise === localPromise){
-			// 			if(hzds) {
-			// 				hzds.forEach(h => {
-			// 					$product_hazards.append(`<input type="hidden" name="hazards[${h.code}]" value="${h.text}" />`)
-			// 				});
-			// 			}
-			// 		}
-			// 	});
-			// }
 
 
 			function  update(pubchem, ncas) {
-				clear_hazards();
+				pState.cid = null;
 
 				if(ncas.length >= 3 && pubchem.isCasValid(ncas)){
 
@@ -200,10 +176,9 @@
 							.then(cid => {
 								if(cid_promise === localPromise){
 									if (cid) {
-										pState.cid = null;
+										pState.cid = cid;
 										pState.isNcasValid = true;
 										autofill_name(pubchem, cid);
-										// autofill_hazards(pubchem, cid);
 									} else {
 										pState.isNcasValid = false;
 									}
@@ -217,36 +192,44 @@
 				}
 			}
 
+
+			function proceed() {
+				check_compatibility($product_location.val(), pState.cid)
+						.then(incompatibilities => {
+							if (incompatibilities) {
+								$incompatibilitiesTableBody.empty();
+								for (let incompatibility of incompatibilities) {
+									$incompatibilitiesTableBody.append(
+											'<th scope="row">'+ incompatibility.id +'</th>'+
+											"<td>"+ incompatibility.ncas +"</td>"+
+											"<td>"+ incompatibility.name +"</td>"
+									);
+								}
+								$compatibilityModal.modal('show');
+							} else {
+								$productForm.submit();
+							}
+						});
+			}
+
 			$compatibilityConfirmButton.click(function () {
 				$product_isIgnoreConflict.val(true);
 				$productForm.submit();
 			});
 
 			$product_form_button.click(function( event ) {
+				console.log(pState.cid)
 				$product_form_button.button('loading');
 
+
+
 				if(pState.cid){
-					check_compatibility($product_location.val(), pState.cid)
-							.then(incompatibilities => {
-								if (incompatibilities) {
-									$incompatibilitiesTableBody.empty();
-									for (let incompatibility of incompatibilities) {
-										$incompatibilitiesTableBody.append(
-												'<th scope="row">'+ incompatibility.id +'</th>'+
-												"<td>"+ incompatibility.ncas +"</td>"+
-												"<td>"+ incompatibility.name +"</td>"
-										);
-									}
-									$compatibilityModal.modal('show');
-								} else {
-									$productForm.submit();
-								}
-							});
+					proceed()
 				}
 
 
 
-				event.preventDefault();
+				// event.preventDefault();
 
 
 			});

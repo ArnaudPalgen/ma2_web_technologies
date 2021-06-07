@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210601091724 extends AbstractMigration
+final class Version20210607184628 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -28,7 +28,7 @@ final class Version20210601091724 extends AbstractMigration
         $this->addSql('CREATE TABLE product (id INT AUTO_INCREMENT NOT NULL, location_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, ncas VARCHAR(255) NOT NULL, size VARCHAR(255) DEFAULT NULL, concentration INT NOT NULL, INDEX IDX_D34A04AD64D218E (location_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE role (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE `usage` (id INT AUTO_INCREMENT NOT NULL, product_id INT NOT NULL, user_id INT NOT NULL, action SMALLINT NOT NULL, date DATETIME NOT NULL, INDEX IDX_D0EB5E704584665A (product_id), INDEX IDX_D0EB5E70A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, role_id INT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, password VARCHAR(255) DEFAULT NULL, registration_number VARCHAR(255) NOT NULL, INDEX IDX_8D93D649D60322AC (role_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, role_id INT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, password VARCHAR(255) DEFAULT NULL, registration_number VARCHAR(255) NOT NULL, deleted_at DATETIME DEFAULT NULL, INDEX IDX_8D93D649D60322AC (role_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE hazard_product ADD CONSTRAINT FK_D36E74DA38150B74 FOREIGN KEY (hazard_id) REFERENCES hazard (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE hazard_product ADD CONSTRAINT FK_D36E74DA4584665A FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE hazard_hazard ADD CONSTRAINT FK_CF065AB37BFA0873 FOREIGN KEY (hazard_source) REFERENCES hazard (id) ON DELETE CASCADE');
@@ -37,9 +37,6 @@ final class Version20210601091724 extends AbstractMigration
         $this->addSql('ALTER TABLE `usage` ADD CONSTRAINT FK_D0EB5E704584665A FOREIGN KEY (product_id) REFERENCES product (id)');
         $this->addSql('ALTER TABLE `usage` ADD CONSTRAINT FK_D0EB5E70A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE user ADD CONSTRAINT FK_8D93D649D60322AC FOREIGN KEY (role_id) REFERENCES role (id)');
-		$this->addSql('CREATE EVENT e_clear_product_usage_history ON SCHEDULE EVERY 1 day COMMENT "Clears out old usage history." DO DELETE FROM `usage` WHERE id IN(SELECT id  FROM (SELECT * FROM `usage` AS u1 WHERE u1.DATE < NOW() - INTERVAL 6 MONTH AND (u1.product_id IN (SELECT product_id FROM `usage` WHERE DATE >= NOW() - INTERVAL 6 MONTH) OR u1.`action`= 4)) AS c);');
-		$this->addSql('CREATE EVENT e_clear_product ON SCHEDULE EVERY 1 day COMMENT "Clears product delete in product." DO DELETE FROM `product` WHERE id IN(SELECT id  FROM (SELECT * FROM `product`  WHERE id NOT IN (SELECT product_id FROM `usage`) ) AS c);');
-		$this->addSql('CREATE EVENT e_clear_user ON SCHEDULE EVERY 1 day COMMENT "Clears user delete." DO DELETE FROM `user` WHERE id IN(SELECT id  FROM (SELECT * FROM `user` WHERE deleted_at IS NOT NULL AND id NOT IN (SELECT user_id FROM `usage`) ) AS c);');
     }
 
     public function down(Schema $schema): void

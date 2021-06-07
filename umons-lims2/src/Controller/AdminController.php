@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Role;
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use DateTime;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -16,7 +16,7 @@ class AdminController extends AbstractController
 
 
 
-    #[Route('/manageUser', name: 'admin.user')]
+    #[Route('/manageUser', name: 'user')]
     public function index(): Response
     {
         $repository = $this->getDoctrine()->getRepository(User::class);
