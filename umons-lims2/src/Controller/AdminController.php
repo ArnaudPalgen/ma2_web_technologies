@@ -7,13 +7,18 @@ use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\HttpUtils;
 
 #[Route('/admin', name: 'admin.')]
 class AdminController extends AbstractController
 {
+
     #[Route('/manageUser', name: 'user')]
     public function index(): Response
     {
+//        dd($this->security->getToken());
+
         $repository = $this->getDoctrine()->getRepository(User::class);
         $users = $repository->findAll();
 

@@ -4,10 +4,8 @@ namespace App\Form;
 
 use App\Entity\Location;
 use App\Entity\Product;
-use Doctrine\DBAL\Types\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -42,11 +40,12 @@ class ProductType extends AbstractType
             ->add('isIgnoreConflict', HiddenType::class, [
                 'empty_data' => false,
                 'mapped' => false,
+                'data' => false,
             ])
-            ->add('hazards', HiddenType::class, [
-                'empty_data' => null,
-                'mapped' => false,
-            ])
+//            ->add('hazards', HiddenType::class, [
+//                'empty_data' => null,
+//                'mapped' => false,
+//            ])
         ;
     }
 

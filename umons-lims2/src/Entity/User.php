@@ -54,8 +54,6 @@ class User implements UserInterface
     private $registration_number;
 
 
-    private $is_admin_allowed = false;
-
 
     public function __construct()
     {
@@ -138,22 +136,12 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @param bool $is_admin_allowed
-     */
-    public function setIsAdminAllowed(bool $is_admin_allowed): void
-    {
-        $this->is_admin_allowed = $is_admin_allowed;
-    }
 
     /**
      * @see UserInterface
      */
     public function getRoles(): array
     {
-        if (!$this->is_admin_allowed) {
-            return ['ROLE_USER'];
-        }
 
         return match ($this->getRole()->getName()) {
             'admin' => ['ROLE_ADMIN'],

@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Location;
 use App\Entity\Product;
 use App\Entity\Usage;
 use ContainerJZgdR83\getProductRepositoryService;
@@ -36,8 +35,12 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter($pname, $code);
         }
 
+        $res = $qb->getQuery()->getResult();
 
-        return $qb->getQuery()->getResult();
+        if(count($res) > 0) {
+            return $res;
+        }
+        return null;
 
 
     }

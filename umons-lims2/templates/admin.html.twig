@@ -234,9 +234,9 @@
             let role_select = modal.find('#edit_role');
 
             //append option to edit_tole
-            if (data[4] != "sudo") {
+            if (data[4] != "") {
                 {% for role in roles %}
-                {% if role.name != "sudo" %}//can't choose sudo
+                {% if role.name != "superuser" %}//can't choose superuser
                 if (data[4] == "{{ role.name }}") {
                     role_select.append('<option selected>{{ role.name }}</option>');
                 } else {
@@ -245,7 +245,7 @@
                 {% endif %}
                 {% endfor %}
             } else {
-                //sudo can't be chaged -> replace select by a read-only input
+                //superuser can't be chaged -> replace select by a read-only input
                 role_select.replaceWith('<input id="edit_role" class="form-control" type="text" placeholder=' + data[4] + ' readonly>');
             }
         })

@@ -4,24 +4,18 @@
 namespace App\Security;
 
 
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PasswordUpgradeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -29,19 +23,17 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\HttpUtils;
-use Symfony\Component\Security\Http\ParameterBagUtils;
 
 class TestAuthenticator extends AbstractLoginFormAuthenticator
 {
 
-    private $httpUtils;
-    private $userProvider;
-    private $httpKernel;
+    private HttpUtils $httpUtils;
+    private UserProviderInterface $userProvider;
 
-    private $login_path = "login";
-    private $check_path = "login";
+    private string $login_path = "login";
+    private string $check_path = "login";
 
-    private  $on_success_redirect_route = "admin.user";
+    private  string $on_success_redirect_route = "admin.user";
 
     public function __construct(HttpUtils $httpUtils, UserProviderInterface $userProvider)
     {
@@ -71,11 +63,11 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
                 throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
             }
 
-            $user->setIsAdminAllowed(true);
-
 
             return $user;
         }), new PasswordCredentials($credentials['password']), [new RememberMeBadge()]);
+
+
 
 
         if ($this->userProvider instanceof PasswordUpgraderInterface) {
@@ -90,8 +82,9 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
      */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
-
-        return new UsernamePasswordToken($passport->getUser(), null, $firewallName, $passport->getUser()->getRoles());
+        $usernamePasswordToken = new UsernamePasswordToken($passport->getUser(), null, $firewallName, $passport->getUser()->getRoles());
+        $usernamePasswordToken->setAttribute('ULIMS:IS_USED_ADMIN_AUTH', true);
+        return $usernamePasswordToken;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

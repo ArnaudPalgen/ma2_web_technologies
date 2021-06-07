@@ -46,7 +46,7 @@ class AppFixtures extends Fixture
 
     private function addRoles(ObjectManager $manager)
     {
-        $this->roles[] = (new Role())->setName("sudo");
+        $this->roles[] = (new Role())->setName("superuser");
         $this->roles[] = (new Role())->setName("admin");
         $this->roles[] = (new Role())->setName("user");
 
@@ -76,6 +76,69 @@ class AppFixtures extends Fixture
 
     private function addHazards(ObjectManager $manager)
     {
+
+        $explosive = (new Hazard())
+            ->setId('GHS01')
+            ->setLabel('Explosive');
+        $flammable = (new Hazard())
+            ->setId('GHS02')
+            ->setLabel('Flammable');
+        $oxidizing = (new Hazard())
+            ->setId('GHS03')
+            ->setLabel('Oxidizing');
+        $compressed_gas = (new Hazard())
+            ->setId('GHS04')
+            ->setLabel('Compressed Gas');
+        $corrosive = (new Hazard())
+            ->setId('GHS05')
+            ->setLabel('Corrosive');
+        $toxic = (new Hazard())
+            ->setId('GHS06')
+            ->setLabel('Toxic');
+        $harmful = (new Hazard())
+            ->setId('GHS07')
+            ->setLabel('Harmful');
+        $health_hazard = (new Hazard())
+            ->setId('GHS08')
+            ->setLabel('Health Hazard');
+        $environmental_hazard = (new Hazard())
+            ->setId('GHS09')
+            ->setLabel('Environmental Hazard');
+
+
+        $explosive
+            ->addIncompatibility($flammable)
+            ->addIncompatibility($oxidizing)
+            ->addIncompatibility($compressed_gas)
+            ->addIncompatibility($corrosive)
+            ->addIncompatibility($toxic)
+            ->addIncompatibility($health_hazard)
+            ->addIncompatibility($environmental_hazard);
+
+        $flammable
+            ->addIncompatibility($oxidizing)
+            ->addIncompatibility($compressed_gas)
+            ->addIncompatibility($corrosive)
+            ->addIncompatibility($toxic)
+            ->addIncompatibility($health_hazard)
+            ->addIncompatibility($environmental_hazard);
+
+        $oxidizing
+            ->addIncompatibility($corrosive)
+            ->addIncompatibility($toxic)
+            ->addIncompatibility($harmful)
+            ->addIncompatibility($health_hazard)
+            ->addIncompatibility($environmental_hazard);
+
+        $compressed_gas
+            ->addIncompatibility($toxic)
+            ->addIncompatibility($harmful)
+            ->addIncompatibility($health_hazard)
+            ->addIncompatibility($environmental_hazard);
+
+
+
+
         $list = [
             "Flammable",
             "Compressed Gases",

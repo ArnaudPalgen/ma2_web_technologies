@@ -5,17 +5,17 @@ namespace App\Controller;
 use App\Entity\Name;
 use App\Entity\Product;
 use App\Entity\Usage;
-use App\Entity\User;
 use App\Form\ProductType;
-use App\Repository\HazardRepository;
 use App\Repository\NameRepository;
 use App\Repository\ProductRepository;
+use App\Service\PubChem;
 use DateTime;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductsController extends AbstractController
 {
@@ -71,6 +71,8 @@ class ProductsController extends AbstractController
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            dd($form->getData());
 
             $product = $form->getData();
 
@@ -135,19 +137,36 @@ class ProductsController extends AbstractController
 //    }
 
     #[Route('/json/products/compatibilities/check', name: 'products.compatibility_check.json')]
-    public function jsonCompatibilityCheck(Request $request, ProductRepository $productRepository): Response
+    public function jsonCompatibilityCheck(Request $request, ProductRepository $productRepository, PubChem $pubChem, SerializerInterface $serializer): Response
     {
-        $product_id = $request->query->get('product');
-        $location_id = $request->query->get('location');
-        if($product_id != null && $location_id!=null) {
-            $product_id = intval($product_id);
-            $location_id = intval($location_id);
 
-            $productRepository->findIncompatibilities();
+
+
+
+
+        $cid = $request->query->get('cid');
+        $location = $request->query->get('location');
+        if($cid && $location) {
+            $p = $pubChem->getHazards($cid);
+            $status = $p['status'];
+            if($status == 200){
+                $hazards = array_map(function ($h) {
+                    return $h['code'];
+                }, $p['hazards']);
+
+                $incompatibilities = $productRepository->findIncompatibilities($location, $hazards);
+                $json = $serializer->serialize($incompatibilities, 'json', ['groups' => ['normal']]);
+                return (new JsonResponse())->setContent($json);
+                return $this->json($json);
+
+            } else{
+                return $this->json(null, $status);
+            }
 
         }
-//        $res = $nameRepository->findBy(['ncas'=>$product_id]);
-//        return $this->json($res);
+
+
+        return $this->json([]);
     }
 
 

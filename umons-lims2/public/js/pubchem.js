@@ -68,7 +68,7 @@ class PubChem {
         try {
             const resp = await this.api.get(`/pug_view/data/compound/${cid}/JSON?heading=Chemical+Safety`);
             return resp.data.Record.Section[0].Information[0].Value.StringWithMarkup[0].Markup.map(e=>{
-                let s =  "https://pubchem.ncbi.nlm.nih.gov/images/ghs/GHS01.svg".split("/");
+                let s =  e.URL.split("/");
                 return {
                     symbol: e.URL,
                     code: s[s.length -1].split('.')[0],

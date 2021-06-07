@@ -17,7 +17,7 @@
 					{{ form_widget(form) }}
 
 					<div id="hazards"></div>
-					<button type="submit" class="btn btn-primary"  id="productFormButton">Valider</button>
+					<button type="button" class="btn btn-primary"  id="productFormButton">Valider</button>
 				{{ form_end(form) }}
 			</div>
 		</div>
@@ -33,7 +33,18 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						...
+						<table class="table">
+							<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">NCAS</th>
+								<th scope="col">Nom</th>
+							</tr>
+							</thead>
+							<tbody id=="incompatibilitiesTableBody">
+
+							</tbody>
+						</table>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
@@ -64,6 +75,8 @@
 			const $ncas_field_group = $ncas_field.parent()
 			const $product_name = $("#product_name");
 
+			const $product_location = $("#product_location");
+
 			const $product_hazards = $("#hazards");
 
 			const $product_form_button = $("#productFormButton");
@@ -73,12 +86,18 @@
 			const $compatibilityConfirmButton = $("#compatibilityConfirmButton");
 			const $productForm = $("form[name='product']");
 
+			const $incompatibilitiesTableBody = $("#incompatibilitiesTableBody");
+
+			const $product_isIgnoreConflict = $("#product_isIgnoreConflict");
+
 			let name_promise;
 			let hazard_promise;
 			let cid_promise;
 
 
 			const pState = {
+				cid: null,
+
 				set isNameLoading(val) {
 					$product_name.prop( "disabled", !!val );
 				},
@@ -87,25 +106,38 @@
 				},
 
 				set isNcasValid(val) {
+
 					const class_invalid = "is-invalid";
-					const class_has_validation = "has-validation"
-					let error_feedback = $ncas_field_group.find('.invalid-feedback')
+					const class_has_validation = "has-validation";
+					let error_feedback = $ncas_field_group.find('.invalid-feedback');
 					if(!error_feedback.length) {
 						error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>");
 					}
 					error_feedback.hide();
 					$ncas_field_group.append(error_feedback);
 
-					$ncas_field_group.removeClass(class_has_validation)
-					$ncas_field.removeClass(class_invalid)
+					$ncas_field_group.removeClass(class_has_validation);
+					$ncas_field.removeClass(class_invalid);
 
 					if(!val){
-						$ncas_field_group.addClass(class_has_validation)
-						$ncas_field.addClass(class_invalid)
-						error_feedback.show()
+						this.cid = null;
+						$ncas_field_group.addClass(class_has_validation);
+						$ncas_field.addClass(class_invalid);
+						error_feedback.show();
 					}
 				},
 
+			}
+
+
+			async function check_compatibility(location, cid) {
+				let p_name = await axios.get("/json/products/compatibilities/check", {
+					params: {
+						location: location,
+						cid: cid
+					}
+				});
+				return  p_name.data;
 			}
 
 			async function get_name(pubchem, prodCid) {
@@ -141,20 +173,20 @@
 				return await pubchem.findProductHazards(prodCid);
 			}
 
-			function autofill_hazards(pubchem, cid) {
-				hazard_promise = get_hazards(pubchem, cid);
-				const localPromise = hazard_promise;
-				hazard_promise.then(hzds => {
-
-					if(hazard_promise === localPromise){
-						if(hzds) {
-							hzds.forEach(h => {
-								$product_hazards.append(`<input type="hidden" name="hazards[${h.code}]" value="${h.text}" />`)
-							});
-						}
-					}
-				});
-			}
+			// function autofill_hazards(pubchem, cid) {
+			// 	hazard_promise = get_hazards(pubchem, cid);
+			// 	const localPromise = hazard_promise;
+			// 	hazard_promise.then(hzds => {
+			//
+			// 		if(hazard_promise === localPromise){
+			// 			if(hzds) {
+			// 				hzds.forEach(h => {
+			// 					$product_hazards.append(`<input type="hidden" name="hazards[${h.code}]" value="${h.text}" />`)
+			// 				});
+			// 			}
+			// 		}
+			// 	});
+			// }
 
 
 			function  update(pubchem, ncas) {
@@ -168,9 +200,10 @@
 							.then(cid => {
 								if(cid_promise === localPromise){
 									if (cid) {
+										pState.cid = null;
 										pState.isNcasValid = true;
 										autofill_name(pubchem, cid);
-										autofill_hazards(pubchem, cid);
+										// autofill_hazards(pubchem, cid);
 									} else {
 										pState.isNcasValid = false;
 									}
@@ -185,19 +218,32 @@
 			}
 
 			$compatibilityConfirmButton.click(function () {
+				$product_isIgnoreConflict.val(true);
 				$productForm.submit();
 			});
 
-			$productForm.submit(function( event ) {
+			$product_form_button.click(function( event ) {
 				$product_form_button.button('loading');
-				// setTimeout(function() {
-				// 	$product_form_button.button('reset');
-				// }, 4000);
-				if(false){ // TODO
-					$productForm.submit();
-				} else {
-					$compatibilityModal.modal('show');
+
+				if(pState.cid){
+					check_compatibility($product_location.val(), pState.cid)
+							.then(incompatibilities => {
+								if (incompatibilities) {
+									$incompatibilitiesTableBody.empty();
+									for (let incompatibility of incompatibilities) {
+										$incompatibilitiesTableBody.append(
+												'<th scope="row">'+ incompatibility.id +'</th>'+
+												"<td>"+ incompatibility.ncas +"</td>"+
+												"<td>"+ incompatibility.name +"</td>"
+										);
+									}
+									$compatibilityModal.modal('show');
+								} else {
+									$productForm.submit();
+								}
+							});
 				}
+
 
 
 				event.preventDefault();
