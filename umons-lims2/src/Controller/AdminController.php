@@ -5,13 +5,18 @@ namespace App\Controller;
 use App\Entity\Role;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use DateTime;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 #[Route('/admin', name: 'admin.')]
 class AdminController extends AbstractController
 {
-    #[Route('/manageUser', name: 'user')]
+
+
+
+    #[Route('/manageUser', name: 'admin.user')]
     public function index(): Response
     {
         $repository = $this->getDoctrine()->getRepository(User::class);
@@ -24,8 +29,8 @@ class AdminController extends AbstractController
     }
 
 
-    #[Route('/changeUser/{id}/{registration_number}/{first_name}/{last_name}/{role}/{action}', name: 'change.user')]
-    public function changeUser(int $id, int $registration_number, string $first_name, string $last_name, string $role, string $action): Response
+    #[Route('/changeUser/{id}/{registration_number}/{first_name}/{last_name}/{mdp}/{role}/{action}', name: 'change.user')]
+    public function changeUser(int $id, int $registration_number, string $first_name, string $last_name, string $mdp, string $role, string $action, UserPasswordEncoderInterface $encoder): Response
     {
         $en = $this->getDoctrine()->getManager();
 
@@ -37,9 +42,18 @@ class AdminController extends AbstractController
         }
 
         if($action === "remove"){
-            $en->remove($user);
+            $user->setDeletedAt(new DateTime());
         }else{
             $newRole = $this->getDoctrine()->getRepository(Role::class)->findOneBy(array('name' => [$role]));
+
+            if ($mdp !== '') {
+                $user->setPassword(
+                    $encoder->encodePassword(
+                        $user,
+                        $mdp
+                    )
+                );
+            }
             $user->setFirstName($first_name);
             $user->setLastName($last_name);
             $user->setRegistrationNumber($registration_number);
@@ -54,27 +68,5 @@ class AdminController extends AbstractController
         return $this->json(json_encode(true));
     }
 
-
-
-    #[Route('/addUser/{registration_number}/{first_name}/{last_name}/{role}', name: 'add.user')]
-    public function addUser(int $registration_number, string $first_name, string $last_name, string $role): Response
-    {
-        $en = $this->getDoctrine()->getManager();
-
-        $newRole = $this->getDoctrine()->getRepository(Role::class)->findOneBy(array('name' => [$role]));
-
-        $user = new User();
-
-        $user->setFirstName($first_name);
-        $user->setLastName($last_name);
-        $user->setRegistrationNumber($registration_number);
-        $user->setRole($newRole);
-
-        $en->persist($user);
-
-        $en->flush();
-
-        return $this->json(json_encode(true));
-    }
 
 }

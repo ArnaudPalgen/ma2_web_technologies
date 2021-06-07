@@ -23,10 +23,8 @@
 {#			</div>#}
 {#		{% endif %}#}
 
-		<div class="container-fluid">
+		<div class="container-fluid recherchable">
 			<form method="post">
-
-
 				<input type="hidden"
 					   name="_csrf_token"
 					   value="{{ csrf_token("simple-auth") }}">
@@ -39,7 +37,7 @@
 
 				<div class="row">
 				{% for user in users %}
-					<div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-2">
+					<div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-2 containCard">
 					<label class="d-block">
 						<input
 								type="radio"
@@ -71,9 +69,9 @@
 {% block javascripts %}
 	<script>
 		$('#search').on('input', function (){
-    	$('.card').removeClass('d-none');
+    	$('.containCard').removeClass('d-none');
     	var filter = $(this).val();
-    	$('.card-columns').find('.card .card-body .card-title:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
+    	$('.recherchable').find('.card .card-body .card-title:not(:contains("'+filter+'"))').closest('.containCard').addClass('d-none');
 })
 	</script>
 {% endblock %}

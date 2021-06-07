@@ -37,6 +37,9 @@ final class Version20210601091724 extends AbstractMigration
         $this->addSql('ALTER TABLE `usage` ADD CONSTRAINT FK_D0EB5E704584665A FOREIGN KEY (product_id) REFERENCES product (id)');
         $this->addSql('ALTER TABLE `usage` ADD CONSTRAINT FK_D0EB5E70A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE user ADD CONSTRAINT FK_8D93D649D60322AC FOREIGN KEY (role_id) REFERENCES role (id)');
+		$this->addSql('CREATE EVENT e_clear_product_usage_history ON SCHEDULE EVERY 1 day COMMENT "Clears out old usage history." DO DELETE FROM `usage` WHERE id IN(SELECT id  FROM (SELECT * FROM `usage` AS u1 WHERE u1.DATE < NOW() - INTERVAL 6 MONTH AND (u1.product_id IN (SELECT product_id FROM `usage` WHERE DATE >= NOW() - INTERVAL 6 MONTH) OR u1.`action`= 4)) AS c);');
+		$this->addSql('CREATE EVENT e_clear_product ON SCHEDULE EVERY 1 day COMMENT "Clears product delete in product." DO DELETE FROM `product` WHERE id IN(SELECT id  FROM (SELECT * FROM `product`  WHERE id NOT IN (SELECT product_id FROM `usage`) ) AS c);');
+		$this->addSql('CREATE EVENT e_clear_user ON SCHEDULE EVERY 1 day COMMENT "Clears user delete." DO DELETE FROM `user` WHERE id IN(SELECT id  FROM (SELECT * FROM `user` WHERE deleted_at IS NOT NULL AND id NOT IN (SELECT user_id FROM `usage`) ) AS c);');
     }
 
     public function down(Schema $schema): void
