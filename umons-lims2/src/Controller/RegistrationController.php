@@ -39,9 +39,9 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Vous avez bien été enregistré.');
+            $this->addFlash('success', "L'utilisateur bien été enregistré.");
 
-            return $this->redirectToRoute('products.index');
+            return $this->redirectToRoute('admin.user');
 
         }
 

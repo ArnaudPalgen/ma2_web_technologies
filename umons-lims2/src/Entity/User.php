@@ -54,6 +54,11 @@ class User implements UserInterface
     private $registration_number;
 
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deleted_at;
+
 
     public function __construct()
     {
@@ -196,6 +201,18 @@ class User implements UserInterface
      */
     public function eraseCredentials()
     {
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deleted_at): self
+    {
+        $this->deleted_at = $deleted_at;
+
+        return $this;
     }
 
 
