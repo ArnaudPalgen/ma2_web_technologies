@@ -399,6 +399,7 @@
 
                     row.data(data).draw(false);
                     table.searchPanes.rebuildPane();
+                    resetcheckbox();
             });
             {% else %}
                 window.location.href = '{{ path('userselect')|escape('js') }}';
@@ -426,11 +427,21 @@
 
                     row.data(data).draw(false);
                     table.searchPanes.rebuildPane();
+                    resetcheckbox();
             });
             {% else %}
                 window.location.href = '{{ path('userselect')|escape('js') }}';
             {% endif %}
 
+        }
+
+        function resetcheckbox(){
+            $("input[type=checkbox]").off('change');
+            $("input[type=checkbox]").change(function () {
+                $("#product-" + this.value).toggleClass('selected');
+            });
+            $("tr").removeClass('selected');
+            $("input[type=checkbox]").prop( "checked", false );
         }
     </script>
 {% endblock %}
