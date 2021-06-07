@@ -1,4 +1,4 @@
-![ULims logo](./umons-lims2/public/lims_logo.svg)
+![ULims logo](./umons-lims2/public/lims_icon.png)
 
 # ULims un gestionnaire de réserve de produits chimique
 
@@ -25,4 +25,4 @@ Les rôles héritent des propriétés des rôles précédents. Par exemple Admin
 
 ## Contact
 Le projet a été réalisé par [Serge Nshimiyimana](mailto:serge.nshimiyimana@student.umons.ac.be), [Arnaud Palgen](mailto:arnaud.palgen@student.umons.ac.be) et [Pierre Zielenski](mailto:pierre.zielenski@student.umons.ac.be) @student.umons.ac.be pour le cours de Web Technology de l'Université de Mons.
-Pour plus d'informations n'éhésitez pas à nous contacter par email !
+Pour plus d'informations n'hésitez pas à nous contacter par email !
