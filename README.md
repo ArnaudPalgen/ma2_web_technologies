@@ -1,4 +1,4 @@
-![ULims logo](https://raw.githubusercontent.com/ArnaudPalgen/ma2_web_technologies/umons-lims2/public/lims_logo.svg)
+![ULims logo](./umons-lims2/public/lims_logo.svg)
 
 # ULims un gestionnaire de réserve de produits chimique
 
