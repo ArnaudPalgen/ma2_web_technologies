@@ -353,18 +353,21 @@
             let data = rows.data();
 
 
+
+
             let url = '{{ path('products.move') }}';
 
             let products = [];
 
-            for (let i = 0; i < data.length; i++) {
+            for(let i = 0; i < data.length; i++) {
                 products.push(data[i]["DT_RowId"].split('-')[1]);
             }
             let queryString = products
-                .map((p, i) => 'products[' + i + ']=' + p)
+                .map((p, i) => 'products['+i+']='+p)
                 .join('&');
 
             url = url + '?' + queryString;
+
 
 
             window.location.href = url;
