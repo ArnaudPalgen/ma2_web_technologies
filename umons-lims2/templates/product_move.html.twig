@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Déplacer des produits
+{% endblock %}
+
+
+{% block searchbar %}{% endblock %}
+
+
+
+
+{% block body %}
+
+
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Déplacer des produits</h1>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">NCAS</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Emplacement Actuel</th>
+                        <th scope="col">Masse / Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <th scope="row"> {{ product.id }} </th>
+                            <td> {{ product.ncas }} </td>
+                            <td> {{ product.name }} </td>
+                            <td> {{ product.location.getDisplayName }} </td>
+                            <td> {{ product.size }} </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                <button type="button" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block javascripts %}
+    <script>
+        $(() => {
+            const $productFormButton = $('#productFormButton');
+            $productFormButton.click(function( event ) {
+
+                $productFormButton.button('loading');
+            });
+
+        });
+    </script>
+{% endblock %}
+
+

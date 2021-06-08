@@ -6,11 +6,14 @@ use App\Entity\Location;
 use App\Entity\Product;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Positive;
 
 class ProductType extends AbstractType
 {
@@ -24,11 +27,22 @@ class ProductType extends AbstractType
                 'label' => 'Nom du produit',
             ])
             ->add('size', TextType::class, ['label' => 'Masse / Volume'])
-            ->add('concentration', TextType::class, ['label' => 'Concentration'])
+            ->add('concentration', PercentType::class, [
+                'label' => 'Concentration',
+                'scale' => 2,
+                'attr' => [
+                    'max' => 100
+                ],
+                'constraints' => [new Positive()],
+            ])
             ->add('count', IntegerType::class, [
                 'label' => 'Quantité',
                 'mapped' => false,
-                'data' => 1
+                'data' => 1,
+                'constraints' => [new Positive()],
+                'attr' => [
+                    'min' => 1
+                ]
             ])
             ->add('location', EntityType::class, [
                 'label' => 'Emplacement',
@@ -42,10 +56,25 @@ class ProductType extends AbstractType
                 'mapped' => false,
                 'data' => false,
             ])
+            ->add('cid', HiddenType::class, [
+                'mapped' => false
+            ])
 //            ->add('hazards', HiddenType::class, [
 //                'empty_data' => null,
 //                'mapped' => false,
 //            ])
+        ;
+
+
+        $builder->get('concentration')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($c) {
+                    return $c / 10000;
+                },
+                function ($c) {
+                    return $c * 10000;
+                }
+            ))
         ;
     }
 

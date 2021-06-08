@@ -17,7 +17,7 @@
 					{{ form_widget(form) }}
 
 					<div id="hazards"></div>
-					<button type="button" class="btn btn-primary"  id="productFormButton">Valider</button>
+					<button type="button" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
 				{{ form_end(form) }}
 			</div>
 		</div>
@@ -33,6 +33,8 @@
 						</button>
 					</div>
 					<div class="modal-body">
+						<p>	Le produit que vous souhaitez créer possède des propriétés incompatibles avec celles d'autres produits se trouvant dans l'emplacement souhaité. Voulez-vous continuer ?</p>
+
 						<table class="table">
 							<thead>
 							<tr>
@@ -41,14 +43,14 @@
 								<th scope="col">Nom</th>
 							</tr>
 							</thead>
-							<tbody id=="incompatibilitiesTableBody">
+							<tbody id="incompatibilitiesTableBody">
 
 							</tbody>
 						</table>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-						<button type="button" class="btn btn-warning" id="compatibilityConfirmButton">Confirmer</button>
+						<button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
+						<button type="button" class="btn btn-secondary" id="compatibilityConfirmButton">Procéder à l'ajout</button>
 					</div>
 				</div>
 			</div>
@@ -79,6 +81,8 @@
 
 			const $product_form_button = $("#productFormButton");
 
+			const $product_cid = $("#product_cid");
+
 			const $compatibilityModal = $("#compatibilityModal");
 
 			const $compatibilityConfirmButton = $("#compatibilityConfirmButton");
@@ -93,7 +97,18 @@
 
 
 			const pState = {
-				cid: null,
+
+				set cid(val) {
+					return $product_cid.val(val);
+
+				},
+				get cid() {
+					let parsed = parseInt($product_cid.val());
+					if (isNaN(parsed)) {
+						return null;
+					}
+					return parsed;
+				},
 
 				set isNameLoading(val) {
 					$product_name.prop( "disabled", !!val );
@@ -196,13 +211,18 @@
 			function proceed() {
 				check_compatibility($product_location.val(), pState.cid)
 						.then(incompatibilities => {
+
 							if (incompatibilities) {
+								console.log(incompatibilities)
 								$incompatibilitiesTableBody.empty();
 								for (let incompatibility of incompatibilities) {
+
 									$incompatibilitiesTableBody.append(
-											'<th scope="row">'+ incompatibility.id +'</th>'+
-											"<td>"+ incompatibility.ncas +"</td>"+
-											"<td>"+ incompatibility.name +"</td>"
+											`<tr>
+												<th scope="row"> ${incompatibility.id} </th>
+												<td> ${incompatibility.ncas} </td>
+												<td> ${incompatibility.name} </td>
+											</tr>`
 									);
 								}
 								$compatibilityModal.modal('show');

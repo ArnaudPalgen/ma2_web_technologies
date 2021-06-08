@@ -24,18 +24,56 @@ class ProductRepository extends ServiceEntityRepository
 
     public function findIncompatibilities(int $location,array $hazardCodes) {
 
-        $qb =  $this->createQueryBuilder('p')
-            ->where('p.location = :location')
-            ->join('p.hazards', 'h')
+
+
+
+
+        $rsm = new ResultSetMapping();
+        $rsm
+            ->addScalarResult('id', 'id')
+            ->addScalarResult('name', 'name')
+            ->addScalarResult('ncas', 'ncas')
+            ->addScalarResult('size', 'size');
+
+        $sql = "
+            SELECT p.id,
+                   name,
+                   ncas,
+                   size
+            FROM   product p
+                   INNER JOIN (SELECT u1.product_id,
+                                      u1.action,
+                                      u2.date,
+                                      u1.user_id
+                               FROM   `usage` u1
+                                      JOIN (SELECT product_id,
+                                                   Max(date) date
+                                            FROM   `usage`
+                                            GROUP  BY product_id) u2
+                                        ON u1.date = u2.date
+                                           AND u1.product_id = u2.product_id) u
+                           ON p.id = u.product_id
+                              AND action != 4
+
+                   INNER JOIN hazard_product hp
+                           ON hp.product_id = p.id
+            WHERE 
+                  p.location_id = :location
+                  and
+                  EXISTS(
+                      SELECT *
+                      FROM   hazard_hazard incs
+                      WHERE  incs.hazard_target = hp.hazard_id && incs.hazard_source IN (:pHazrads )
+                      )  
+        ";
+
+        $query = $this->getEntityManager()
+            ->createNativeQuery($sql, $rsm)
+            ->setParameter('pHazrads', $hazardCodes)
             ->setParameter('location', $location);
 
-        foreach ($hazardCodes as $k=> $code) {
-            $pname = 'hzrdcode'.$k;
-            $qb->orWhere(':'.$pname.' MEMBER OF h.incompatibilities')
-                ->setParameter($pname, $code);
-        }
 
-        $res = $qb->getQuery()->getResult();
+        $res =  $query->getResult();
 
         if(count($res) > 0) {
             return $res;

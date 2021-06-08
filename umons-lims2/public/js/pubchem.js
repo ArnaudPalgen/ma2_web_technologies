@@ -77,7 +77,7 @@ class PubChem {
             });
 
         } catch (e) {
-            if(e.response.status == 404) {
+            if(e.response.status === 404) {
                 return [];
             } else{
                 console.error('PubChem call failed !')

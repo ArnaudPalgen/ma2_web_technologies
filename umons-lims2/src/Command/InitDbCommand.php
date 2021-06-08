@@ -130,17 +130,21 @@ class InitDbCommand extends Command
 
     private function createRolesAndSuperUser(SymfonyStyle $io)
     {
+        $adminLastName = 'ULIMS';
+        $adminFirstName = 'SUPERUSER';
+        $adminRegistrationNumber= 'ULIMS_SUPERUSER';
+        $adminPlainPassword = 'UmonsLIMS';
 
-        $adminName = $io->ask('Type in the name you want to give to the superuser', 'ULIMS Superuser');
-        $adminPassword = $io->askHidden('Type in the password', function ($value) {
-            if (trim($value) == '') {
-                throw new \Exception('The password cannot be empty');
-            }
-            if (strlen($value) < 6) {
-                throw new \Exception('The password must be at least 6 characters long.');
-            }
-            return $value;
-        });
+//        $adminName = $io->ask('Type in the name you want to give to the superuser', 'ULIMS Superuser');
+//        $adminPlainPassword = $io->askHidden('Type in the password', function ($value) {
+//            if (trim($value) == '') {
+//                throw new \Exception('The password cannot be empty');
+//            }
+//            if (strlen($value) < 6) {
+//                throw new \Exception('The password must be at least 6 characters long.');
+//            }
+//            return $value;
+//        });
 
 
 
@@ -154,14 +158,14 @@ class InitDbCommand extends Command
 
         $user = (new User())
             ->setRole($roleSuperuser)
-            ->setRegistrationNumber("ULIMS_SUPERUSER")
-            ->setFirstName($adminName)
-            ->setLastName('')
+            ->setRegistrationNumber($adminRegistrationNumber)
+            ->setFirstName($adminFirstName)
+            ->setLastName($adminLastName)
         ;
 
         $user->setPassword($this->passwordEncoder->encodePassword(
             $user,
-            $adminPassword
+            $adminPlainPassword
         ))
         ;
 

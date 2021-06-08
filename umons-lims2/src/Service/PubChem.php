@@ -53,4 +53,29 @@ class PubChem
             ];
         }
     }
+
+
+    public  function getCid($ncas) {
+
+        $response = $this->client->request(
+            'GET',
+            'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/'.$ncas.'/cids/JSON'
+        );
+
+        try {
+            $cid = $response->toArray()['IdentifierList']['CID'][0];
+            return [
+                'status' => $response->getStatusCode(),
+                'cid' => $cid
+            ];
+        } catch ( Exception $e) {
+            return [
+                'status' => 500,
+                'cid' => null
+            ];
+        }
+    }
+
+
+
 }
