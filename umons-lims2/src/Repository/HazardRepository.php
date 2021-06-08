@@ -21,36 +21,6 @@ class HazardRepository extends ServiceEntityRepository
 
 
 
-    /**
-      * @return Hazard[] Returns an array of Hazard objects
-      */
-    public function findByIdOrCreate($hrds) {
-
-        $codes = array_map(fn($hrd) => $hrd['code'], $hrds);
-        $hs =  $this->findBy(['code' => $codes]);
-
-        $existing_hazard_codes = array_map(function ($e) {
-            return $e->getId();
-        }, $hs);
-
-        $non_existing_hazard_codes = array_values(array_diff($ids, $existing_hazard_codes));
-
-        $em = $this->getEntityManager();
-        foreach ($non_existing_hazard_codes as $hazard_id) {
-            $hazard = new Hazard();
-            $hazard
-                ->setCode("coucou")
-                ->setLabel("coucou label");
-
-            $hs[]= $hazard;
-            $em->persist($hazard);
-
-        }
-        $em->flush();
-
-        dd($hs);
-    }
-
     // /**
     //  * @return Hazard[] Returns an array of Hazard objects
     //  */
