@@ -1,4 +1,4 @@
-    {% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
@@ -55,7 +55,7 @@
                             <td>{{ product.ncas }}</td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.location }}</td>
-                            <td>{{ product.concentration/100 }}%</td>
+                            <td>{{ product.concentration }}%</td>
                             <td>{{ product.size }}</td>
                             <td>
                                 {% if product.action == 1 %}
@@ -103,373 +103,368 @@
     {% include 'pubchemapi.html.twig' %}
 
     <script type="text/javascript">
-
-
-
-            var table = $('#productTable').DataTable({
-                dom: 'P<Blf<t>ip>',
-                searchPanes: {
-                    cascadePanes: true,
-                    panes: [
-                        {
-                            header: 'Produits utilisés/libres',
-                            options: [
-                                {
-                                    label: 'libres',
-                                    value: function (rowData, rowIdx) {
-                                        return rowData[8] === '';
-                                    }
-                                },
-                                {
-                                    label: 'utilisés',
-                                    value: function (rowData, rowIdx) {
-                                        return rowData[8] !== '';
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                buttons: [
+        var table = $('#productTable').DataTable({
+            dom: 'P<Blf<t>ip>',
+            searchPanes: {
+                cascadePanes: true,
+                panes: [
                     {
-                        tag: "button",
-                        className: "btn btn-light action-btn",
-                        text: 'Déplacer',
-                        action: function (e, dt, node, config) {
-                            moveRow();
-                        }
-                    },
-                    {
-                        tag: "button",
-                        className: "btn btn-light action-btn",
-                        text: 'Ajouter',
-                        action: function (e, dt, node, config) {
-                            addElement();
-                        }
-                    },
-                    {
-                        tag: "button",
-                        className: "btn btn-light action-btn",
-                        text: 'Supprimer',
-                        action: function (e, dt, node, config) {
-                            deleteRow();
-                        }
-                    }
-
-                ],
-                "order": [[3, 'desc']],
-                "columnDefs": [
-                    {"searchable": false, "targets": 0},
-                    {"searchable": false, "targets": 1},
-                    {"searchable": false, "targets": 2},
-                    {
-                        searchPanes: {
-                            show: false
-                        }, width: '4%',
-                        targets: [0]
-                    },
-                    {
-                        searchPanes: {
-                            show: false
-                        }, width: '2%',
-                        targets: [1]
-                    },
-                    {
-                        searchPanes: {
-                            show: false
-                        }, width: '5%',
-                        targets: [2]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [3]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [4]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [5]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [6]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [7]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [8]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        },
-                        targets: [9]
-                    },
-                    {
-                        searchPanes: {
-                            show: true
-                        }, width: '5%',
-                        targets: [10]
-                    },
-                    {"targets": [0, 1, 2], "orderable": false},
-                    {"className": "dt-center", "targets": "_all"}
-                ],
-                stateSave: true,
-                "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-                language: {
-                    searchPanes: {
-                        clearMessage: 'réinitialiser la recherche',
-                        collapse: {0: 'Recherche avancée', _: 'Recherche avancée(%d)'},
-                        emptyPanes: "Aucune recherche n'est possible :("
-                    },
-                    "decimal": ",",
-                    "thousands": ".",
-                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-                }, "initComplete": function (settings, json) {
-                    table.searchPanes.container().prependTo(table.table().container());
-                    table.searchPanes.container().hide();
-                    $.fn.DataTable.ext.pager.numbers_length = 5;
-
-                    new $.fn.dataTable.Buttons(table, {
-                        buttons: [
+                        header: 'Produits utilisés/libres',
+                        options: [
                             {
-                                text: 'Recherche avancée',
-                                tag: "button",
-                                className: "btn btn-light action-btn",
-                                action: function (e, dt, node, config) {
-                                    table.searchPanes.container().toggle();
+                                label: 'libres',
+                                value: function (rowData, rowIdx) {
+                                    return rowData[8] === '';
+                                }
+                            },
+                            {
+                                label: 'utilisés',
+                                value: function (rowData, rowIdx) {
+                                    return rowData[8] !== '';
                                 }
                             }
                         ]
-                    });
-
-                    table.buttons(1, null).container().appendTo(
-                        $("#productTable_filter")
-                    );
+                    }
+                ]
+            },
+            buttons: [
+                {
+                    tag: "button",
+                    className: "btn btn-light action-btn",
+                    text: 'Déplacer',
+                    action: function (e, dt, node, config) {
+                        moveRow();
+                    }
+                },
+                {
+                    tag: "button",
+                    className: "btn btn-light action-btn",
+                    text: 'Ajouter',
+                    action: function (e, dt, node, config) {
+                        addElement();
+                    }
+                },
+                {
+                    tag: "button",
+                    className: "btn btn-light action-btn",
+                    text: 'Supprimer',
+                    action: function (e, dt, node, config) {
+                        deleteRow();
+                    }
                 }
-            });
 
+            ],
+            "order": [[3, 'desc']],
+            "columnDefs": [
+                {"searchable": false, "targets": 0},
+                {"searchable": false, "targets": 1},
+                {"searchable": false, "targets": 2},
+                {
+                    searchPanes: {
+                        show: false
+                    }, width: '4%',
+                    targets: [0]
+                },
+                {
+                    searchPanes: {
+                        show: false
+                    }, width: '2%',
+                    targets: [1]
+                },
+                {
+                    searchPanes: {
+                        show: false
+                    }, width: '5%',
+                    targets: [2]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [3]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [4]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [5]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [6]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [7]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [8]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    },
+                    targets: [9]
+                },
+                {
+                    searchPanes: {
+                        show: true
+                    }, width: '5%',
+                    targets: [10]
+                },
+                {"targets": [0, 1, 2], "orderable": false},
+                {"className": "dt-center", "targets": "_all"}
+            ],
+            stateSave: true,
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+            language: {
+                searchPanes: {
+                    clearMessage: 'réinitialiser la recherche',
+                    collapse: {0: 'Recherche avancée', _: 'Recherche avancée(%d)'},
+                    emptyPanes: "Aucune recherche n'est possible :("
+                },
+                "decimal": ",",
+                "thousands": ".",
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            }, "initComplete": function (settings, json) {
+                table.searchPanes.container().prependTo(table.table().container());
+                table.searchPanes.container().hide();
+                $.fn.DataTable.ext.pager.numbers_length = 5;
 
-            // Traitements sur des cases à chocher
-            $("input[type=checkbox]").change(function () {
-                $("#product-" + this.value).toggleClass('selected');
-            });
+                new $.fn.dataTable.Buttons(table, {
+                    buttons: [
+                        {
+                            text: 'Recherche avancée',
+                            tag: "button",
+                            className: "btn btn-light action-btn",
+                            action: function (e, dt, node, config) {
+                                table.searchPanes.container().toggle();
+                            }
+                        }
+                    ]
+                });
 
-            async function getInformation(cas, id, elem) {
-                var tr = elem.closest('tr');
-                var row = table.row('#' + id);
-
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                    tr.classList.remove('shown');
-                } else {
-                    let a = new PubChem()
-                    let result = await a.findProductInfoByCAS(cas);
-                    let info = information(result);
-                    row.child(info, 'child').show();
-                    tr.classList.add('shown');
-                }
+                table.buttons(1, null).container().appendTo(
+                    $("#productTable_filter")
+                );
             }
+        });
 
-            function information(result) {
-                if (result === null) {
-                    return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left: auto;margin-right: auto;">' +
-                        '<tr>' +
-                        '<td>Aucune information n\'a été trouvée pour ce numéro de CAS :(</td>' +
-                        '</tr>' +
-                        '</table>';
-                }
-                let safeties = '';
-                for (const elem of result["hazards"]) {
-                    safeties += '<p><img src="' + elem["symbol"] + '">' + elem["text"] + '<\p>';
-                }
+
+        // Traitements sur des cases à chocher
+        $("input[type=checkbox]").change(function () {
+            $("#product-" + this.value).toggleClass('selected');
+        });
+
+        async function getInformation(cas, id, elem) {
+            var tr = elem.closest('tr');
+            var row = table.row('#' + id);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.classList.remove('shown');
+            } else {
+                let a = new PubChem()
+                let result = await a.findProductInfoByCAS(cas);
+                let info = information(result);
+                row.child(info, 'child').show();
+                tr.classList.add('shown');
+            }
+        }
+
+        function information(result) {
+            if (result === null) {
                 return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left: auto;margin-right: auto;">' +
                     '<tr>' +
-                    '<td>Formule moléculaire:</td>' +
-                    '<td>' + toChimicalFormula(result["MolecularFormula"]) + '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td>Masse moléculaire :</td>' +
-                    '<td>' + result["MolecularWeight"] + '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td>Lien vers la page PubChem:</td>' +
-                    '<td><a href="' + result["link"] + '" target="_blank">' + result["link"] + '</a></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td>Sécurités:</td>' +
-                    '<td>' + safeties + '</td>' +
+                    '<td>Aucune information n\'a été trouvée pour ce numéro de CAS :(</td>' +
                     '</tr>' +
                     '</table>';
             }
-
-            function toChimicalFormula(formula) {
-                let res = formula.charAt(0);
-                let lastType = "string";
-                for (let i = 1; i < formula.length; i++) {
-                    let letter = formula.charAt(i);
-                    if (!isNaN(Number(letter))) {
-                        letter = Number(letter);
-                    }
-                    let type = (typeof letter);
-                    if (type === "number" && lastType === "string") {
-                        res += '<sub>';
-                    } else if (type === "string" && lastType === "number") {
-                        res += '</sub>';
-                    }
-                    res += letter;
-                    lastType = type;
-                }
-                return res;
+            let safeties = '';
+            for (const elem of result["hazards"]) {
+                safeties += '<p><img src="' + elem["symbol"] + '">' + elem["text"] + '<\p>';
             }
+            return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left: auto;margin-right: auto;">' +
+                '<tr>' +
+                '<td>Formule moléculaire:</td>' +
+                '<td>' + toChimicalFormula(result["MolecularFormula"]) + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Masse moléculaire :</td>' +
+                '<td>' + result["MolecularWeight"] + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Lien vers la page PubChem:</td>' +
+                '<td><a href="' + result["link"] + '" target="_blank">' + result["link"] + '</a></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Sécurités:</td>' +
+                '<td>' + safeties + '</td>' +
+                '</tr>' +
+                '</table>';
+        }
 
-            function addElement() {
-                {% if app.user %}
-                window.location.href = '{{ path('products.create')|escape('js') }}';
-                {% else %}
-                window.location.href = '{{ path('userselect')|escape('js') }}';
-                {% endif %}
-            }
-
-            function moveRow() {
-                {% if app.user %}
-
-                let rows = table.rows('.selected');
-                let data = rows.data();
-
-
-
-
-                let url = '{{ path('products.move') }}';
-
-                let products = [];
-
-                for(let i = 0; i < data.length; i++) {
-                    products.push(data[i]["DT_RowId"].split('-')[1]);
+        function toChimicalFormula(formula) {
+            let res = formula.charAt(0);
+            let lastType = "string";
+            for (let i = 1; i < formula.length; i++) {
+                let letter = formula.charAt(i);
+                if (!isNaN(Number(letter))) {
+                    letter = Number(letter);
                 }
-                let queryString = products
-                    .map((p, i) => 'products['+i+']='+p)
-                    .join('&');
-
-                url = url + '?' + queryString;
-
-
-
-                window.location.href = url;
-                // rows.remove().draw(false);
-                // table.searchPanes.rebuildPane();
-
-                {% else %}
-                window.location.href = '{{ path('userselect')|escape('js') }}';
-                {% endif %}
-            }
-
-            function deleteRow() {
-                {% if app.user %}
-                let rows = table.rows('.selected');
-                let data = rows.data();
-
-                for (let i = 0; i < data.length; i++) {
-                    let product = data[i]["DT_RowId"].split('-')[1];
-                    let action = {{ constant('App\\Entity\\Usage::ACTION_DELETE') }};
-
-                    let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
-                    route = route.replace("action", action);
-                    route = route.replace("product", product);
-
-                    $.get(route, function (res) {
-                        $(".result").html(res);
-                    });
-
+                let type = (typeof letter);
+                if (type === "number" && lastType === "string") {
+                    res += '<sub>';
+                } else if (type === "string" && lastType === "number") {
+                    res += '</sub>';
                 }
-                rows.remove().draw(false);
+                res += letter;
+                lastType = type;
+            }
+            return res;
+        }
+
+        function addElement() {
+            {% if app.user %}
+            window.location.href = '{{ path('products.create')|escape('js') }}';
+            {% else %}
+            window.location.href = '{{ path('userselect')|escape('js') }}';
+            {% endif %}
+        }
+
+        function moveRow() {
+            {% if app.user %}
+
+            let rows = table.rows('.selected');
+            let data = rows.data();
+
+
+            let url = '{{ path('products.move') }}';
+
+            let products = [];
+
+            for (let i = 0; i < data.length; i++) {
+                products.push(data[i]["DT_RowId"].split('-')[1]);
+            }
+            let queryString = products
+                .map((p, i) => 'products[' + i + ']=' + p)
+                .join('&');
+
+            url = url + '?' + queryString;
+
+
+            window.location.href = url;
+            // rows.remove().draw(false);
+            // table.searchPanes.rebuildPane();
+
+            {% else %}
+            window.location.href = '{{ path('userselect')|escape('js') }}';
+            {% endif %}
+        }
+
+        function deleteRow() {
+            {% if app.user %}
+            let rows = table.rows('.selected');
+            let data = rows.data();
+
+            for (let i = 0; i < data.length; i++) {
+                let product = data[i]["DT_RowId"].split('-')[1];
+                let action = {{ constant('App\\Entity\\Usage::ACTION_DELETE') }};
+
+                let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
+                route = route.replace("action", action);
+                route = route.replace("product", product);
+
+                $.get(route, function (res) {
+                    $(".result").html(res);
+                });
+
+            }
+            rows.remove().draw(false);
+            table.searchPanes.rebuildPane();
+            {% else %}
+            window.location.href = '{{ path('userselect')|escape('js') }}';
+            {% endif %}
+        }
+
+        function ranger(id) {
+            {% if app.user %}
+            let product = id.split('-')[1];
+            let action = {{ constant('App\\Entity\\Usage::ACTION_RETURN') }};
+            let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
+
+            route = route.replace("action", action);
+            route = route.replace("product", product);
+
+            $.get(route, function (res) {
+                $(".result").html(res);
+
+                let row = table.row("#" + id);
+                let data = row.data();
+
+                data[2] = '<a onclick="prendre(' + "'" + id + "'" + ')" class="btn btn-primary take-btn">Prendre</a>';
+                data[8] = ""
+
+                row.data(data).draw(false);
                 table.searchPanes.rebuildPane();
-                {% else %}
-                window.location.href = '{{ path('userselect')|escape('js') }}';
-                {% endif %}
-            }
+                resetcheckbox();
+            });
+            {% else %}
+            window.location.href = '{{ path('userselect')|escape('js') }}';
+            {% endif %}
+        }
 
-            function ranger(id) {
-                {% if app.user %}
-                let product = id.split('-')[1];
-                let action = {{ constant('App\\Entity\\Usage::ACTION_RETURN') }};
-                let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
+        function prendre(id) {
+            {% if app.user %}
+            let product = id.split('-')[1];
+            let action = {{ constant('App\\Entity\\Usage::ACTION_TAKE') }};
+            let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
 
-                route = route.replace("action", action);
-                route = route.replace("product", product);
+            route = route.replace("action", action);
+            route = route.replace("product", product);
 
-                $.get(route, function (res) {
-                    $(".result").html(res);
+            $.get(route, function (res) {
+                $(".result").html(res);
 
-                    let row = table.row("#" + id);
-                    let data = row.data();
+                let row = table.row("#" + id);
+                let data = row.data();
 
-                    data[2] = '<a onclick="prendre(' + "'" + id + "'" + ')" class="btn btn-primary take-btn">Prendre</a>';
-                    data[8] = ""
+                data[2] = '<a onclick="ranger(' + "'" + id + "'" + ')" class="btn btn-primary put-btn">Ranger</a>';
+                data[8] = $.parseJSON(res);
+                data[9] = 'Ouvert';
 
-                    row.data(data).draw(false);
-                    table.searchPanes.rebuildPane();
-                    resetcheckbox();
-                });
-                {% else %}
-                window.location.href = '{{ path('userselect')|escape('js') }}';
-                {% endif %}
-            }
+                row.data(data).draw(false);
+                table.searchPanes.rebuildPane();
+                resetcheckbox();
+            });
+            {% else %}
+            window.location.href = '{{ path('userselect')|escape('js') }}';
+            {% endif %}
 
-            function prendre(id) {
-                {% if app.user %}
-                let product = id.split('-')[1];
-                let action = {{ constant('App\\Entity\\Usage::ACTION_TAKE') }};
-                let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
+        }
 
-                route = route.replace("action", action);
-                route = route.replace("product", product);
+        function resetcheckbox() {
+            $("input[type=checkbox]").off('change');
+            $("input[type=checkbox]").change(function () {
+                $("#product-" + this.value).toggleClass('selected');
+            });
+            $("tr").removeClass('selected');
+            $("input[type=checkbox]").prop("checked", false);
+        }
 
-                $.get(route, function (res) {
-                    $(".result").html(res);
-
-                    let row = table.row("#" + id);
-                    let data = row.data();
-
-                    data[2] = '<a onclick="ranger(' + "'" + id + "'" + ')" class="btn btn-primary put-btn">Ranger</a>';
-                    data[8] = $.parseJSON(res);
-                    data[9] = 'Ouvert';
-
-                    row.data(data).draw(false);
-                    table.searchPanes.rebuildPane();
-                    resetcheckbox();
-                });
-                {% else %}
-                window.location.href = '{{ path('userselect')|escape('js') }}';
-                {% endif %}
-
-            }
-
-            function resetcheckbox() {
-                $("input[type=checkbox]").off('change');
-                $("input[type=checkbox]").change(function () {
-                    $("#product-" + this.value).toggleClass('selected');
-                });
-                $("tr").removeClass('selected');
-                $("input[type=checkbox]").prop("checked", false);
-            }
     </script>
 {% endblock %}
