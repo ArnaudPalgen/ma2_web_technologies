@@ -47,4 +47,4 @@ services:
         environment:
           - WAIT_HOSTS=db:3306, php:9000
           - WAIT_SLEEP_INTERVAL=20
-          - WAIT_TIMEOUT=60
+          - WAIT_TIMEOUT=90
