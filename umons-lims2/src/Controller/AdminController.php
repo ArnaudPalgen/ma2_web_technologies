@@ -6,6 +6,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -29,9 +30,17 @@ class AdminController extends AbstractController
     }
 
 
-    #[Route('/changeUser/{id}/{registration_number}/{first_name}/{last_name}/{mdp}/{role}/{action}', name: 'change.user')]
-    public function changeUser(int $id, int $registration_number, string $first_name, string $last_name, string $mdp, string $role, string $action, UserPasswordEncoderInterface $encoder): Response
+    #[Route('/changeUser', name: 'change.user')]
+    public function changeUser(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
+        $id = $request -> get("id");
+        $registration_number = $request -> get("registration_number");
+        $first_name = $request -> get("first_name");
+        $last_name = $request -> get("last_name");
+        $mdp = $request -> get("mdp");
+        $role = $request -> get("role");
+        $action = $request -> get("action");
+
         $en = $this->getDoctrine()->getManager();
 
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
