@@ -10,7 +10,7 @@ services:
           MYSQL_ROOT_PASSWORD: ${DB_ROOT}
           MYSQL_USER: ${DB_USER}
           MYSQL_PASSWORD: ${DB_PASSWORD}
-          MYSQL_DATABASE: ${DB_DATABASE}
+          MYSQL_DATABASE: ${DB_NAME}
 
     php:
         build: php7-fpm
@@ -26,8 +26,9 @@ services:
           - db
         environment:
           - WAIT_HOSTS=db:3306
+          - WAIT_TIMEOUT=120
           - WAIT_SLEEP_INTERVAL=15
-          - MYSQL_DATABASE=${DB_DATABASE}
+          - MYSQL_DATABASE=${DB_NAME}
           - MYSQL_USER=${DB_USER}
           - MYSQL_PASSWORD=${DB_PASSWORD}
 
@@ -47,4 +48,4 @@ services:
         environment:
           - WAIT_HOSTS=db:3306, php:9000
           - WAIT_SLEEP_INTERVAL=20
-          - WAIT_TIMEOUT=90
+          - WAIT_TIMEOUT=180
