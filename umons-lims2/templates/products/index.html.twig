@@ -407,6 +407,13 @@
             let action = {{ constant('App\\Entity\\Usage::ACTION_RETURN') }};
             let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
 
+            let row = table.row("#" + id);
+            let data = row.data();
+
+            data[2] = '<div class="spinner-border text-primary" role="status"><span class="sr-only">Chargement...</span></div>';
+
+            row.data(data).draw(false);
+
             route = route.replace("action", action);
             route = route.replace("product", product);
 
@@ -420,7 +427,11 @@
                 data[8] = ""
 
                 row.data(data).draw(false);
+
+                table.api().ajax.reload( null, false );
                 table.searchPanes.rebuildPane();
+                table.api().ajax.reload( null, true );
+
                 resetcheckbox();
             });
             {% else %}
@@ -433,6 +444,13 @@
             let product = id.split('-')[1];
             let action = {{ constant('App\\Entity\\Usage::ACTION_TAKE') }};
             let route = '{{ path('products.change',{'action': 'action','product' : 'product'}) }}';
+
+            let row = table.row("#" + id);
+            let data = row.data();
+
+            data[2] = '<div class="spinner-border text-primary" role="status"><span class="sr-only">Chargement...</span></div>';
+
+            row.data(data).draw(false);
 
             route = route.replace("action", action);
             route = route.replace("product", product);
@@ -447,8 +465,12 @@
                 data[8] = $.parseJSON(res);
                 data[9] = 'Ouvert';
 
+
                 row.data(data).draw(false);
+
+                table.api().ajax.reload( null, false );
                 table.searchPanes.rebuildPane();
+                table.api().ajax.reload( null, true );
                 resetcheckbox();
             });
             {% else %}
