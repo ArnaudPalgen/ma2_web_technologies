@@ -44,9 +44,43 @@
 
                 {{ form_start(form) }}
                     {{ form_widget(form) }}
+
                 <button type="button" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
 
                 {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="modal fade" id="compatibilityModal" tabindex="-1" aria-labelledby="compatibilityModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="compatibilityModalLabel">Confirmer Emplacement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>	Déplacer ces produits à l'emplacement choisi va introduire des incompatibilités. Voulez-vous continuer ?</p>
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">NCAS</th>
+                                <th scope="col">Nom</th>
+                            </tr>
+                            </thead>
+                            <tbody id="incompatibilitiesTableBody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-secondary" id="compatibilityConfirmButton">Continuer</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -60,12 +94,115 @@
 
 
 {% block javascripts %}
+
+    {% include 'pubchemapi.html.twig' %}
     <script>
-        $(() => {
+        $(function() {
             const $productFormButton = $('#productFormButton');
+
+            const $form_products = $('#form_products');
+
+            const $form_location = $('#form_location');
+
+            const $compatibilityModal = $("#compatibilityModal");
+
+            const $incompatibilitiesTableBody = $("#incompatibilitiesTableBody");
+
+            const $compatibilityConfirmButton = $("#compatibilityConfirmButton");
+
+            const  $form_isIgnoreConflict = $("#form_isIgnoreConflict");
+
+            const $form = $("form[name='form']");
+
+            const pubchem = new PubChem();
+
+
+
+
+
+            $compatibilityConfirmButton.click(function () {
+                $form_isIgnoreConflict.val(true);
+                $form.submit();
+            })
+
             $productFormButton.click(function( event ) {
 
-                $productFormButton.button('loading');
+                // $productFormButton.button('loading');
+
+                const location = $form_location.val();
+
+                const promises = [];
+                let products = JSON.parse($form_products.val());
+                products.forEach(function(p) {
+                    promises.push( pubchem.findProductsCid(p.ncas))
+                });
+
+                Promise
+                    .all(promises)
+                    .then(cids => {
+                        let prms = [];
+                        cids.forEach((cid, i) => {
+                            products[i]['cid'] = cid;
+                            prms.push(
+                                axios.get("/json/products/compatibilities/check", {
+                                    params: {
+                                        location: location,
+                                        cid: cid
+                                    }
+                                })
+                            );
+                        });
+                        $form_products.val(JSON.stringify(products));
+                        return Promise.all(prms)
+                    }).then(resps => {
+                        let incs = resps.map(function (res) {
+                            return res.data;
+                        });
+
+
+
+                        incs = [].concat.apply([], incs);
+
+
+                        // console.log(incs)
+                        // incs = incs.reduce((acc, curr) => acc.concat(curr));
+
+                      try{
+                          const compareObjects = (a, b) => a.ncas === b.ncas;
+                          let result = incs.reduce((r, o) => {
+                              if (!r.some(compareObjects.bind(null, o))) {
+                                  r.push(o);
+                              }
+                              return r;
+                          }, []);
+                      } catch (TypeError ) {
+                        $form_isIgnoreConflict.submit();
+                      }
+
+                        if (result && Array.isArray(result) && result.length > 0) {
+
+                            for (let incompatibility of result) {
+
+                                $incompatibilitiesTableBody.append(
+                                    `<tr>
+												<th scope="row"> ${incompatibility.id} </th>
+												<td> ${incompatibility.ncas} </td>
+												<td> ${incompatibility.name} </td>
+											</tr>`
+                                );
+                            }
+                            $compatibilityModal.modal('show')
+                        } else {
+
+                            $form_isIgnoreConflict.submit();
+                        }
+
+
+
+
+
+                    });
+
             });
 
         });

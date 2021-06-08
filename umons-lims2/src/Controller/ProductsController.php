@@ -8,12 +8,14 @@ use App\Entity\Product;
 use App\Entity\Usage;
 use App\Form\ProductType;
 use App\Repository\HazardRepository;
+use App\Repository\LocationRepository;
 use App\Repository\NameRepository;
 use App\Repository\ProductRepository;
 use App\Service\PubChem;
 use DateTime;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -213,7 +215,7 @@ class ProductsController extends AbstractController
     }
 
     #[Route('/products/move', name: 'products.move')]
-    public function moveProduct(Request $request, PubChem $pubChem, HazardRepository $hazardRepository, ProductRepository $productRepository) {
+    public function moveProduct(Request $request, PubChem $pubChem , LocationRepository $locationRepository, HazardRepository $hazardRepository, ProductRepository $productRepository) {
 
         $product_ids =  $request->query->get('products');
 
@@ -222,6 +224,14 @@ class ProductsController extends AbstractController
         }
 
         $products = $productRepository->findBy(["id" => $product_ids]);
+
+        $existing_product_ids = array_map(function ($p) {
+            return [
+                'id' => $p->getId(),
+                'ncas' => $p->getNcas()
+            ];
+        }, $products);
+
 
 
         $form = $this->createFormBuilder()
@@ -237,41 +247,56 @@ class ProductsController extends AbstractController
                 'empty_data' => false,
                 'data' => false,
             ])
+            ->add('products', HiddenType::class, [
+                'data' => json_encode($existing_product_ids)
+            ])
             ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-
             $data = $form->getData();
 
-            $h = $pubChem->getHazards($data['cid']);
-            $status = $h['status'];
+            $prdts = json_decode($data[]);
 
 
-            if($status == 200){
-                $hazards = array_map(function ($h) {
-                    return $h['code'];
-                }, $h['hazards']);
+            foreach ($prdts as $prd) {
+
+                $pEntity = $productRepository->find($prd['id']);
 
 
-                if($data['isIgnoreConflict'] != 'true'){
-                    $incompatibilities = $productRepository->findIncompatibilities($product->getLocation()->getId(), $hazards);
+                $h = $pubChem->getHazards($data['cid']);
+                $status = $h['status'];
+
+
+                if($status == 200){
+                    $hazards = array_map(function ($h) {
+                        return $h['code'];
+                    }, $h['hazards']);
+
+
+                    if($data['isIgnoreConflict'] != 'true'){
+                        $incompatibilities = $productRepository->findIncompatibilities($data['location'], $hazards);
+                        return $this->json([
+                            'success' => false,
+                            'incompatibilities' => $incompatibilities
+                        ]);
+                    }
+
+                    $pEntity->setLocation($data['location']);
+
+                    $this->getDoctrine()->getManager()->flush();
                     return $this->json([
-                        'success' => false,
-                        'incompatibilities' => $incompatibilities
+                        'success' => true,
                     ]);
+
+
                 }
-
-                $product->setLocation($data['location']);
-
-                $this->getDoctrine()->getManager()->flush();
-                return $this->json([
-                    'success' => true,
-                ]);
-
-
             }
+
+
+
+
         }
 
         return $this->render('product_move.html.twig', [
