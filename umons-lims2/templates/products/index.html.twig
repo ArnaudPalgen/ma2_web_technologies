@@ -55,7 +55,7 @@
                             <td>{{ product.ncas }}</td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.location }}</td>
-                            <td>{{ product.concentration }}%</td>
+                            <td>{{ product.concentration/100 }}%</td>
                             <td>{{ product.size }}</td>
                             <td>
                                 {% if product.action == 1 %}
@@ -103,7 +103,7 @@
     {% include 'pubchemapi.html.twig' %}
 
     <script type="text/javascript">
-        $(() => {
+
 
 
             var table = $('#productTable').DataTable({
@@ -463,14 +463,13 @@
 
             }
 
-            function resetcheckbox(){
+            function resetcheckbox() {
                 $("input[type=checkbox]").off('change');
                 $("input[type=checkbox]").change(function () {
                     $("#product-" + this.value).toggleClass('selected');
                 });
                 $("tr").removeClass('selected');
-                $("input[type=checkbox]").prop( "checked", false );
+                $("input[type=checkbox]").prop("checked", false);
             }
-        })
     </script>
 {% endblock %}
