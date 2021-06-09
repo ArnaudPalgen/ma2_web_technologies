@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use App\Entity\Usage;
-use ContainerJZgdR83\getProductRepositoryService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,10 +21,8 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findIncompatibilities($location, $hazardCodes) {
-
-
-
+    public function findIncompatibilities($location, $hazardCodes)
+    {
 
 
         $rsm = new ResultSetMapping();
@@ -75,9 +72,9 @@ class ProductRepository extends ServiceEntityRepository
             ->setParameter('location', $location);
 
 
-        $res =  $query->getResult();
+        $res = $query->getResult();
 
-        if(count($res) > 0) {
+        if (count($res) > 0) {
             return $res;
         }
         return null;

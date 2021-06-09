@@ -22,8 +22,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\HttpUtils;
+use function strlen;
 
-class TestAuthenticator extends AbstractLoginFormAuthenticator
+class AppAuthenticator extends AbstractLoginFormAuthenticator
 {
 
     private HttpUtils $httpUtils;
@@ -32,7 +33,7 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
     private string $login_path = "login";
     private string $check_path = "login";
 
-    private  string $on_success_redirect_route = "admin.user";
+    private string $on_success_redirect_route = "admin.user";
 
     public function __construct(HttpUtils $httpUtils, UserProviderInterface $userProvider)
     {
@@ -40,11 +41,6 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
         $this->userProvider = $userProvider;
 
 
-    }
-
-    protected function getLoginUrl(Request $request): string
-    {
-        return $this->httpUtils->generateUri($request, $this->login_path);
     }
 
     public function supports(Request $request): bool
@@ -67,13 +63,27 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
         }), new PasswordCredentials($credentials['password']), [new RememberMeBadge()]);
 
 
-
-
         if ($this->userProvider instanceof PasswordUpgraderInterface) {
             $passport->addBadge(new PasswordUpgradeBadge($credentials['password'], $this->userProvider));
         }
 
         return $passport;
+    }
+
+    private function getCredentials(Request $request): array
+    {
+        $credentials = [
+            'username' => $request->request->get('_username'),
+            'password' => $request->request->get('_password'),
+        ];
+
+        if (strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
+            throw new BadCredentialsException('Invalid username.');
+        }
+
+        $request->getSession()->set(Security::LAST_USERNAME, $credentials['username']);
+
+        return $credentials;
     }
 
     /**
@@ -88,31 +98,17 @@ class TestAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if($redirect_route = $request->request->get('_redirect_route')) {
+        if ($redirect_route = $request->request->get('_redirect_route')) {
             return $this->httpUtils->createRedirectResponse($request, $redirect_route);
         }
         return $this->httpUtils->createRedirectResponse($request, $this->on_success_redirect_route);
 
     }
 
-
-    private function getCredentials(Request $request): array
+    protected function getLoginUrl(Request $request): string
     {
-        $credentials = [
-            'username' => $request->request->get('_username'),
-            'password' => $request->request->get('_password'),
-        ];
-
-        if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
-            throw new BadCredentialsException('Invalid username.');
-        }
-
-        $request->getSession()->set(Security::LAST_USERNAME, $credentials['username']);
-
-        return $credentials;
+        return $this->httpUtils->generateUri($request, $this->login_path);
     }
-
-
 
 
 }

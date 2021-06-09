@@ -7,16 +7,13 @@ use App\Entity\Name;
 use App\Entity\Product;
 use App\Entity\Usage;
 use App\Form\ProductFormType;
-use App\Form\ProductType;
 use App\Repository\HazardRepository;
-use App\Repository\LocationRepository;
 use App\Repository\NameRepository;
 use App\Repository\ProductRepository;
 use App\Service\PubChem;
 use DateTime;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,7 +72,8 @@ class ProductsController extends AbstractController
 
 
     #[Route(path: "/products/new", name: 'products.new')]
-    public  function  newProduct(Request $request, ProductRepository $pr, HazardRepository $hr, NameRepository $nr, PubChem $pubChem) {
+    public function newProduct(Request $request, ProductRepository $pr, HazardRepository $hr, NameRepository $nr, PubChem $pubChem)
+    {
 
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -91,8 +89,8 @@ class ProductsController extends AbstractController
             }, $hazards);
 
 
-            if ($hazards ) {
-                if(count($hazards) > 0
+            if ($hazards) {
+                if (count($hazards) > 0
                     && $form->get('is_ignore_conflicts')->getData() != 'true'
                     && $incompatibilities = $pr->findIncompatibilities($f_product->getLocation(), $hazards)
                 ) {
@@ -106,20 +104,20 @@ class ProductsController extends AbstractController
                 $this->addFlash("danger", "Une erreur s'est produite durant la communication avec PubChem.");
                 return $this->render('product_create.html.twig', [
                     'form' => $form->createView(),
+                    'incompatibilities' => null
                 ]);
             }
 
 
             $em = $this->getDoctrine()->getManager();
 
-            for($i = 0; $i < $form->get("count")->getData(); $i++) {
+            for ($i = 0; $i < $form->get("count")->getData(); $i++) {
                 $product = (new Product())
                     ->setNcas($f_product->getNcas())
                     ->setLocation($f_product->getLocation())
                     ->setName($f_product->getName())
                     ->setSize($f_product->getSize())
-                    ->setConcentration($f_product->getConcentration())
-                ;
+                    ->setConcentration($f_product->getConcentration());
 
                 foreach ($hr->findBy(["id" => $hazards]) as $hazardEntity) {
                     $product->addHazard($hazardEntity);
@@ -129,7 +127,7 @@ class ProductsController extends AbstractController
                 $actionCreate = (new Usage())
                     ->setAction(Usage::ACTION_CREATE)
                     ->setUser($this->getUser())
-                    ->setDate(new \DateTime());
+                    ->setDate(new DateTime());
 
                 $product->addUsage($actionCreate);
 
@@ -161,18 +159,20 @@ class ProductsController extends AbstractController
 
         return $this->render('product_create.html.twig', [
             'form' => $form->createView(),
+            'incompatibilities' => null
         ]);
     }
 
 
     #[Route('/products/move', name: 'products.move')]
-    public function moveProduct(Request $request, ProductRepository $pr) {
+    public function moveProduct(Request $request, ProductRepository $pr)
+    {
 
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $product_ids =  $request->query->get('products', []);
+        $product_ids = $request->query->get('products', []);
 
-        if(empty($product_ids)) {
+        if (empty($product_ids)) {
             return $this->redirectToRoute('products.index');
         }
 
@@ -199,15 +199,15 @@ class ProductsController extends AbstractController
 
 
             $incompatibilities = [];
-            if($form->get('is_ignore_conflicts')->getData() != 'true'){
+            if ($form->get('is_ignore_conflicts')->getData() != 'true') {
                 foreach ($products as $product) {
                     $p_hazard = $product->getHazards();
-                    if (count($p_hazard) > 0  &&  $p_incompatibilities = $pr->findIncompatibilities($data['location'], $p_hazard)) {
+                    if (count($p_hazard) > 0 && $p_incompatibilities = $pr->findIncompatibilities($data['location'], $p_hazard)) {
                         $incompatibilities[$product->getNcas()] = $p_incompatibilities;
                     }
                 }
 
-                if(!empty($incompatibilities)) {
+                if (!empty($incompatibilities)) {
                     return $this->render('product_move.html.twig', [
                         'form' => $form->createView(),
                         'products' => $products,
@@ -223,7 +223,7 @@ class ProductsController extends AbstractController
                 $actionCreate = (new Usage())
                     ->setAction(Usage::ACTION_MOVE)
                     ->setUser($this->getUser())
-                    ->setDate(new \DateTime());
+                    ->setDate(new DateTime());
 
                 $em->persist($actionCreate);
                 $product->addUsage($actionCreate);
@@ -244,12 +244,12 @@ class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/names', name: 'products.autocomplete')]
-    public function autocompleteProduct(Request $request, NameRepository $nr) {
-        $term = $request->query->get('term', '');
-        return $this->json($nr->searchByNcas($term));
-    }
+    #[Route('/products/autocomplete', name: 'products.autocomplete')]
+    public function autocompleteProduct(NameRepository $nr)
+    {
 
+        return $this->json($nr->findAllIndexedByCAS());
+    }
 
 
 }

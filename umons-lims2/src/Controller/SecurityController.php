@@ -20,7 +20,7 @@ class SecurityController extends AbstractController
     {
 
         if ($this->getUser() && $this->isGranted("ROLE_ADMIN") && $this->isGranted(new Expression(
-            "token.hasAttribute('ULIMS:IS_USED_ADMIN_AUTH') and token.getAttribute('ULIMS:IS_USED_ADMIN_AUTH') == true"
+                "token.hasAttribute('ULIMS:IS_USED_ADMIN_AUTH') and token.getAttribute('ULIMS:IS_USED_ADMIN_AUTH') == true"
             ))) {
             return $this->redirectToRoute('login');
 
@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
 
         return $this->render('admin_login.html.twig', [
             'last_username' => $lastUsername,
-            'error'         => $error,
+            'error' => $error,
         ]);
 
 
@@ -52,7 +52,6 @@ class SecurityController extends AbstractController
             'users' => $users,
             'redirect_route' => $redirect_route
         ]);
-
 
 
     }

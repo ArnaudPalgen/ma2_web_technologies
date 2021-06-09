@@ -26,14 +26,13 @@ class InitDbCommand extends Command
     {
         parent::__construct();
         $this->em = $em;
-        $this->passwordEncoder =$passwordEncoder;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
-        ;
+            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -51,7 +50,57 @@ class InitDbCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function seedHazardsAndIncompatibilities(SymfonyStyle $io) {
+    private function createRolesAndSuperUser(SymfonyStyle $io)
+    {
+        $adminLastName = 'ULIMS';
+        $adminFirstName = 'SUPERUSER';
+        $adminRegistrationNumber = 'ULIMS_SUPERUSER';
+        $adminPlainPassword = 'UmonsLIMS';
+
+//        $adminName = $io->ask('Type in the name you want to give to the superuser', 'ULIMS Superuser');
+//        $adminPlainPassword = $io->askHidden('Type in the password', function ($value) {
+//            if (trim($value) == '') {
+//                throw new \Exception('The password cannot be empty');
+//            }
+//            if (strlen($value) < 6) {
+//                throw new \Exception('The password must be at least 6 characters long.');
+//            }
+//            return $value;
+//        });
+
+
+        $roleSuperuser = (new Role())->setName("superuser");
+        $roleAdmin = (new Role())->setName("admin");
+        $roleUser = (new Role())->setName("user");
+
+        $io->text("Created roles.");
+
+
+        $user = (new User())
+            ->setRole($roleSuperuser)
+            ->setRegistrationNumber($adminRegistrationNumber)
+            ->setFirstName($adminFirstName)
+            ->setLastName($adminLastName);
+
+        $user->setPassword($this->passwordEncoder->encodePassword(
+            $user,
+            $adminPlainPassword
+        ));
+
+        $this->em->persist($roleSuperuser);
+        $this->em->persist($roleAdmin);
+        $this->em->persist($roleUser);
+        $this->em->persist($user);
+
+        $this->em->flush();
+
+        $io->text("Created superuser.");
+
+
+    }
+
+    private function seedHazardsAndIncompatibilities(SymfonyStyle $io)
+    {
 
         $explosive = (new Hazard())
             ->setId('GHS01')
@@ -126,59 +175,6 @@ class InitDbCommand extends Command
         $this->em->flush();
 
         $io->text("Hazards incompatibilities created.");
-    }
-
-    private function createRolesAndSuperUser(SymfonyStyle $io)
-    {
-        $adminLastName = 'ULIMS';
-        $adminFirstName = 'SUPERUSER';
-        $adminRegistrationNumber= 'ULIMS_SUPERUSER';
-        $adminPlainPassword = 'UmonsLIMS';
-
-//        $adminName = $io->ask('Type in the name you want to give to the superuser', 'ULIMS Superuser');
-//        $adminPlainPassword = $io->askHidden('Type in the password', function ($value) {
-//            if (trim($value) == '') {
-//                throw new \Exception('The password cannot be empty');
-//            }
-//            if (strlen($value) < 6) {
-//                throw new \Exception('The password must be at least 6 characters long.');
-//            }
-//            return $value;
-//        });
-
-
-
-
-        $roleSuperuser = (new Role())->setName("superuser");
-        $roleAdmin = (new Role())->setName("admin");
-        $roleUser = (new Role())->setName("user");
-
-        $io->text("Created roles.");
-
-
-        $user = (new User())
-            ->setRole($roleSuperuser)
-            ->setRegistrationNumber($adminRegistrationNumber)
-            ->setFirstName($adminFirstName)
-            ->setLastName($adminLastName)
-        ;
-
-        $user->setPassword($this->passwordEncoder->encodePassword(
-            $user,
-            $adminPlainPassword
-        ))
-        ;
-
-        $this->em->persist($roleSuperuser);
-        $this->em->persist($roleAdmin);
-        $this->em->persist($roleUser);
-        $this->em->persist($user);
-
-        $this->em->flush();
-
-        $io->text("Created superuser.");
-
-
     }
 
     private function seedLocations(SymfonyStyle $io)

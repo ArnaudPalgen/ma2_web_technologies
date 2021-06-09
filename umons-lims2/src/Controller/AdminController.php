@@ -16,7 +16,6 @@ class AdminController extends AbstractController
 {
 
 
-
     #[Route('/manageUser', name: 'user')]
     public function index(): Response
     {
@@ -33,13 +32,13 @@ class AdminController extends AbstractController
     #[Route('/changeUser', name: 'change.user')]
     public function changeUser(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
-        $id = $request -> get("id");
-        $registration_number = $request -> get("registration_number");
-        $first_name = $request -> get("first_name");
-        $last_name = $request -> get("last_name");
-        $mdp = $request -> get("mdp");
-        $role = $request -> get("role");
-        $action = $request -> get("action");
+        $id = $request->get("id");
+        $registration_number = $request->get("registration_number");
+        $first_name = $request->get("first_name");
+        $last_name = $request->get("last_name");
+        $mdp = $request->get("mdp");
+        $role = $request->get("role");
+        $action = $request->get("action");
 
         $en = $this->getDoctrine()->getManager();
 
@@ -50,9 +49,9 @@ class AdminController extends AbstractController
             return $this->json(json_encode(false));
         }
 
-        if($action === "remove"){
+        if ($action === "remove") {
             $user->setDeletedAt(new DateTime());
-        }else{
+        } else {
             $newRole = $this->getDoctrine()->getRepository(Role::class)->findOneBy(array('name' => [$role]));
 
             if ($mdp !== '') {
@@ -68,7 +67,6 @@ class AdminController extends AbstractController
             $user->setRegistrationNumber($registration_number);
             $user->setRole($newRole);
         }
-
 
 
         $en->flush();

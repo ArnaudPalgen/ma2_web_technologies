@@ -16,9 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Positive;
-use Symfony\Component\Validator\Constraints\ZeroComparisonConstraintTrait;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ProductFormType extends AbstractType
 {
@@ -34,12 +32,11 @@ class ProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-
             ->add('ncas', TextType::class, [
                 'label' => 'Numéro CAS',
                 'constraints' => [
                     new Callback(function ($value, ExecutionContextInterface $context) {
-                        if(!$this->casChecker->isValid($value)) {
+                        if (!$this->casChecker->isValid($value)) {
                             $context
                                 ->buildViolation("Ce numéro CAS n'est pas valide.")
                                 ->addViolation();
@@ -48,18 +45,18 @@ class ProductFormType extends AbstractType
                     })
                 ],
             ])
-            ->add('name', TextType::class, [ 'label' => 'Nom du produit'])
+            ->add('name', TextType::class, ['label' => 'Nom du produit'])
             ->add('concentration', PercentType::class, [
                 'label' => 'Concentration',
                 'scale' => 2,
                 'attr' => [
-                  'min' => 0,
-                  'max' => 100
+                    'min' => 0,
+                    'max' => 100
                 ],
                 'constraints' => [
                     new Callback(function ($value, ExecutionContextInterface $context) {
-                        $value/=100;
-                        if($value > 100 || $value < 0) {
+                        $value /= 100;
+                        if ($value > 100 || $value < 0) {
                             $context
                                 ->buildViolation("Veuillez entrer un pourcentage compris entre 0% et 100%")
                                 ->addViolation();
@@ -89,8 +86,7 @@ class ProductFormType extends AbstractType
                 'empty_data' => false,
                 'mapped' => false,
                 'data' => false,
-            ])
-        ;
+            ]);
 
         $builder->get('concentration')
             ->addModelTransformer(new CallbackTransformer(
@@ -100,8 +96,7 @@ class ProductFormType extends AbstractType
                 function ($c) {
                     return $c * 10000;
                 }
-            ))
-        ;
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

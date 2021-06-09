@@ -137,8 +137,6 @@ class AppFixtures extends Fixture
             ->addIncompatibility($environmental_hazard);
 
 
-
-
         $list = [
             "Flammable",
             "Compressed Gases",
@@ -159,7 +157,7 @@ class AppFixtures extends Fixture
         foreach ($list as $hazard) {
             $cs = new Hazard();
             $cs->setLabel($hazard);
-            $cs->setId("GHS".$this->faker->randomNumber(2));
+            $cs->setId("GHS" . $this->faker->randomNumber(2));
             $manager->persist($cs);
             $this->hazards[] = $cs;
         }

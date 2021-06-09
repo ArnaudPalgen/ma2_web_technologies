@@ -3,9 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Name;
-use App\Entity\Usage;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,28 +20,13 @@ class NameRepository extends ServiceEntityRepository
     }
 
 
-    public function searchByNcas(string $ncas) {
+    public function findAllIndexedByCAS()
+    {
 
-        if($ncas == null) {
-            return [];
-        }
-        $rsm = new ResultSetMapping();
-        $rsm
-            ->addScalarResult('id', 'id')
-            ->addScalarResult('name', 'name')
-            ->addScalarResult('ncas', 'ncas')
-            ->addScalarResult('score', 'score');
+        $query = $this->createQueryBuilder('n')
+            ->indexBy('n', 'n.ncas')
+            ->getQuery();
 
-        $sql = "
-               SELECT 
-                      *,
-                      MATCH(ncas) AGAINST(:ncas) score 
-               FROM name
-               ORDER BY score DESC
-        ";
-        $query = $this->getEntityManager()
-            ->createNativeQuery($sql, $rsm)
-            ->setParameter('ncas', $ncas);
         return $query->getResult();
     }
 

@@ -74,8 +74,7 @@ class ProductType extends AbstractType
                 function ($c) {
                     return $c * 10000;
                 }
-            ))
-        ;
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -4,7 +4,6 @@
 namespace App\Service;
 
 
-
 use Exception;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -17,7 +16,13 @@ class PubChem
         $this->client = $client;
     }
 
-    public  function getHazards($cid) {
+    public function getHazardsByNcas($ncas)
+    {
+        return $this->getHazards($this->getCid($ncas));
+    }
+
+    public function getHazards($cid)
+    {
         if ($cid == null) {
             return null;
         }
@@ -26,28 +31,28 @@ class PubChem
 
             $response = $this->client->request(
                 'GET',
-                'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/'.$cid.'/JSON', [
+                'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/' . $cid . '/JSON', [
                 'query' => [
                     'heading' => 'Chemical Safety',
                 ],
             ]);
 
             return array_map(function ($e) {
-                $s = explode("/",$e['URL']);
+                $s = explode("/", $e['URL']);
                 return [
                     'symbol' => $e['URL'],
-                    'code'=> explode(".", end($s))[0],
+                    'code' => explode(".", end($s))[0],
                     'text' => $e['Extra']
                 ];
-            },$response->toArray()['Record']['Section'][0]['Information'][0]['Value']['StringWithMarkup'][0]['Markup']);
+            }, $response->toArray()['Record']['Section'][0]['Information'][0]['Value']['StringWithMarkup'][0]['Markup']);
 
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
 
-
-    public  function getCid($ncas) {
+    public function getCid($ncas)
+    {
         if ($ncas == null) {
             return null;
         }
@@ -56,19 +61,14 @@ class PubChem
 
             $response = $this->client->request(
                 'GET',
-                'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/'.$ncas.'/cids/JSON'
+                'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/' . $ncas . '/cids/JSON'
             );
 
             return $response->toArray()['IdentifierList']['CID'][0];
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
-
-    public function getHazardsByNcas($ncas) {
-        return $this->getHazards($this->getCid($ncas));
-    }
-
 
 
 }
