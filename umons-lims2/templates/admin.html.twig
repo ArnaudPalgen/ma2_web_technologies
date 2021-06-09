@@ -33,7 +33,7 @@
                     {% for user in users %}
                         {% if user.getDeletedAt  is null %}
                         <tr id='user-{{ user.getId }}'>
-                            {% if is_granted('ROLE_SUPER_ADMIN') or user.getRole.getName =="user"%}
+                            {% if (is_granted('ROLE_SUPER_ADMIN') or user.getRole.getName =="user") and user.getRole.getName !="superuser"%}
                                 <td><label><input type="checkbox" value='{{ user.getId }}' autocomplete="off"><span></span></label></td>
                             {% else %}
                                 <td></td>
