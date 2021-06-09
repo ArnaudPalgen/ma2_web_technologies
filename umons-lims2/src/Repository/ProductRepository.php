@@ -22,7 +22,7 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findIncompatibilities(int $location,array $hazardCodes) {
+    public function findIncompatibilities($location, $hazardCodes) {
 
 
 
@@ -33,13 +33,15 @@ class ProductRepository extends ServiceEntityRepository
             ->addScalarResult('id', 'id')
             ->addScalarResult('name', 'name')
             ->addScalarResult('ncas', 'ncas')
-            ->addScalarResult('size', 'size');
+            ->addScalarResult('size', 'size')
+            ->addScalarResult('concentration', 'concentration');
 
         $sql = "
             SELECT p.id,
                    name,
                    ncas,
-                   size
+                   size,
+                   concentration
             FROM   product p
                    INNER JOIN (SELECT u1.product_id,
                                       u1.action,

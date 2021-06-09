@@ -144,3 +144,6 @@ input[type="checkbox"]:disabled+span {
   color: black;
   opacity: 0.5;
 }
+
+.table-not-striped tbody tr:nth-of-type(odd), .table-not-striped tbody th:nth-of-type(odd) {
+    background-color: transparent!important;}

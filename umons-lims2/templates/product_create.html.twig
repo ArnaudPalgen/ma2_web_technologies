@@ -14,47 +14,61 @@
 				<h1 class="card-title">Ajouter un produit</h1>
 
 				{{ form_start(form) }}
-					{{ form_widget(form) }}
+				{{ form_widget(form) }}
 
-					<div id="hazards"></div>
-					<button type="button" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
+				<div id="hazards"></div>
+				<button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
 				{{ form_end(form) }}
 			</div>
 		</div>
 
+		{% if incompatibilities %}
+			<div class="modal fade" id="compatibilityModal" tabindex="-1" aria-labelledby="compatibilityModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="compatibilityModalLabel">Confirmer Emplacement</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p>	Le produit que vous souhaitez créer possède des propriétés incompatibles avec celles d'autres produits se trouvant dans l'emplacement souhaité. Voulez-vous continuer ?</p>
 
-		<div class="modal fade" id="compatibilityModal" tabindex="-1" aria-labelledby="compatibilityModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="compatibilityModalLabel">Confirmer Emplacement</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p>	Le produit que vous souhaitez créer possède des propriétés incompatibles avec celles d'autres produits se trouvant dans l'emplacement souhaité. Voulez-vous continuer ?</p>
+							<table class="table">
+								<thead>
+								<tr>
+									<th scope="col">Id</th>
+									<th scope="col">NCAS</th>
+									<th scope="col">Nom</th>
+									<th scope="col">Concentration</th>
+									<th scope="col">Masse / Volume</th>
+								</tr>
+								</thead>
+								<tbody id="incompatibilitiesTableBody">
+								{% for product in incompatibilities %}
+									<tr>
+										<th scope="row"> {{ product.id }} </th>
+										<td> {{ product.ncas }} </td>
+										<td> {{ product.name }} </td>
+										<td> {{ product.concentration}} </td>
+										<td> {{ product.size }} </td>
+									</tr>
+								{% endfor %}
 
-						<table class="table">
-							<thead>
-							<tr>
-								<th scope="col">Id</th>
-								<th scope="col">NCAS</th>
-								<th scope="col">Nom</th>
-							</tr>
-							</thead>
-							<tbody id="incompatibilitiesTableBody">
-
-							</tbody>
-						</table>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
-						<button type="button" class="btn btn-secondary" id="compatibilityConfirmButton">Procéder à l'ajout</button>
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
+							<button type="button" class="btn btn-secondary" id="compatibilityConfirmButton">Procéder à l'ajout</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{% endif %}
+
+
 
 	</div>
 
@@ -69,210 +83,41 @@
 
 
 {% block javascripts %}
-	{% include 'pubchemapi.html.twig' %}
+	<script src="{{ asset('js/pubchem.js') }}"></script>
 
 	<script>
 		$(() => {
-			const $ncas_field = $( "#product_ncas" );
-			const $ncas_field_group = $ncas_field.parent()
-			const $product_name = $("#product_name");
+			const $compatibilityModal = $('#compatibilityModal');
+			const $compatibilityConfirmButton = $('#compatibilityConfirmButton');
 
-			const $product_location = $("#product_location");
+			const $isIgnoreConflicts = $('#{{ form.is_ignore_conflicts.vars.id }}');
 
-			const $product_form_button = $("#productFormButton");
-
-			const $product_cid = $("#product_cid");
-
-			const $compatibilityModal = $("#compatibilityModal");
-
-			const $compatibilityConfirmButton = $("#compatibilityConfirmButton");
-			const $productForm = $("form[name='product']");
-
-			const $incompatibilitiesTableBody = $("#incompatibilitiesTableBody");
-
-			const $product_isIgnoreConflict = $("#product_isIgnoreConflict");
-
-			let name_promise;
-			let cid_promise;
-
-
-			const pState = {
-
-				set cid(val) {
-					return $product_cid.val(val);
-
-				},
-				get cid() {
-					let parsed = parseInt($product_cid.val());
-					if (isNaN(parsed)) {
-						return null;
-					}
-					return parsed;
-				},
-
-				set isNameLoading(val) {
-					$product_name.prop( "disabled", !!val );
-				},
-				get isNameLoading() {
-					return $product_name.prop('disabled');
-				},
-
-				set isNcasValid(val) {
-
-					const class_invalid = "is-invalid";
-					const class_has_validation = "has-validation";
-					let error_feedback = $ncas_field_group.find('.invalid-feedback');
-					if(!error_feedback.length) {
-						error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>");
-					}
-					error_feedback.hide();
-					$ncas_field_group.append(error_feedback);
-
-					$ncas_field_group.removeClass(class_has_validation);
-					$ncas_field.removeClass(class_invalid);
-
-					if(!val){
-						this.cid = null;
-						$ncas_field_group.addClass(class_has_validation);
-						$ncas_field.addClass(class_invalid);
-						error_feedback.show();
-					}
-				},
-
-			}
-
-
-			async function check_compatibility(location, cid) {
-				let p_name = await axios.get("/json/products/compatibilities/check", {
-					params: {
-						location: location,
-						cid: cid
-					}
-				});
-				return  p_name.data;
-			}
-
-			async function get_name(pubchem, prodCid) {
-				let p_name = await axios.get("/json/products/name", {
-					params: {
-						ncas: prodCid
-					}
-				});
-				return  p_name.data || await pubchem.findProductName(prodCid);
-			}
-
-			function autofill_name(pubchem, cid) {
-
-				pState.isNameLoading = true;
-
-				name_promise = get_name(pubchem, cid);
-				const localPromise = name_promise;
-				name_promise.then(result => {
-					if(name_promise === localPromise){
-						pState.isNameLoading = false;
-						if(result) {
-							$product_name.val(result);
-						}
-					}
-				});
-			}
-
-
-
-
-			function  update(pubchem, ncas) {
-				pState.cid = null;
-
-				if(ncas.length >= 3 && pubchem.isCasValid(ncas)){
-
-					cid_promise = pubchem.findProductsCid(ncas);
-					const localPromise = cid_promise;
-					cid_promise
-							.then(cid => {
-								if(cid_promise === localPromise){
-									if (cid) {
-										pState.cid = cid;
-										pState.isNcasValid = true;
-										autofill_name(pubchem, cid);
-									} else {
-										pState.isNcasValid = false;
-									}
-								}
-							})
-							.catch((err)=>{
-								pState.isNcasValid = false;
-							})
-				} else {
-					pState.isNcasValid = false;
-				}
-			}
-
-
-			function proceed() {
-				check_compatibility($product_location.val(), pState.cid)
-						.then(incompatibilities => {
-
-							if (incompatibilities) {
-								console.log(incompatibilities)
-								$incompatibilitiesTableBody.empty();
-								for (let incompatibility of incompatibilities) {
-
-									$incompatibilitiesTableBody.append(
-											`<tr>
-												<th scope="row"> ${incompatibility.id} </th>
-												<td> ${incompatibility.ncas} </td>
-												<td> ${incompatibility.name} </td>
-											</tr>`
-									);
-								}
-								$compatibilityModal.modal('show');
-							} else {
-								$productForm.submit();
-							}
-						});
-			}
+			const $inputNcas = $('#{{ form.ncas.vars.id }}');
+			const $inputName = $('#{{ form.name.vars.id }}');
 
 			$compatibilityConfirmButton.click(function () {
-				$product_isIgnoreConflict.val(true);
-				$productForm.submit();
+				$isIgnoreConflicts.val('true');
+				$isIgnoreConflicts.form().submit();
 			});
 
-			$product_form_button.click(function( event ) {
-				console.log(pState.cid)
-				// $product_form_button.button('loading');
-
-				if(pState.cid){
-					proceed()
-				}
 
 
 
-				// event.preventDefault();
+			{% if incompatibilities %}
+			$compatibilityModal.modal('show');
+			{% endif %}
 
-
-			});
-
-			const pubchem = new PubChem();
-
-			$ncas_field.on("input", function() {
-				update(pubchem,  $(this).val())
-			});
-
-			$ncas_field.autocomplete({
-				source: function( qry, callback ) {
-					pubchem.autocompleteCAS(qry.term).then(callback)
-				},
-				minLength: 3,
-				select: function( event, ui ) {
-					update(pubchem, ui.item.value)
-				}
-			});
-
+			// $inputNcas.autocomplete({
+			// 	source: function( qry, callback ) {
+			// 		pubchem.autocompleteCAS(qry.term).then(callback)
+			// 	},
+			// 	minLength: 3,
+			// 	select: function( event, ui ) {
+			// 		update(pubchem, ui.item.value)
+			// 	}
+			// });
 
 		});
-
-
-
 	</script>
 
 

@@ -6,6 +6,7 @@ use App\Entity\Location;
 use App\Entity\Name;
 use App\Entity\Product;
 use App\Entity\Usage;
+use App\Form\ProductFormType;
 use App\Form\ProductType;
 use App\Repository\HazardRepository;
 use App\Repository\LocationRepository;
@@ -64,148 +65,6 @@ class ProductsController extends AbstractController
         return $this->json(json_encode($nameUser));
     }
 
-    #[Route(path: "new_product", name: 'products.create')]
-    public function new(Request $request, NameRepository $nameRepository,  HazardRepository $hazardRepository, ProductRepository $productRepository, PubChem $pubChem): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-
-        $form = $this->createForm(ProductType::class);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager = $this->getDoctrine()->getManager();
-
-            $p = $form->getData();
-
-
-            $h = $pubChem->getHazards($form['cid']->getData());
-            $status = $h['status'];
-
-
-            if($status == 200){
-                $hazards = array_map(function ($h) {
-                    return $h['code'];
-                }, $h['hazards']);
-
-
-                $hazardEntities = $hazardRepository->findBy(["id" => $hazards]);
-
-                if($form['isIgnoreConflict']->getData() != 'true'){
-                    $incompatibilities = $productRepository->findIncompatibilities($p->getLocation()->getId(), $hazards);
-                    if($incompatibilities) {
-                        $this->addFlash("danger", "Erreur: des incompatibilités ont été trouvés");
-
-                        return $this->render('product_create.html.twig', [
-                            'form' => $form->createView(),
-                        ]);
-                    }
-                }
-
-                for($i = 0; $i < $form["count"]->getData(); $i++) {
-                    $product = (new Product())
-                        ->setNcas($p->getNcas())
-                        ->setLocation($p->getLocation())
-                        ->setName($p->getName())
-                        ->setSize($p->getSize())
-                        ->setConcentration($p->getConcentration())
-                    ;
-
-                    foreach ($hazardEntities as $hazardEntity) {
-                        $product->addHazard($hazardEntity);
-                    }
-
-
-                    $actionCreate = (new Usage())
-                        ->setAction(Usage::ACTION_CREATE)
-                        ->setUser($this->getUser())
-                        ->setDate(new DateTime());
-
-                    $product->addUsage($actionCreate);
-
-                    $entityManager->persist($actionCreate);
-                    $entityManager->persist($product);
-
-
-                }
-                $name = $nameRepository->findOneBy([
-                    "ncas" => $product->getNcas()
-                ]);
-
-                if ($name == null) {
-                    $name = new Name();
-                    $name->setName($product->getName());
-                    $name->setNcas($product->getNcas());
-                    $entityManager->persist($name);
-                } else {
-                    $name->setName($product->getName());
-                }
-
-
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Le produit a bien été ajouté.');
-
-                return $this->redirectToRoute('products.index');
-
-
-            }else{
-                $this->addFlash('danger', "A problem occurred while retrieving data from pubchem");
-
-            }
-
-
-        }
-
-        return $this->render('product_create.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-
-    #[Route('/json/products/name', name: 'products.search.json')]
-    public function jsonSearch(Request $request, NameRepository $nameRepository): Response
-    {
-        $query = $request->query->get('ncas');
-        $res = $nameRepository->findOneBy(['ncas'=>$query]);
-        return $this->json($res);
-    }
-
-
-
-    #[Route('/json/products/compatibilities/check', name: 'products.compatibility_check.json')]
-    public function jsonCompatibilityCheck(Request $request, ProductRepository $productRepository, PubChem $pubChem): Response
-    {
-        $cid = $request->query->get('cid');
-        $location = $request->query->get('location');
-        if($cid && $location) {
-            $p = $pubChem->getHazards($cid);
-            $status = $p['status'];
-            if($status == 200){
-                $hazards = array_map(function ($h) {
-                    return $h['code'];
-                }, $p['hazards']);
-
-//                dump($hazards);
-
-                $incompatibilities = $productRepository->findIncompatibilities($location, $hazards);
-
-                return $this->json($incompatibilities);
-
-            } else{
-                return $this->json(null, $status);
-            }
-
-        }
-
-
-        return $this->json([]);
-    }
-
-    // todo: handle if cas is not known
-
-
-
     #[Route('/history', name: 'history')]
     public function history(): Response
     {
@@ -214,28 +73,112 @@ class ProductsController extends AbstractController
         return $this->render('history.html.twig', ['history' => $history,]);
     }
 
-    #[Route('/products/move', name: 'products.move')]
-    public function moveProduct(Request $request, PubChem $pubChem , LocationRepository $locationRepository, HazardRepository $hazardRepository, ProductRepository $productRepository) {
 
-        $product_ids =  $request->query->get('products');
+    #[Route(path: "/products/new", name: 'products.new')]
+    public  function  newProduct(Request $request, ProductRepository $pr, HazardRepository $hr, NameRepository $nr, PubChem $pubChem) {
 
-        if(!$product_ids) {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $f_product = new Product();
+
+        $form = $this->createForm(ProductFormType::class, $f_product);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hazards = $pubChem->getHazardsByNcas($f_product->getNcas());
+
+            $hazards = array_map(function ($h) {
+                return $h['code'];
+            }, $hazards);
+
+
+            if ($hazards ) {
+                if(count($hazards) > 0
+                    && $form->get('is_ignore_conflicts')->getData() != 'true'
+                    && $incompatibilities = $pr->findIncompatibilities($f_product->getLocation(), $hazards)
+                ) {
+
+                    return $this->render('product_create.html.twig', [
+                        'form' => $form->createView(),
+                        'incompatibilities' => $incompatibilities
+                    ]);
+                }
+            } else {
+                $this->addFlash("danger", "Une erreur s'est produite durant la communication avec PubChem.");
+                return $this->render('product_create.html.twig', [
+                    'form' => $form->createView(),
+                ]);
+            }
+
+
+            $em = $this->getDoctrine()->getManager();
+
+            for($i = 0; $i < $form->get("count")->getData(); $i++) {
+                $product = (new Product())
+                    ->setNcas($f_product->getNcas())
+                    ->setLocation($f_product->getLocation())
+                    ->setName($f_product->getName())
+                    ->setSize($f_product->getSize())
+                    ->setConcentration($f_product->getConcentration())
+                ;
+
+                foreach ($hr->findBy(["id" => $hazards]) as $hazardEntity) {
+                    $product->addHazard($hazardEntity);
+                }
+
+
+                $actionCreate = (new Usage())
+                    ->setAction(Usage::ACTION_CREATE)
+                    ->setUser($this->getUser())
+                    ->setDate(new \DateTime());
+
+                $product->addUsage($actionCreate);
+
+                $em->persist($actionCreate);
+                $em->persist($product);
+
+
+            }
+            $name = $nr->findOneBy([
+                "ncas" => $f_product->getNcas()
+            ]);
+
+            if ($name == null) {
+                $name = new Name();
+                $name->setName($f_product->getName());
+                $name->setNcas($f_product->getNcas());
+                $em->persist($name);
+            } else {
+                $name->setName($f_product->getName());
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Le produit a bien été ajouté.');
+
             return $this->redirectToRoute('products.index');
         }
 
-        $products = $productRepository->findBy(["id" => $product_ids]);
 
-        $existing_product_ids = array_map(function ($p) {
-            return [
-                'id' => $p->getId(),
-                'ncas' => $p->getNcas()
-            ];
-        }, $products);
+        return $this->render('product_create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
 
+    #[Route('/products/move', name: 'products.move')]
+    public function moveProduct(Request $request, ProductRepository $pr) {
+
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $product_ids =  $request->query->get('products', []);
+
+        if(empty($product_ids)) {
+            return $this->redirectToRoute('products.index');
+        }
+
+        $products = $pr->findBy(["id" => $product_ids]);
 
         $form = $this->createFormBuilder()
-
             ->add('location', EntityType::class, [
                 'label' => 'Nouvel Emplacement',
                 'class' => Location::class,
@@ -243,69 +186,68 @@ class ProductsController extends AbstractController
                     return $category->getDisplayName();
                 }
             ])
-            ->add('isIgnoreConflict', HiddenType::class, [
+            ->add('is_ignore_conflicts', HiddenType::class, [
                 'empty_data' => false,
                 'data' => false,
-            ])
-            ->add('products', HiddenType::class, [
-                'data' => json_encode($existing_product_ids)
-            ])
-            ->getForm();
+            ])->getForm();
+
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = $form->getData();
 
-            $prdts = json_decode($data[]);
 
-
-            foreach ($prdts as $prd) {
-
-                $pEntity = $productRepository->find($prd['id']);
-
-
-                $h = $pubChem->getHazards($data['cid']);
-                $status = $h['status'];
-
-
-                if($status == 200){
-                    $hazards = array_map(function ($h) {
-                        return $h['code'];
-                    }, $h['hazards']);
-
-
-                    if($data['isIgnoreConflict'] != 'true'){
-                        $incompatibilities = $productRepository->findIncompatibilities($data['location'], $hazards);
-                        return $this->json([
-                            'success' => false,
-                            'incompatibilities' => $incompatibilities
-                        ]);
+            $incompatibilities = [];
+            if($form->get('is_ignore_conflicts')->getData() != 'true'){
+                foreach ($products as $product) {
+                    $p_hazard = $product->getHazards();
+                    if (count($p_hazard) > 0  &&  $p_incompatibilities = $pr->findIncompatibilities($data['location'], $p_hazard)) {
+                        $incompatibilities[$product->getNcas()] = $p_incompatibilities;
                     }
+                }
 
-                    $pEntity->setLocation($data['location']);
-
-                    $this->getDoctrine()->getManager()->flush();
-                    return $this->json([
-                        'success' => true,
+                if(!empty($incompatibilities)) {
+                    return $this->render('product_move.html.twig', [
+                        'form' => $form->createView(),
+                        'products' => $products,
+                        'incompatibilities' => $incompatibilities
                     ]);
-
-
                 }
             }
 
+            $em = $this->getDoctrine()->getManager();
+            foreach ($products as $product) {
+                $product->setLocation($data['location']);
 
+                $actionCreate = (new Usage())
+                    ->setAction(Usage::ACTION_MOVE)
+                    ->setUser($this->getUser())
+                    ->setDate(new \DateTime());
 
+                $em->persist($actionCreate);
+                $product->addUsage($actionCreate);
+
+                $em->flush();
+            }
+
+            $this->addFlash('success', 'Les produits ont bien été ajoutés.');
+
+            return $this->redirectToRoute('products.index');
 
         }
 
         return $this->render('product_move.html.twig', [
+            'form' => $form->createView(),
             'products' => $products,
-            'form' => $form->createView()
+            'incompatibilities' => null
         ]);
+    }
 
-
-
+    #[Route('/products/names', name: 'products.autocomplete')]
+    public function autocompleteProduct(Request $request, NameRepository $nr) {
+        $term = $request->query->get('term', '');
+        return $this->json($nr->searchByNcas($term));
     }
 
 

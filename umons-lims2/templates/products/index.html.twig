@@ -31,7 +31,7 @@
                         <th class="text-center">Masse / Volume</th>
                         <th class="text-center">Utilisé par:</th>
                         <th class="text-center">Ouvert/Fermé</th>
-                        <th class="text-center">Identifiant</th>
+                        <th class="text-center">Id Produit</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -87,7 +87,7 @@
                         <th>Masse / Volume</th>
                         <th>Utilisé par:</th>
                         <th>Ouvert/Fermé</th>
-                        <th>Identifiant</th>
+                        <th>Id Produit</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -340,7 +340,7 @@
 
         function addElement() {
             {% if app.user %}
-            window.location.href = '{{ path('products.create')|escape('js') }}';
+            window.location.href = '{{ path('products.new')|escape('js') }}';
             {% else %}
             window.location.href = '{{ path('userselect')|escape('js') }}';
             {% endif %}
