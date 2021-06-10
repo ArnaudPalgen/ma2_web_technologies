@@ -8,6 +8,7 @@ if [ -f "$CONTAINER_ALREADY_STARTED" ]; then
 else
     echo "-- First container startup --"
     touch "$CONTAINER_ALREADY_STARTED"
+    composer install --no-dev --optimize-autoloader
     php bin/console doctrine:migrations:migrate
     php bin/console app:init-db
 fi
