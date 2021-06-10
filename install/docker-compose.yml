@@ -1,0 +1,51 @@
+#https://hub.docker.com/_/mysql/
+version: '2'
+services:
+    db:
+        image: mysql:8.0.24 #version used during the implementation of the project 
+        container_name: mysql 
+        ports:
+          - 3307:3306
+        environment:
+          MYSQL_ROOT_PASSWORD: ${DB_ROOT}
+          MYSQL_USER: ${DB_USER}
+          MYSQL_PASSWORD: ${DB_PASSWORD}
+          MYSQL_DATABASE: ${DB_NAME}
+
+    php:
+        build: php7-fpm
+        ports:
+            - 9001:9000
+        #command: bash -c "myentrypoint.sh"
+        links:
+            - db
+        volumes:
+            - ../umons-lims2:/var/www/symfony
+            - ./logs/symfony:/var/www/symfony/app/logs
+        depends_on:
+          - db
+        environment:
+          - WAIT_HOSTS=db:3306
+          - WAIT_TIMEOUT=120
+          - WAIT_SLEEP_INTERVAL=15
+          - MYSQL_DATABASE=${DB_NAME}
+          - MYSQL_USER=${DB_USER}
+          - MYSQL_PASSWORD=${DB_PASSWORD}
+
+    nginx:
+        build: nginx
+        ports:
+          - 82:80
+        links:
+          - php
+        volumes_from:
+          - php
+        volumes:
+          - ./logs/nginx/:/var/log/nginx
+        depends_on:
+          - php
+          - db
+        environment:
+          - WAIT_HOSTS=db:3306, php:9000
+          - WAIT_SLEEP_INTERVAL=20
+          - WAIT_TIMEOUT=180

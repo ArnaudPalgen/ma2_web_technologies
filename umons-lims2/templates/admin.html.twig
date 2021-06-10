@@ -1,0 +1,280 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.1/sl-1.3.3/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('tableStyle.css') }}"/>
+
+
+{% endblock %}
+{% block title %}
+    Administrateur
+{% endblock %}
+{% block searchbar %}
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid" style="margin-top: 2em;width:98%;">
+        <div class="row">
+            <div class="table-responsive">
+                <table id="productTable" class="display" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Matricule</th>
+                        <th class="text-center">Prénom</th>
+                        <th class="text-center">Nom</th>
+                        <th class="text-center">Rôle</th>
+                        <th class="text-center">Outils</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        {% if user.getDeletedAt  is null %}
+                        <tr id='user-{{ user.getId }}'>
+                            {% if (is_granted('ROLE_SUPER_ADMIN') or user.getRole.getName =="user") and user.getRole.getName !="superuser"%}
+                                <td><label><input type="checkbox" value='{{ user.getId }}' autocomplete="off"><span></span></label></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ user.getRegistrationNumber }}</td>
+                            <td>{{ user.getFirstName }}</td>
+                            <td>{{ user.getLastName }}</td>
+                            <td>{{ user.getRole.getName }}</td>
+                            {% if is_granted('ROLE_SUPER_ADMIN') or user.getRole.getName =="user" or app.user.getRegistrationNumber == user.getRegistrationNumber%}
+                            <td>
+                                <button type="button" class="btn-primary.put-btn" data-toggle="modal"
+                                        data-target="#myModal" data-whatever="user-{{ user.getId }}">Modifier <i
+                                            class="bi bi-pencil"></i></button>
+                            </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Matricule</th>
+                        <th class="text-center">Prénom</th>
+                        <th class="text-center">Nom</th>
+                        <th class="text-center">Rôle</th>
+                        <th class="text-center">Outils</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modifier un utilisateur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="edit_id">
+                        <label for="edit_id">Matricule</label>
+                        <input type="text" class="form-control" id="edit_matricule" placeholder="...">
+                        <label for="edit_name">Nom</label>
+                        <input type="text" class="form-control" id="edit_name" placeholder="...">
+                        <label for="edit_firstname">Prénom</label>
+                        <input type="text" class="form-control" id="edit_firstname" placeholder="...">
+                        <label for="edit_mdp">Mot de passe (a remplir pour modifier le mot de passe actuel)</label>
+                        <input type="password" class="form-control" id="edit_mdp"  required>
+                        <div class="alert alert-danger" id="passwordsNoMatchRegister">
+                          Votre mot de passe doit contenir 6 caractères minimum
+                        </div>
+                        <label for="edit_role">Rôle</label>
+                        <select class="form-control" id="edit_role">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="savebutton">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/v/dt/dt-1.10.24/b-1.7.0/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+
+    <script type="text/javascript">
+
+        var table = $('#productTable').DataTable({
+            dom: '<Bl<t>ip>',
+            buttons: [
+                {
+                    tag: "button",
+                    className: "btn btn-light action-btn",
+                    text: 'Ajouter',
+                    action: function (e, dt, node, config) {
+                        addElement();
+                    }
+                },
+                {
+                    tag: "button",
+                    className: "btn btn-light action-btn",
+                    text: 'Supprimer',
+                    action: function (e, dt, node, config) {
+                        deleteRow();
+                    }
+                }
+
+            ],
+            "order": [[1, 'desc']],
+            "columnDefs": [
+                {"targets": [0, 5], "orderable": false},
+                {"className": "dt-center", "targets": "_all"},
+                {
+                    width: '4%',
+                    targets: [0]
+                }
+            ],
+            stateSave: true,
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            }
+        });
+
+
+        // Traitements sur des cases à chocher
+        $("input[type=checkbox]").change(function () {
+            $("#user-" + this.value).toggleClass('selected');
+        });
+
+        function addElement() {
+            window.location.href = '{{ path('app_register')|escape('js') }}';
+        }
+
+
+        function deleteRow() {
+            let rows = table.rows('.selected');
+            let data = rows.data();
+
+            for (let i = 0; i < data.length; i++) {
+                let actualData = data[i];
+
+                let matricule = actualData[1];
+                let name = actualData[2];
+                let firstname = actualData[3];
+                let role_name = actualData[4];
+                let id = actualData["DT_RowId"];
+
+                let route = '{{ path('admin.change.user') }}';
+
+                route = route.replace("id", id.split('-')[1]);
+                route = route.replace("registration_number", matricule);
+                route = route.replace("first_name", firstname);
+                route = route.replace("last_name", name);
+                route = route.replace("role", role_name);
+
+                $.post(route,{'id': id.split('-')[1],'registration_number' : matricule,'first_name' : firstname,'last_name' : name,'mdp':"",'role' : role_name,'action' : 'remove'}, function (res) {
+
+                });
+            }
+            rows.remove().draw(false);
+            table.searchPanes.rebuildPane();
+        }
+
+        //when user save modification on the modal
+        $('#savebutton').on("click", function () {
+            let new_MDP = $('#edit_mdp').val();
+            if(new_MDP.length !== 0 && new_MDP.length < 6){
+                $('#passwordsNoMatchRegister').show();
+            }
+            else{
+                //get new data
+                let new_matricule = $('#edit_matricule').val();
+                let new_name = $('#edit_name').val();
+                let new_firstname = $('#edit_firstname').val();
+                let new_role_name = $('#edit_role option:selected').text();
+                if(new_role_name === ""){
+                    new_role_name = ($('#edit_role').val());
+                }
+
+                let id = $('#edit_id').val();
+
+                let route = '{{ path('admin.change.user') }}';
+
+                $.post(route, {'id': id.split('-')[1],'registration_number' : new_matricule,'first_name' : new_firstname,'last_name' : new_name,'mdp':new_MDP,'role' : new_role_name,'action' : 'update'}, function (res) {
+                    if ($.parseJSON(res)) {
+                        //get data from concerned row
+                        let row = table.row("#" + id);
+                        let data = row.data();
+
+                        //update data in datatable
+                        data[1] = new_matricule;
+                        data[3] = new_name;
+                        data[2] = new_firstname;
+                        data[4] = new_role_name;
+
+
+                        row.data(data).draw(false);//redraw datatable
+                        $('#myModal').modal('hide');//hide modal
+                    }
+                });
+            }
+        });
+
+        //when the modal is shown
+        $('#myModal').on('show.bs.modal', function (event) {
+            $('#passwordsNoMatchRegister').hide();
+
+            let button = $(event.relatedTarget);//find the button that trigger the event
+            let id = button.data('whatever');//get data
+
+            //get data from concerned row
+            let row = table.row("#" + id);
+            let data = row.data();
+
+            let modal = $(this);
+
+            //find input elements of the modal
+            modal.find('#edit_id').val(id);
+            modal.find('#edit_matricule').val(data[1]);
+            modal.find('#edit_name').val(data[3]);
+            modal.find('#edit_firstname').val(data[2]);
+            modal.find('#edit_mdp').val("");
+
+            //re-init the select #edit_role
+            modal.find('#edit_role').replaceWith('<select class="form-control" id="edit_role"></select>');
+            let role_select = modal.find('#edit_role');
+
+            {% if is_granted('ROLE_SUPER_ADMIN')%}
+                //append option to edit_role
+                if (data[4] != "superuser") {
+                    {% for role in roles %}
+                    {% if role.name != "superuser" %}//can't choose sudo
+                    if (data[4] == "{{ role.name }}") {
+                        role_select.append('<option selected>{{ role.name }}</option>');
+                    } else {
+                        role_select.append('<option value="{{ role.id }}">{{ role.name }}</option>');
+                    }
+                    {% endif %}
+                    {% endfor %}
+                } else {
+                    //sudo can't be chaged -> replace select by a read-only input
+                    role_select.replaceWith('<input id="edit_role" class="form-control" value="' + data[4] + '" type="text" placeholder=' + data[4] + ' readonly>');
+                }
+            {% else %}
+                role_select.replaceWith('<input id="edit_role" class="form-control" value="' + data[4] + '" type="text" placeholder=' + data[4] + ' readonly>');
+            {% endif %}
+        })
+
+    </script>
+{% endblock %}

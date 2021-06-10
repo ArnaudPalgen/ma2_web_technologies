@@ -1,0 +1,155 @@
+:root{
+  --red: #d60044;
+} 
+
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: #888A8D;
+}
+
+#particles-js > canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.navbar{
+    position: fixed;
+    background-color: white;
+    box-shadow: 0px 8px 8px -6px rgba(0,0,0,.5);
+    width:80%;
+}
+.navbar-nav{
+  display:flex;
+  align-items:center;
+}
+.title{
+    color: white;
+}
+
+.btn-light.info-btn {
+    background-color: transparent;
+}
+
+.btn-light.info-btn:hover {
+    background-color: #C4C4C4;
+    border-color: #C4C4C4;
+}
+
+.btn-light.action-btn {
+    background-color: #FFFFFF;
+    border-color: #FFFFFF;
+    color: #000000;
+}
+
+.btn-light.action-btn:hover {
+	background-color: #C4C4C4;
+	border-color: #C4C4C4;
+}
+
+.btn-primary.put-btn {
+	background-color: #FFFFFF;
+	border-color: #FFFFFF;
+	color: #000000;
+	border: 1px solid;
+}
+
+.btn-primary.put-btn:hover {
+	background-color: #DAF4FC;
+	border-color: #DAF4FC;
+	color: #000000;
+	border: 1px solid;
+}
+
+.btn-primary.take-btn {
+	background-color: #66CAEC;
+	border-color: #66CAEC ;
+	color: #000000;
+	border: 1px solid;
+}
+
+.btn-primary.take-btn:hover {
+	background-color: #4688DC;
+	border-color: #4688DC;
+	color: #000000;
+	border: 1px solid;
+}
+
+
+
+
+/*source checkbox: http://jsfiddle.net/maxshuty/2cs0dj54/ */
+input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+/* Text color for the label */
+input[type="checkbox"]+span {
+  cursor: pointer;
+  font: 16px sans-serif;
+  color: black;
+}
+
+/* Checkbox un-checked style */
+input[type="checkbox"]+span:before {
+  content: '';
+  border: 1px solid grey;
+  border-radius: 3px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5em;
+  margin-top: 0.5em;
+  vertical-align: -2px;
+}
+
+/* Checked checkbox style (in this case the background is red) */
+input[type="checkbox"]:checked+span:before {
+  /* NOTE: Replace the url with a path to an SVG of a checkmark to get a checkmark icon */
+  background-image: url('check.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 13px;
+  border-radius: 2px;
+  background-color: #DAF4FC;
+  color: white;
+}
+
+/* Adding a dotted border around the active tabbed-into checkbox */
+input[type="checkbox"]:focus+span:before,
+input[type="checkbox"]:not(:disabled)+span:hover:before {
+  /* Visible in the full-color space */
+  box-shadow: 0px 0px 0px 2px rgba(0, 150, 255, 1);
+
+  /* Visible in Windows high-contrast themes
+     box-shadow will be hidden in these modes and
+     transparency will not be hidden in high-contrast
+     thus box-shadow will not show but the outline will
+     providing accessibility */
+  outline-color: transparent;
+  outline-width: 2px;
+  outline-style: dotted;
+  }
+
+
+/* Disabled checkbox styles */
+input[type="checkbox"]:disabled+span {
+  cursor: default;
+  color: black;
+  opacity: 0.5;
+}
+
+.table-not-striped tbody tr:nth-of-type(odd), .table-not-striped tbody th:nth-of-type(odd) {
+    background-color: transparent!important;}
+
+
+
+.collapsing {
+    transition: none !important;
+}

@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Déplacer des produits
+{% endblock %}
+
+
+{% block searchbar %}{% endblock %}
+
+
+{% block body %}
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Déplacer des produits</h1>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">NCAS</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Emplacement Actuel</th>
+                        <th scope="col">Masse / Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <th scope="row"> {{ product.id }} </th>
+                            <td> {{ product.ncas }} </td>
+                            <td> {{ product.name }} </td>
+                            <td> {{ product.location.getDisplayName }} </td>
+                            <td> {{ product.size }} </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+
+                <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Loading..."  id="productFormButton">Valider</button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        {% if incompatibilities %}
+
+            <div class="modal fade" id="compatibilityModal" tabindex="-1" aria-labelledby="compatibilityModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="compatibilityModalLabel">Confirmer Emplacement</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>	Déplacer ces produits à l'emplacement choisi va introduire des incompatibilités. Voulez-vous continuer ?</p>
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">NCAS</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Emplacement Actuel</th>
+                                    <th scope="col">Masse / Volume</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    {#                                    {{ attribute(incompatibilities, product.ncas) }}#}
+                                    {% if attribute(incompatibilities, product.ncas) is defined %}
+                                        <tr class="collapsed" data-toggle="collapse" data-target="#children-of-{{ product.id }}" style="cursor:pointer;"  aria-expanded="false">
+                                            <td class="bi bi-caret-right-fill"></td>
+                                            <th scope="row"> {{ product.id }} </th>
+                                            <td> {{ product.ncas }} </td>
+                                            <td> {{ product.name }} </td>
+                                            <td> {{ product.location.getDisplayName }} </td>
+                                            <td> {{ product.size }} </td>
+                                        </tr>
+                                        <tr id="children-of-{{ product.id }}" class="collapse">
+                                            <td colspan=6">
+                                                <table class="table mb-0 ">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Id</th>
+                                                        <th scope="col">NCAS</th>
+                                                        <th scope="col">Nom</th>
+                                                        <th scope="col">Masse / Volume</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for incompatible_product in attribute(incompatibilities, product.ncas) %}
+                                                        <tr>
+                                                            <th scope="row"> {{ incompatible_product.id }} </th>
+                                                            <td> {{ incompatible_product.ncas }} </td>
+                                                            <td> {{ incompatible_product.name }} </td>
+                                                            <td> {{ incompatible_product.size }} </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-secondary" id="compatibilityConfirmButton">Continuer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+
+    </div>
+
+
+
+
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+
+{% endblock %}
+
+
+{% block javascripts %}
+
+    {#    {% include 'pubchemapi.html.twig' %}#}
+    <script>
+        $(() => {
+            const $compatibilityModal = $('#compatibilityModal');
+            const $compatibilityConfirmButton = $('#compatibilityConfirmButton');
+
+            const $isIgnoreConflicts = $('#{{ form.is_ignore_conflicts.vars.id }}');
+
+            $compatibilityConfirmButton.click(function () {
+                $isIgnoreConflicts.val('true');
+                $isIgnoreConflicts.form().submit();
+            });
+
+            {% if incompatibilities %}
+            $compatibilityModal.modal('show');
+            {% endif %}
+
+            $('[data-toggle="collapse"]').on('click', function() {
+                $(this).toggleClass('collapsed');
+            });
+
+            $('.collapse').on('show.bs.collapse', function(){
+                $(this).parent().find(".bi-caret-right-fill").removeClass("bi-caret-right-fill").addClass("bi-caret-down-fill");
+            }).on('hide.bs.collapse', function(){
+                $(this).parent().find(".bi-caret-down-fill").removeClass("bi-caret-down-fill").addClass("bi-caret-right-fill");
+            });
+
+        });
+    </script>
+{% endblock %}
+
+

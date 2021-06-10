@@ -1,0 +1,78 @@
+
+{% extends 'base.html.twig' %}
+{% block searchbar %}
+    <div class="input-group" style="margin-top:1%; width:40%; margin-bottom:1%;">
+        <input type="text" id="search" placeholder="Rechercher un nom" class="form-control"/>
+    </div>
+{% endblock %}
+
+{% block title %}
+	Connexion
+{% endblock %}
+
+{%block body %}
+	<div class="container-fluid" style="width: 80%; margin-top:1%;">
+
+{#		{% if error %}#}
+{#			<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
+{#		{% endif %}#}
+
+{#		{% if app.user %}#}
+{#			<div class="mb-3">#}
+{#				You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>#}
+{#			</div>#}
+{#		{% endif %}#}
+
+		<div class="container-fluid recherchable">
+			<form method="post">
+				<input type="hidden"
+					   name="_csrf_token"
+					   value="{{ csrf_token("simple-auth") }}">
+
+				{% if redirect_route %}
+					<input type="hidden"
+						   name="_redirect_route"
+						   value="{{ redirect_route }}">
+				{% endif %}
+
+				<div class="row">
+				{% for user in users %}
+					<div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-2 containCard">
+					<label class="d-block">
+						<input
+								type="radio"
+								name="_username"
+								class="d-none"
+								onchange="this.form.submit();"
+								value="{{ user.getRegistrationNumber }}">
+						
+						<div class="card text-center" style="cursor: pointer">
+							<div class="card-body">
+								<center>
+								<img src="user.svg" alt="Card image cap" style="width: 80%;background: {{ random(['#F87091', '#00ABD0', '#EFFBFF', '#E6F4F1']) }};">
+								<h5 class="card-title" >{{user.getFullName}}</h5>
+								<p class="card-text">{{ user.getRegistrationNumber }}</p>
+								</center>
+							</div>
+						</div>
+					</label>
+					</div>
+				{% endfor %}
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+		$('#search').on('input', function (){
+    	$('.containCard').removeClass('d-none');
+    	var filter = $(this).val();
+    	$('.recherchable').find('.card .card-body .card-title:not(:contains("'+filter+'"))').closest('.containCard').addClass('d-none');
+})
+	</script>
+{% endblock %}
+
