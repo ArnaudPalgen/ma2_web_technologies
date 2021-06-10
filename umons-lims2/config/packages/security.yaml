@@ -30,7 +30,7 @@ security:
             access_denied_handler: App\Security\AccessDeniedHandler
 
             custom_authenticators:
-                - App\Security\TestAuthenticator
+                - App\Security\AppAuthenticator
             logout:
                 path: app_logout
 
@@ -40,7 +40,7 @@ security:
             provider: user_provider
 
             custom_authenticators:
-                - App\Security\TestSimpleAuthenticator
+                - App\Security\AppSimpleAuthenticator
             logout:
                 path: app_logout
                 # target: products.index
