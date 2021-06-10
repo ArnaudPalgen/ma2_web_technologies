@@ -1,4 +1,3 @@
-#!/bin/sh
 echo "Trying my-entrypoint"
 
 CONTAINER_ALREADY_STARTED=START
