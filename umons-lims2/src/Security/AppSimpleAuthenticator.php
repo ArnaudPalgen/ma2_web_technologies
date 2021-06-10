@@ -35,8 +35,6 @@ class AppSimpleAuthenticator extends AbstractLoginFormAuthenticator
     {
         $this->httpUtils = $httpUtils;
         $this->userProvider = $userProvider;
-
-
     }
 
     public function supports(Request $request): bool
@@ -76,6 +74,9 @@ class AppSimpleAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($redirect_route = $request->request->get('_redirect_route')) {
+            return $this->httpUtils->createRedirectResponse($request, $redirect_route);
+        }
+        if ($redirect_route = $request->getSession()->get('_security.' . $firewallName . '.target_path')) {
             return $this->httpUtils->createRedirectResponse($request, $redirect_route);
         }
         return $this->httpUtils->createRedirectResponse($request, $this->on_success_redirect_route);

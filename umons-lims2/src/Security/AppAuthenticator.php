@@ -101,6 +101,9 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         if ($redirect_route = $request->request->get('_redirect_route')) {
             return $this->httpUtils->createRedirectResponse($request, $redirect_route);
         }
+        if ($redirect_route = $request->getSession()->get('_security.' . $firewallName . '.target_path')) {
+            return $this->httpUtils->createRedirectResponse($request, $redirect_route);
+        }
         return $this->httpUtils->createRedirectResponse($request, $this->on_success_redirect_route);
 
     }
