@@ -1,16 +1,14 @@
 
 {% extends 'base.html.twig' %}
-{% block searchbar %}
-    <div class="input-group" style="margin-top:1%; width:40%; margin-bottom:1%;">
-        <input type="text" id="search" placeholder="Rechercher un nom" class="form-control"/>
-    </div>
-{% endblock %}
 
 {% block title %}
 	Connexion
 {% endblock %}
 
-{%block body %}
+{% block body %}
+    <div class="input-group col-md-8 mx-auto" style="margin-top:1%; width:40%; margin-bottom:1%;">
+        <input type="text" id="search" placeholder="Rechercher un nom" class="form-control"/>
+    </div>
 	<div class="container-fluid" style="width: 80%; margin-top:1%;">
 
 {#		{% if error %}#}
