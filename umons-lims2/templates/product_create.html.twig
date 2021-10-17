@@ -82,7 +82,7 @@
 
 {% block javascripts %}
 	<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6"></script>
-
+	{% include 'pubchemapi.html.twig' %}
 	<script>
 		$(() => {
 			const $compatibilityModal = $('#compatibilityModal');
@@ -168,11 +168,23 @@
 
 				const fuse = new Fuse(values, options);
 
+
+
 				$inputNcas.on('input', function () {
-					if(validateNcas($(this).val())) {
+					if(validateNcas($(this).val()) && list[$inputNcas.val()] != null) {
 						$inputName.val(list[$inputNcas.val()].name)
 						$inputNcas.autocomplete('close')
-
+					}
+					else if (validateNcas($(this).val())){
+						const a = new PubChem()
+						a.findProductsCid($(this).val()).then(function(cid){
+							if(cid != null){
+								a.findProductName(cid).then(function(found_name){
+									$inputName.val(found_name)
+									$inputNcas.autocomplete('close')
+								})
+							}
+						})
 					}
 				})
 
