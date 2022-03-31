@@ -90,7 +90,7 @@ class PubChem {
 						}
 					});
 				} catch (e) {
-					if(e.response.status === 404) {
+					if(e.response.status === 404 || e.response.status == 400) {
 						return [];
 					} else{
 						console.error('PubChem call failed !')

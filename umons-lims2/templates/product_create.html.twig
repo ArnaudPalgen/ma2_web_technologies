@@ -111,7 +111,6 @@
 				const class_has_validation = "has-validation";
 				let error_feedback = $ncas_field_group.find('.invalid-feedback');
 				if(!error_feedback.length) {
-					console.log("ici");
 					error_feedback = $("<div class='invalid-feedback'>Numéro CAS invalide</div>");
 				}
 				error_feedback.hide();
@@ -119,7 +118,6 @@
 				$ncas_field_group.removeClass(class_has_validation);
 				$inputNcas.removeClass(class_invalid);
 				if(!val){
-					console.log("entre");
 					this.cid = null;
 					$ncas_field_group.addClass(class_has_validation);
 					$inputNcas.addClass(class_invalid);

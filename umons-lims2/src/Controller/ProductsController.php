@@ -83,13 +83,16 @@ class ProductsController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $hazards = $pubChem->getHazardsByNcas($f_product->getNcas());
+			if(is_null(null)){
+				$hazards = array();
+			}	
 
             $hazards = array_map(function ($h) {
                 return $h['code'];
             }, $hazards);
 
 
-            if ($hazards) {
+            if (! is_null($hazards)) {
                 if (count($hazards) > 0
                     && $form->get('is_ignore_conflicts')->getData() != 'true'
                     && $incompatibilities = $pr->findIncompatibilities($f_product->getLocation(), $hazards)
